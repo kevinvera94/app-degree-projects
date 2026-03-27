@@ -31,17 +31,34 @@ El proceso de trabajos de grado se gestiona actualmente de forma manual o fragme
 
 ---
 
-## 5. Usuarios del sistema (Actores)
+## 5. Usuarios del sistema (Actores y Roles)
+
+### 5.1 Actores institucionales del proceso
+
+Estos son los actores identificados en la Resolución 004/2025 y su rol en el proceso:
 
 | Actor | Rol en el proceso |
 |---|---|
-| **Estudiante** | Inscribe la idea, diligencia anteproyecto, adjunta informe final (Plantilla A), recibe notificaciones, sube correcciones, diligencia autorización de biblioteca |
-| **Comité de Trabajos de Grado (CTG)** | Conformado por el decano, directores de programas, coordinador CEII, coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas |
-| **Director de trabajo de grado** | Docente (máx. 2 por trabajo) que acompaña al estudiante, da Vo.Bo. y verifica reporte de similitud ≤20% antes de radicar |
-| **Jurado 1 / Jurado 2** | Docentes evaluadores (anónimos para el estudiante). Mismos jurados para anteproyecto y producto final cuando sea posible |
-| **Jurado 3 (eventual)** | Designado por el CTG solo si uno de los dos jurados reprueba. Solo puede aprobar o reprobar, no devolver para correcciones |
-| **Secretaria de facultad** | Apoyo administrativo del CTG. Gestiona ventanas de fechas, coordina comunicaciones |
-| **Administrador del sistema** | Configura parámetros, gestiona usuarios, supervisa el sistema |
+| **Estudiante** | Inscribe la idea, diligencia anteproyecto, adjunta informe final, recibe notificaciones, sube correcciones, diligencia autorización de biblioteca |
+| **Comité de Trabajos de Grado (CTG)** | Conformado por el decano, directores de programas, coordinador CEII y coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas. Coordinado por un integrante designado por rotación anual |
+| **Secretaria de facultad** | Apoyo administrativo del CTG. Operadora principal del sistema en nombre del CTG |
+| **Director de trabajo de grado** | Docente (máx. 2 por trabajo) que acompaña al estudiante, da Vo.Bo. y verifica reporte de similitud ≤20% antes de radicar. El primero debe ser docente USC en ejercicio |
+| **Jurado 1 / Jurado 2** | Docentes evaluadores designados por el CTG. Anónimos para el estudiante. Mismos jurados para anteproyecto y producto final cuando sea posible |
+| **Jurado 3 (eventual)** | Designado por el CTG solo si un jurado aprueba y el otro reprueba. Solo puede aprobar o reprobar, nunca devolver para correcciones. No aplica en sustentación |
+
+### 5.2 Roles en el sistema
+
+Para el sistema, los actores anteriores se agrupan en **3 roles**. Al registrar un usuario se le asigna el rol correspondiente:
+
+| Rol en el sistema | Agrupa a | Responsabilidad |
+|---|---|---|
+| **Administrador** | CTG, Secretaria de facultad, Directores de programa (y cualquier persona con permiso asignado) | Materializa las decisiones del CTG: aprueba/rechaza ideas y anteproyectos, asigna director y jurados, gestiona ventanas de fechas, emite actas, habilita ventanas extemporáneas. También gestiona usuarios y parámetros del sistema |
+| **Docente** | Director de trabajo de grado, Jurado 1, Jurado 2, Jurado 3 | Su función concreta en cada trabajo (Director o Jurado) la asigna el Administrador por proyecto. Un mismo docente puede ser Director en un trabajo y Jurado en otro simultáneamente |
+| **Estudiante** | Estudiante | Inscribe la idea, radica documentos, consulta el estado de su trabajo, sube correcciones, diligencia autorización de biblioteca |
+
+> **Nota:** El CTG como cuerpo colegiado delibera fuera del sistema. Sus decisiones se materializan en el sistema a través del usuario con rol Administrador (principalmente la secretaria de facultad).
+
+> **Nota:** Los jurados son anónimos para el estudiante. El sistema los identifica como "Jurado 1" y "Jurado 2", sin revelar su identidad real.
 
 ---
 
@@ -55,15 +72,14 @@ El proceso de trabajos de grado se gestiona actualmente de forma manual o fragme
 2. Diligencia el formulario de inscripción con:
    - Nombre del trabajo de grado (máx. 100 caracteres)
    - Modalidad seleccionada
-   - Número de integrantes (según límites por modalidad — ver sección 8)
-   - Datos del estudiante responsable: nombre, cédula, email institucional, celular, dirección
-   - Semestre actual y programa académico
+   - Número de integrantes (según límites configurables por modalidad — ver sección 8)
+   - Datos de cada integrante: nombre, cédula, email institucional, celular, dirección, semestre, programa académico
    - Línea de profundización y grupo de investigación (GIEIAM o COMBA I+D)
    - Director sugerido (opcional)
 3. Sistema registra la idea → estado **"Pendiente de evaluación de idea"**
 
-### ETAPA 2 — Evaluación de la idea por el CTG
-4. El CTG revisa la idea y valida unicidad (que no exista trabajo similar en curso o aprobado)
+### ETAPA 2 — Evaluación de la idea
+4. El Administrador revisa la idea y valida unicidad (que no exista trabajo similar en curso o aprobado)
 5. Decisión:
    - **Aprobada:** asigna director(es) → notifica al estudiante → estado **"Idea aprobada"**
    - **Rechazada:** registra motivo → estado **"Idea rechazada"**
@@ -78,61 +94,67 @@ El proceso de trabajos de grado se gestiona actualmente de forma manual o fragme
 9. Para modalidad **Investigación**: también se requiere aval del comité de ética (enfocado en metodología y recolección de información)
 10. Estado → **"Anteproyecto pendiente de evaluación"**
 
-### ETAPA 4 — Evaluación del anteproyecto por el CTG y jurados
-11. El CTG asigna dos jurados para revisar el anteproyecto
+### ETAPA 4 — Evaluación del anteproyecto por jurados
+11. El Administrador asigna dos jurados para revisar el anteproyecto
 12. Los jurados tienen **15 días hábiles** para emitir calificación numérica:
     - **≥ 4.0 → Aprobado**
     - **3.0 a 3.9 → Devuelto para correcciones**
     - **< 3.0 → Reprobado**
-13. Si un jurado reprueba y el otro aprueba → el CTG designa un **Jurado 3**. Este solo puede aprobar o reprobar (no devolver para correcciones)
+13. Si un jurado reprueba y el otro aprueba → el Administrador designa un **Jurado 3**. Este solo puede aprobar o reprobar (no devolver para correcciones)
 14. Si reprobación unánime → el estudiante debe presentar nueva propuesta desde cero (estado **"Anteproyecto reprobado"**)
 15. Si aprobado → estado **"Anteproyecto aprobado"**. A partir de este punto **no se pueden agregar integrantes nuevos**
+16. Las calificaciones registradas fuera del plazo de 15 días hábiles quedan marcadas como **extemporáneas** en el sistema
 
 ### ETAPA 4b — Correcciones al anteproyecto (si aplica)
-16. El estudiante recibe observaciones y tiene **10 días hábiles** para entregar el documento corregido con Vo.Bo. del director
-17. Si no cumple el plazo → debe radicar en la siguiente fecha del calendario
-18. Si tampoco cumple → debe reiniciar el proceso completo
-19. En segunda revisión los jurados tienen **10 días hábiles** y solo pueden aprobar o reprobar
+17. El estudiante recibe observaciones y tiene **10 días hábiles** para entregar el documento corregido con Vo.Bo. del director
+18. Si no cumple el plazo → debe radicar en la siguiente fecha del calendario
+19. Si tampoco cumple → debe reiniciar el proceso completo (nueva propuesta desde cero)
+20. En segunda revisión los jurados tienen **10 días hábiles** y solo pueden aprobar o reprobar
 
 ### ETAPA 5 — Desarrollo del trabajo de grado
-20. El estudiante desarrolla el trabajo bajo orientación del director
-21. El plazo máximo es el **periodo académico** en que se radicó la inscripción. Si no se avanza, se debe reinscribir en el siguiente periodo
-22. El sistema registra el estado pero no interviene activamente en esta etapa
+21. El estudiante desarrolla el trabajo bajo orientación del director
+22. El plazo máximo es el **periodo académico** en que se radicó la inscripción. Si no se avanza, se debe reinscribir en el siguiente periodo
+23. El sistema registra el estado pero no interviene activamente en esta etapa
 
 ### ETAPA 6 — Radicación del producto final
-23. En las **ventanas de fechas habilitadas** por el CTG, el estudiante radica el producto final adjuntando **tres documentos obligatorios**:
-    - (a) Producto final en la Plantilla A correspondiente a su modalidad
+24. En las **ventanas de fechas habilitadas**, el estudiante radica el producto final adjuntando **tres documentos obligatorios**:
+    - (a) Producto final en la plantilla correspondiente a su modalidad
     - (b) Carta de aval del director de trabajo de grado
     - (c) Reporte de similitud (máx. 20%)
-24. **Fuera de las ventanas de fechas, el sistema NO permite adjuntar documentos**
-25. Estado → **"Producto final entregado"**
+25. Para modalidad **Innovación y Emprendimiento**: se requiere un cuarto adjunto obligatorio:
+    - (d) Certificación de inscripción del Plan de Negocio ante fondo de financiación reconocido o unidad de innovación USC
+26. Si el trabajo está vinculado a una empresa u organización: adjunto condicional:
+    - Carta de impacto emitida por la empresa (validada por el Administrador)
+27. **Fuera de las ventanas de fechas, el sistema NO permite adjuntar documentos.** Excepción: el Administrador puede habilitar una ventana extemporánea individual para un trabajo específico, una vez que la solicitud del estudiante fue aprobada por el CTG fuera del sistema
+28. Estado → **"Producto final entregado"**
 
 ### ETAPA 7 — Evaluación del producto final por jurados
-26. El CTG asigna los mismos jurados del anteproyecto (cuando sea posible)
-27. Los jurados se identifican al estudiante de forma **anónima** como Jurado 1 y Jurado 2
-28. Los jurados tienen **15 días hábiles** para emitir calificación numérica (misma escala que anteproyecto)
-29. Si un jurado reprueba y el otro aprueba → el CTG designa un **Jurado 3**. Solo puede aprobar o reprobar
+29. El Administrador asigna los mismos jurados del anteproyecto (cuando sea posible)
+30. Los jurados se identifican al estudiante de forma **anónima** como Jurado 1 y Jurado 2
+31. Los jurados tienen **15 días hábiles** para emitir calificación numérica (misma escala que anteproyecto)
+32. Si un jurado reprueba y el otro aprueba → el Administrador designa un **Jurado 3**. Solo puede aprobar o reprobar
+33. Las calificaciones registradas fuera del plazo quedan marcadas como **extemporáneas**
 
 ### ETAPA 7b — Correcciones al producto final (si aplica)
-30. El estudiante recibe observaciones y tiene **10 días hábiles** para entregar el documento corregido con Vo.Bo. del director
-31. Si no cumple el plazo → debe radicar en la siguiente fecha del calendario
-32. Si tampoco cumple → debe reiniciar el proceso completo
-33. En segunda revisión los jurados solo pueden aprobar o reprobar
+34. El estudiante recibe observaciones y tiene **10 días hábiles** para entregar el documento corregido con Vo.Bo. del director
+35. Si no cumple el plazo → debe radicar en la siguiente fecha del calendario
+36. Si tampoco cumple → debe reiniciar el proceso completo
+37. En segunda revisión los jurados solo pueden aprobar o reprobar
 
 ### ETAPA 8 — Sustentación pública
-34. Una vez aprobado el producto final, el CTG establece fecha, hora y lugar de la **sustentación pública**
-35. Notifica a director, estudiantes y jurados
-36. Calificación de la sustentación: ≥4.0 aprobado, <4.0 reprobado
-37. Si reprobación → el estudiante debe presentar nueva propuesta desde cero
+38. Una vez aprobado el producto final, el Administrador registra fecha, hora y lugar de la **sustentación pública** y notifica a director, estudiantes y jurados
+39. Calificación de la sustentación: ≥4.0 aprobado, <4.0 reprobado
+40. Si reprobación → el estudiante debe presentar nueva propuesta desde cero
+41. **Excepción:** la modalidad **Diplomado en programas tecnológicos** no requiere sustentación pública. Una vez aprobado el producto final se pasa directamente a la generación del acta
 
 ### ETAPA 9 — Aprobación final y generación de acta
-38. Ambas instancias aprobadas (producto final + sustentación) → estado **"Trabajo aprobado"**
-39. El estudiante diligencia el **formato de autorización de publicación** para la biblioteca (indica si autoriza o no)
-40. El CTG emite el **Acta de Sustentación / Aprobación de Trabajo de Grado**
-41. Con el acta, el estudiante puede iniciar el proceso de solicitud de grado en el sistema externo
+42. Ambas instancias aprobadas (producto final + sustentación) → estado **"Trabajo aprobado"**
+43. El estudiante diligencia el **formato de autorización de publicación** para la biblioteca (indica si autoriza o no)
+44. El Administrador emite el **Acta de Sustentación / Aprobación de Trabajo de Grado**
+45. Con el acta, el estudiante puede iniciar el proceso de solicitud de grado en el sistema externo
 
 ### Caso especial — Plagio
-- Si se comprueba plagio, copia ilegal o falsificación, el CTG suspende el proceso y remite al comité de ética y disciplina → estado **"Suspendido por plagio"**
+- Si se comprueba plagio, copia ilegal o falsificación, el Administrador suspende el proceso en el sistema y el CTG remite el caso al comité de ética y disciplina → estado **"Suspendido por plagio"**
 
 ---
 
@@ -151,7 +173,7 @@ Pendiente de evaluación de idea
                   → (si correcciones) Correcciones producto final solicitadas
                     → Producto final corregido entregado
                       → Aprobado para sustentación
-                        → Sustentación programada
+                        → Sustentación programada         ← omitida en Diplomado tecnológico
                           → Trabajo aprobado | Reprobado en sustentación
                             → Acta generada
 Suspendido por plagio (puede ocurrir en cualquier etapa)
@@ -163,37 +185,44 @@ Suspendido por plagio (puede ocurrir en cualquier etapa)
 
 | Modalidad | Máx. integrantes | Nivel | Formato anteproyecto | Plantilla producto final |
 |---|---|---|---|---|
-| Investigación | 3 | Pregrado y posgrado | FORMATO_PROPUESTA_TG-INVESTIGACION | Plantilla_A_Investigación |
-| Monografía | 2 | Pregrado | FORMATO_PROPUESTA_TG-MONOGRAFIA | Plantilla_A_Revisión |
-| Innovación y Emprendimiento | 3 | Profesional | FORMATO_PROPUESTA_TG-EMPRENDIMIENTO | Plantilla_A_Emprendimiento |
-| Cursos de posgrado (9 créditos) | 2 | Pregrado | FORMATO_PROPUESTA_TG-MONOGRAFIA | Artículo de revisión |
-| Diplomado | 2 | Pregrado tecnológico | FORMATO_PROPUESTA_TG-MONOGRAFIA | Artículo de revisión |
-| Pasantía o Práctica | 1 | Profesional | — | Artículo de actividades |
+| Investigación | 3 (pregrado/profesional) / 2 (maestría profundización) / 1 (maestría investigación) | Tecnológico, Profesional, Maestría | FORMATO_PROPUESTA_TG-INVESTIGACION | Plantilla_A_Investigación |
+| Monografía | 2 | Tecnológico | FORMATO_PROPUESTA_TG-MONOGRAFIA | Artículo de revisión |
+| Innovación y Emprendimiento | 3 | Profesional | FORMATO_PROPUESTA_TG-EMPRENDIMIENTO | Plan de Negocios |
+| Cursos de posgrado (9 créditos) | 2 | Profesional | FORMATO_PROPUESTA_TG-MONOGRAFIA | Artículo de revisión |
+| Diplomado | 2 | Tecnológico y Profesional | FORMATO_PROPUESTA_TG-MONOGRAFIA | Artículo de revisión |
+| Pasantía o Práctica | 1 | Profesional | Definido por CTG | Artículo de actividades |
 
-**Restricciones por nivel:**
+**Restricciones por nivel (Art. 10° y 11°, Resolución 004/2025):**
 - Tecnológicos: Investigación, Monografía, Diplomado
 - Profesionales: Investigación, Innovación/Emprendimiento, Diplomado, Cursos de posgrado, Pasantía
 - Maestría: solo Investigación
 - Doctorado: reglamento específico del nivel
+- Especializaciones con registro calificado desde 2021: el trabajo de grado no es requisito de grado; el Administrador valida la elegibilidad
+
+> Los límites de integrantes son configurables en el sistema por el Administrador.
 
 ---
 
 ## 9. Reglas de negocio clave (Resolución 004/2025)
 
-- El sistema **NO permite** adjuntar documentos fuera de las ventanas de fechas habilitadas por el CTG
+- El sistema **NO permite** adjuntar documentos fuera de las ventanas de fechas habilitadas por el CTG. El Administrador puede habilitar ventanas extemporáneas individuales
 - Los jurados son **anónimos** para los estudiantes (Jurado 1 y Jurado 2)
-- Para radicar anteproyecto y producto final se requieren **3 adjuntos**: plantilla + carta aval + reporte similitud ≤20%
+- Para radicar anteproyecto y producto final se requieren **3 adjuntos mínimos**: plantilla + carta aval + reporte similitud ≤20%
+- Innovación y Emprendimiento requiere un **4° adjunto** en el producto final: certificación de inscripción del Plan de Negocio
+- Si el trabajo está vinculado a empresa, se requiere **carta de impacto** como adjunto condicional
 - **No se pueden agregar integrantes** una vez aprobado el anteproyecto
 - El retiro de un integrante requiere solicitud al CTG con justificación y aval del director
 - El director debe verificar similitud ≤20% antes de firmar el aval (Art. 31° literal i)
 - Los jurados del anteproyecto deben ser los mismos del producto final cuando sea posible
 - **Plazo para correcciones:** 10 días hábiles con Vo.Bo. del director
 - **Plazo de evaluación jurados:** 15 días hábiles (primera revisión), 10 días hábiles (segunda revisión)
+- Las calificaciones registradas fuera del plazo quedan marcadas como **extemporáneas** (no se bloquean)
 - Si un jurado reprueba y el otro aprueba → se designa **Jurado 3** (solo aprueba o reprueba)
-- Reprobación unánime en cualquier etapa → nueva propuesta desde cero
+- **Jurado 3 no existe en sustentación** — en esa etapa solo hay Aprobado o Reprobado
+- Reprobación unánime en cualquier etapa → nueva propuesta desde cero (nueva inscripción + asignación de director)
 - Plagio comprobado → suspensión y remisión al comité de ética y disciplina
 - Un trabajo puede tener hasta **2 directores**; el primero debe ser docente USC en ejercicio
-- La aprobación final requiere tanto el producto final aprobado como la **sustentación pública** aprobada
+- La aprobación final requiere producto final aprobado + sustentación pública aprobada, **excepto** Diplomado en programas tecnológicos (solo producto final)
 
 ---
 
@@ -309,6 +338,8 @@ app-degree-projects/
 - Trabajos pendientes de evaluación (ideas, anteproyectos, productos finales)
 - Trabajos con correcciones solicitadas sin respuesta
 - Trabajos con plazo de corrección próximo a vencer (alertas)
+- **Reporte de incumplimiento de jurados:** jurados que registraron calificaciones extemporáneas, con nombre, trabajo, etapa y días de retraso
+- **Alerta de vencimiento de jurados:** jurados con plazo activo próximo a vencer (días configurables), con detalle de los trabajos asignados
 
 ---
 
@@ -318,14 +349,15 @@ Módulo de mensajería asíncrona (tipo bandeja de entrada, no chat en tiempo re
 
 | Origen | Destino | Casos de uso |
 |---|---|---|
-| Estudiante | Director de trabajo | Consultas, borradores, notificación de avances |
+| Estudiante | Docente (como Director) | Consultas, borradores, notificación de avances |
 | Estudiante | Jurado (anónimo) | Notificación de correcciones realizadas |
-| Director de trabajo | Estudiante | Retroalimentación, orientación, Vo.Bo. |
+| Docente (como Director) | Estudiante | Retroalimentación, orientación, Vo.Bo. |
+| Docente (como Director) | Administrador | Solicitudes formales: radicación, modificación, cancelación del trabajo |
 | Jurado | Estudiante | Solicitud de correcciones (intermediado por el sistema, sin revelar identidad) |
-| CTG / Secretaria | Cualquier usuario | Notificaciones de aprobación/rechazo, apertura de ventanas de fechas |
+| Administrador | Cualquier usuario | Notificaciones de aprobación/rechazo, apertura de ventanas de fechas |
 
 **Consideraciones:**
 - El sistema intermedia mensajes de jurado→estudiante mostrando solo "Jurado 1" o "Jurado 2"
 - Los mensajes quedan en el historial del trabajo de grado
-- Notificación por email al recibir un mensaje nuevo (notificación, no el contenido)
+- Notificación interna al recibir un mensaje nuevo
 - No es chat en tiempo real — mensajería asíncrona

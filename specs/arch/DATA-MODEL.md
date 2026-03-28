@@ -21,8 +21,8 @@ users ────────────────────────�
   │                              ├──< project_status_history         │
   │                              └──< extemporaneous_windows         │
   │                                                                  │
-  ├──< modalities (configuración)                                    │
-  └──< date_windows                                                  │
+  ├──< date_windows (created_by)                                     │
+  └──< modalities (created_by)                                       │
                                                                      │
 academic_programs ──────────────────────────────────────────────────┘
 ```
@@ -83,6 +83,8 @@ Configurable por el Administrador.
 | `requires_ethics_approval` | boolean | `true` para Investigación |
 | `requires_business_plan_cert` | boolean | `true` para Innovación y Emprendimiento |
 | `is_active` | boolean | |
+| `created_by` | uuid FK → users | Administrador que creó/configuró la modalidad |
+| `created_at` | timestamp | |
 
 ---
 

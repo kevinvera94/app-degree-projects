@@ -11,7 +11,7 @@ Se usa **Supabase Auth** como proveedor de identidad. El **frontend llama direct
 ```
 Cliente (React)            Supabase Auth             Backend FastAPI
   │                             │                          │
-  │── supabase.auth.signIn() ──►│                          │
+  │── supabase.auth.signInWithPassword() ──►│              │
   │◄── JWT (access + refresh) ──│                          │
   │                             │                          │
   │── GET /api/v1/projects ───────────────────────────►    │
@@ -26,7 +26,7 @@ Cliente (React)            Supabase Auth             Backend FastAPI
 - **Verificación en backend:** usando `SUPABASE_JWT_SECRET` (ver `specs/arch/INFRA.md`)
 - **Claims:** `sub` (user_id), `role`, `email`
 - **Expiración:** access token 1 hora / refresh token 7 días
-- **Almacenamiento en cliente:** `localStorage` o memoria — decisión de implementación del frontend
+- **Almacenamiento en cliente:** preferir **memoria (variable en React context/state)**. Evitar `localStorage` — es accesible desde JS y expone tokens ante un ataque XSS. Alternativa aceptable: `httpOnly cookie` con rotación de refresh token gestionada por Supabase.
 
 ---
 

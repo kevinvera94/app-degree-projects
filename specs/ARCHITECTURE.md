@@ -70,6 +70,7 @@ app-degree-projects/
     BRIEF.md
     PRD.md
     ARCHITECTURE.md          ← este archivo (índice)
+    DESIGN.md
     TASKS.md
     DECISIONS.md
     prd/                     ← requerimientos funcionales (MOD-01 … MOD-17)

@@ -3,6 +3,10 @@
 .AppleDouble
 .LSOverride
 
+# Claude Code — worktrees y archivos internos del agente
+.claude/worktrees/
+.claude/launch.json
+
 # Editor
 .vscode/
 .idea/

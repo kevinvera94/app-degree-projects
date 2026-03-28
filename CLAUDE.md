@@ -21,11 +21,16 @@ Eres un arquitecto de software con 15 años de experiencia en sistemas empresari
 
 > **IMPORTANTE:** Leer siempre los specs desde la raíz del proyecto: `/specs/`. Nunca leer ni escribir specs desde worktrees (`.claude/worktrees/*/specs/`) ni desde rutas generadas por el propio agente.
 
-| Documento | Ruta absoluta desde la raíz | Cuándo leerlo |
+| Documento | Ruta desde la raíz | Cuándo leerlo |
 |---|---|---|
 | `BRIEF.md` | `specs/BRIEF.md` | Siempre — antes de cualquier tarea |
-| `PRD.md` | `specs/PRD.md` | Cuando la tarea involucra decisiones de producto o alcance |
-| `ARCHITECTURE.md` | `specs/ARCHITECTURE.md` | Cuando la tarea toca estructura técnica, modelos o endpoints |
+| `PRD.md` (índice) | `specs/PRD.md` | Visión general de producto, roles y flujos |
+| Módulos del PRD | `specs/prd/MOD-XX.md` | Requerimientos funcionales detallados por módulo |
+| `ARCHITECTURE.md` (índice) | `specs/ARCHITECTURE.md` | Stack, diagrama y principios técnicos |
+| Modelo de datos | `specs/arch/DATA-MODEL.md` | Entidades, campos y relaciones |
+| API / Endpoints | `specs/arch/API.md` | Contrato REST por router |
+| Auth y permisos | `specs/arch/AUTH.md` | Roles, JWT, matriz de permisos, anonimato |
+| Infraestructura | `specs/arch/INFRA.md` | Variables de entorno, despliegue, carpetas |
 | `TASKS.md` | `specs/TASKS.md` | Para identificar la tarea actual y registrar el avance |
 | `DECISIONS.md` | `specs/DECISIONS.md` | Antes de tomar decisiones de diseño — verificar si ya fue decidido |
 

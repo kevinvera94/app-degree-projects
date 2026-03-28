@@ -31,6 +31,7 @@ Eres un arquitecto de software con 15 años de experiencia en sistemas empresari
 | API / Endpoints | `specs/arch/API.md` | Contrato REST por router |
 | Auth y permisos | `specs/arch/AUTH.md` | Roles, JWT, matriz de permisos, anonimato |
 | Infraestructura | `specs/arch/INFRA.md` | Variables de entorno, despliegue, carpetas |
+| `DESIGN.md` | `specs/DESIGN.md` | Paleta de colores y estándares visuales |
 | `TASKS.md` | `specs/TASKS.md` | Para identificar la tarea actual y registrar el avance |
 | `DECISIONS.md` | `specs/DECISIONS.md` | Antes de tomar decisiones de diseño — verificar si ya fue decidido |
 

@@ -36,7 +36,7 @@ Sistema web de tres capas (SPA + API REST + BD relacional) desplegado en servici
 │                  API REST (Render)                       │
 │              FastAPI + Pydantic (Python)                 │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌───────────┐  │
-│  │ /auth    │ │/projects │ │/reports  │ │/admin     │  │
+│  │ /auth    │ │/projects │ │/reports  │ │  /users   │  │
 │  └──────────┘ └──────────┘ └──────────┘ └───────────┘  │
 └──────────┬──────────────────────────┬────────────────────┘
            │ SQL (asyncpg)            │ SDK

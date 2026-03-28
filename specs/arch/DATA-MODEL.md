@@ -50,7 +50,7 @@ Datos adicionales exclusivos del rol `estudiante`.
 | Campo | Tipo | Descripción |
 |---|---|---|
 | `id` | uuid PK | |
-| `user_id` | uuid FK → users | |
+| `user_id` | uuid FK → users **UNIQUE** | Garantiza relación 1:1 con users |
 | `cedula` | varchar(20) | Documento de identidad |
 | `phone` | varchar(20) | Celular |
 | `address` | text | Dirección |

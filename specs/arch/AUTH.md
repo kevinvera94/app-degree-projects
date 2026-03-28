@@ -6,25 +6,27 @@
 
 ## Estrategia de autenticación
 
-Se usa **Supabase Auth** como proveedor de identidad. El backend FastAPI valida el JWT emitido por Supabase en cada request.
+Se usa **Supabase Auth** como proveedor de identidad. El **frontend llama directamente al SDK de Supabase** para login/logout — no existe un endpoint de login en el backend. El backend FastAPI solo valida el JWT en cada request protegido.
 
 ```
-Cliente                  Supabase Auth             Backend FastAPI
-  │                           │                          │
-  │── POST /auth/login ───────►│                          │
-  │◄── JWT (access + refresh)─│                          │
-  │                           │                          │
-  │── GET /api/projects ──────────────────────────────►  │
-  │      Authorization: Bearer <JWT>                     │
-  │                           │◄─ verify JWT ────────────│
-  │                           │─── claims ──────────────►│
-  │◄────────────────────────────── response ─────────────│
+Cliente (React)            Supabase Auth             Backend FastAPI
+  │                             │                          │
+  │── supabase.auth.signIn() ──►│                          │
+  │◄── JWT (access + refresh) ──│                          │
+  │                             │                          │
+  │── GET /api/v1/projects ───────────────────────────►    │
+  │      Authorization: Bearer <JWT>                       │
+  │                             │                          │
+  │                             │◄─ verify JWT (HS256) ────│
+  │                             │─── claims (sub, role) ──►│
+  │◄─────────────────────────────── response ──────────────│
 ```
 
-- **Token:** JWT firmado por Supabase (RS256)
+- **Token:** JWT firmado por Supabase con algoritmo **HS256** (HMAC SHA-256, clave simétrica)
+- **Verificación en backend:** usando `SUPABASE_JWT_SECRET` (ver `specs/arch/INFRA.md`)
 - **Claims:** `sub` (user_id), `role`, `email`
 - **Expiración:** access token 1 hora / refresh token 7 días
-- **Almacenamiento en cliente:** `httpOnly cookie` o `localStorage` (decisión de implementación)
+- **Almacenamiento en cliente:** `localStorage` o memoria — decisión de implementación del frontend
 
 ---
 

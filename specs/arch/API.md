@@ -1,5 +1,6 @@
 # API.md — Endpoints REST
-> Contrato de la API. Todos los endpoints requieren `Authorization: Bearer <JWT>` salvo `/auth/login`.
+> Contrato de la API. Todos los endpoints requieren `Authorization: Bearer <JWT>`.
+> Login y logout se realizan desde el frontend directamente con el SDK de Supabase Auth — no son endpoints del backend.
 > Base URL: `/api/v1`
 > Última actualización: 2026-03-28
 
@@ -16,11 +17,11 @@
 
 ## `/auth`
 
+> Login y logout son llamadas al **SDK de Supabase Auth desde el frontend** (`supabase.auth.signInWithPassword()`, `supabase.auth.signOut()`). No se exponen como endpoints del backend.
+
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| POST | `/auth/login` | Iniciar sesión (email + password → JWT) | Público |
-| POST | `/auth/logout` | Cerrar sesión | Todos |
-| GET | `/auth/me` | Datos del usuario autenticado | Todos |
+| GET | `/auth/me` | Perfil del usuario autenticado (datos del sistema + rol) | Todos |
 
 ---
 
@@ -167,7 +168,7 @@
 |---|---|---|---|
 | GET | `/projects/{id}/messages` | Bandeja de mensajes del trabajo | Todos (con pertenencia) |
 | POST | `/projects/{id}/messages` | Enviar mensaje | Todos (con pertenencia) |
-| PATCH | `/projects/{id}/messages/{msgId}/read` | Marcar como leído | Todos |
+| PATCH | `/projects/{id}/messages/{msgId}/read` | Marcar como leído | Todos (con pertenencia) |
 
 ---
 

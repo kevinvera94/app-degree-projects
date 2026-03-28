@@ -1,7 +1,8 @@
 # PRD.md — Product Requirements Document (Índice)
 > Fuente de verdad del producto. Se construye sobre `specs/BRIEF.md` y la Resolución No. 004 de 2025.
 > Los requerimientos funcionales detallados están en `specs/prd/MOD-XX.md`.
-> Última actualización: 2026-03-27
+> Identidad visual y paleta de colores: `specs/DESIGN.md`.
+> Última actualización: 2026-03-28
 
 ---
 

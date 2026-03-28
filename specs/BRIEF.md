@@ -260,6 +260,7 @@ app-degree-projects/
     BRIEF.md
     PRD.md
     ARCHITECTURE.md
+    DESIGN.md
     TASKS.md
     DECISIONS.md
   frontend/               ← React + Vite
@@ -294,6 +295,7 @@ app-degree-projects/
 | Estilo código frontend | ESLint + Prettier |
 | Estilo código backend | Black + Flake8 |
 | Referencias bibliográficas (documentos académicos) | Formato APA |
+| Identidad visual y paleta de colores | Ver `specs/DESIGN.md` |
 
 ---
 

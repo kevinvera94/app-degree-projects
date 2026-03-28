@@ -7,5 +7,5 @@
 | ID | Requerimiento | Actor |
 |---|---|---|
 | RF-08-01 | El sistema impide agregar nuevos integrantes a un trabajo de grado una vez que el anteproyecto ha sido aprobado | Sistema |
-| RF-08-02 | El Administrador puede registrar el retiro de un integrante en cualquier etapa posterior a la aprobación del anteproyecto, adjuntando la justificación y el aval del director | Administrador |
+| RF-08-02 | El Administrador puede registrar el retiro de un integrante en cualquier etapa posterior a la aprobación del anteproyecto. Debe adjuntar un documento que contenga la justificación del retiro y el aval del director de trabajo de grado | Administrador |
 | RF-08-03 | El sistema registra en el historial del trabajo cualquier cambio en los integrantes con fecha y motivo | Sistema |

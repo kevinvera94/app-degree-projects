@@ -55,7 +55,8 @@ Cliente (React)            Supabase Auth             Backend FastAPI
 | Asignar director al trabajo | ✅ | ❌ | ❌ | ❌ |
 | Radicar anteproyecto | ❌ | ❌ | ❌ | ✅ |
 | Asignar jurados | ✅ | ❌ | ❌ | ❌ |
-| Registrar calificación | ❌ | ❌ | ✅ (asignados) | ❌ |
+| Registrar calificación (anteproyecto / producto final) | ❌ | ❌ | ✅ (asignados) | ❌ |
+| Registrar calificación de sustentación | ✅ | ❌ | ✅ (asignados) | ❌ |
 | Ver identidad de jurados | ✅ | ✅ (propio trab.) | ❌ | ❌ |
 | Emitir Vo.Bo. del director | ❌ | ✅ (asignados) | ❌ | ❌ |
 | Radicar producto final | ❌ | ❌ | ❌ | ✅ |
@@ -89,6 +90,8 @@ Además del rol, el backend valida que el usuario **pertenezca al proyecto** ant
 | `docente` (Director) | Debe estar en `project_directors` con `is_active = true` |
 | `docente` (Jurado) | Debe estar en `project_jurors` con `is_active = true` |
 | `administrador` | Acceso a todos los proyectos sin restricción de pertenencia |
+
+> **H47 — Docente "en ejercicio":** El sistema no valida automáticamente si el primer director es docente USC en ejercicio. Es responsabilidad del Administrador verificarlo al asignar el director (RF-04-06).
 
 ---
 

@@ -86,7 +86,7 @@
 |---|---|---|---|
 | GET | `/projects/{id}/members` | Listar integrantes | Todos (con pertenencia) |
 | POST | `/projects/{id}/members` | Agregar integrante (solo antes de anteproyecto aprobado) | Administrador |
-| PATCH | `/projects/{id}/members/{memberId}/remove` | Retirar integrante | Administrador |
+| PATCH | `/projects/{id}/members/{memberId}/remove` | Retirar integrante (requiere adjunto con justificación + aval director, multipart/form-data) | Administrador |
 
 ### Directores
 
@@ -140,7 +140,7 @@
 |---|---|---|---|
 | GET | `/projects/{id}/sustentation` | Detalle de sustentación | Todos (con pertenencia) |
 | POST | `/projects/{id}/sustentation` | Registrar fecha, hora y lugar | Administrador |
-| PATCH | `/projects/{id}/sustentation` | Registrar calificación de la sustentación | Administrador |
+| PATCH | `/projects/{id}/sustentation` | Registrar calificación de la sustentación | Docente (Jurado asignado), Administrador |
 
 ---
 

@@ -16,4 +16,6 @@
 | RF-06-08 | El Administrador puede asignar un Jurado 3 cuando el sistema lo requiera. El Jurado 3 solo puede registrar Aprobado o Reprobado, sin opción de devolver para correcciones | Administrador |
 | RF-06-09 | Si el Jurado 3 reprueba → **Anteproyecto reprobado**. Si aprueba → **Anteproyecto aprobado** | Sistema |
 | RF-06-10 | Al aprobarse el anteproyecto, el sistema bloquea la adición de nuevos integrantes al trabajo | Sistema |
-| RF-06-11 | El sistema notifica al estudiante el resultado con las observaciones de los jurados (sin revelar su identidad) | Sistema |
+| RF-06-11 | El sistema notifica al estudiante el resultado con las observaciones de los jurados (sin revelar su identidad). Las observaciones se entregan por dos canales: (1) campo `observations` de la evaluación visible en el detalle del trabajo, y (2) mensaje automático en la bandeja del estudiante firmado como "Jurado 1" o "Jurado 2" | Sistema |
+| RF-06-12 | Al aprobarse el anteproyecto, el sistema transiciona automáticamente el estado a **En desarrollo** | Sistema |
+| RF-06-13 | Cuando el anteproyecto es reprobado (unánimemente o por Jurado 3), el sistema retorna el estado a **Idea aprobada**. El estudiante puede radicar un nuevo anteproyecto dentro de las ventanas de fechas habilitadas. La idea no se pierde; lo que se rehace es el anteproyecto desde cero | Sistema |

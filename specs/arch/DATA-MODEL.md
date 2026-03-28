@@ -141,14 +141,14 @@ Entidad central del sistema.
 **Estados del trabajo (`status`):**
 ```
 pendiente_evaluacion_idea
-idea_aprobada
+idea_aprobada                          ← también estado de retorno tras anteproyecto_reprobado
 idea_rechazada
 anteproyecto_pendiente_evaluacion
 anteproyecto_aprobado
-anteproyecto_reprobado
+anteproyecto_reprobado                 → retorna a idea_aprobada (nueva radicación de anteproyecto)
 correcciones_anteproyecto_solicitadas
 anteproyecto_corregido_entregado
-en_desarrollo
+en_desarrollo                          ← transición automática al aprobarse el anteproyecto
 producto_final_entregado
 en_revision_jurados_producto_final
 correcciones_producto_final_solicitadas
@@ -156,9 +156,9 @@ producto_final_corregido_entregado
 aprobado_para_sustentacion
 sustentacion_programada
 trabajo_aprobado
-reprobado_en_sustentacion
+reprobado_en_sustentacion              → nueva inscripción de idea desde cero
 acta_generada
-suspendido_por_plagio
+suspendido_por_plagio                  ← puede ocurrir en cualquier etapa
 ```
 
 ---
@@ -175,6 +175,7 @@ Integrantes del trabajo (rol estudiante).
 | `joined_at` | timestamp | |
 | `removed_at` | timestamp nullable | |
 | `removal_reason` | text nullable | Justificación del retiro |
+| `removal_attachment_url` | text nullable | URL Supabase Storage — documento con justificación y aval del director |
 
 ---
 
@@ -202,10 +203,11 @@ Jurados asignados por etapa.
 | `project_id` | uuid FK → thesis_projects | |
 | `docente_id` | uuid FK → users | |
 | `juror_number` | integer | `1`, `2` o `3` |
-| `stage` | enum | `anteproyecto` \| `producto_final` |
+| `stage` | enum | `anteproyecto` \| `producto_final` \| `sustentacion` |
 | `assigned_by` | uuid FK → users | |
 | `assigned_at` | timestamp | |
 | `is_active` | boolean | |
+| `replaced_docente_id` | uuid FK → users nullable | Si este jurado reemplazó a otro en producto_final, referencia al docente reemplazado para trazabilidad |
 
 ---
 
@@ -272,8 +274,10 @@ Registro de la sustentación pública.
 | `location` | varchar(200) | Lugar |
 | `score` | decimal(3,1) nullable | Calificación registrada |
 | `is_approved` | boolean nullable | |
-| `registered_at` | timestamp | |
-| `registered_by` | uuid FK → users | Administrador |
+| `scored_by` | uuid FK → users nullable | Jurado o Administrador que registró la calificación |
+| `scored_at` | timestamp nullable | |
+| `registered_at` | timestamp | Fecha de programación de la sustentación |
+| `registered_by` | uuid FK → users | Administrador que programó la sustentación |
 
 ---
 

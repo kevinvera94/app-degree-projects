@@ -36,10 +36,15 @@ SECRET_KEY=your-secret-key
 ALLOWED_ORIGINS=http://localhost:5173,https://your-app.vercel.app
 
 # Configuración de plazos (días hábiles)
+# Días hábiles = días calendario - fines de semana - festivos del calendario académico USC
 JUROR_EVALUATION_DEADLINE_DAYS=15
 JUROR_SECOND_REVIEW_DEADLINE_DAYS=10
 STUDENT_CORRECTION_DEADLINE_DAYS=10
-JUROR_EXPIRY_ALERT_DAYS=3          # días antes del vencimiento para alertar
+JUROR_EXPIRY_ALERT_DAYS=3          # días hábiles antes del vencimiento para alertar
+
+# Festivos USC (archivo JSON con fechas del calendario académico)
+# Formato: ["2026-01-01", "2026-03-23", ...] — se actualiza cada periodo académico
+USC_HOLIDAYS_FILE=config/usc_holidays.json
 ```
 
 ### Frontend (`frontend/.env`)

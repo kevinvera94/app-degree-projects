@@ -11,12 +11,12 @@
 - **Referencias:** `specs/ARCHITECTURE.md` (sección Estructura de carpetas)
 - **Descripción:** Crear la estructura de directorios definitiva: `frontend/`, `backend/`, con sus subcarpetas según la convención de arquitectura. Inicializar `README.md` con descripción básica del proyecto.
 - **Criterios de aceptación:**
-  - [ ] Carpetas `frontend/src/{components,pages,hooks,services,utils,types}` creadas
-  - [ ] Carpetas `backend/app/{routers,models,schemas,services,core,utils}` creadas
-  - [ ] `README.md` en la raíz con nombre del proyecto, stack y enlace a `specs/BRIEF.md`
-  - [ ] `.gitignore` actualizado con patrones para Python (`.venv`, `__pycache__`, `.env`) y Node (`node_modules`, `dist`, `.env.local`)
+  - [x] Carpetas `frontend/src/{components,pages,hooks,services,utils,types}` creadas
+  - [x] Carpetas `backend/app/{routers,models,schemas,services,core,utils}` creadas
+  - [x] `README.md` en la raíz con nombre del proyecto, stack y enlace a `specs/BRIEF.md`
+  - [x] `.gitignore` actualizado con patrones para Python (`.venv`, `__pycache__`, `.env`) y Node (`node_modules`, `dist`, `.env.local`)
 - **Dependencias:** —
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

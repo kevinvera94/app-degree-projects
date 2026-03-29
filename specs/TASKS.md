@@ -1,15 +1,15 @@
 # TASKS.md — Plan de tareas del proyecto
 > Índice de fases. Cada fase tiene su archivo de detalle en `specs/tasks/`.
 > Convención: una tarea = una sesión de agente (atómica, verificable, independiente).
-> Última actualización: 2026-03-28
+> Última actualización: 2026-03-29
 
 ---
 
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** —
-**Próxima tarea:** `T-F01-01` — Inicializar estructura de carpetas del proyecto
+**Fase activa:** FASE-01
+**Próxima tarea:** `T-F01-02` — Configurar proyecto backend (FastAPI)
 
 ---
 
@@ -46,8 +46,7 @@
 
 ## Completadas
 
-<!-- Mover aquí las tareas terminadas con ID, descripción y fecha -->
-<!-- Ejemplo: `T-F01-01` — Inicializar estructura de carpetas — 2026-03-28 -->
+- `T-F01-01` — Inicializar estructura de carpetas del proyecto — 2026-03-29
 
 ---
 

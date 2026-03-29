@@ -31,7 +31,7 @@
   - [ ] `research_group` con valores: `GIEIAM`, `COMBA_ID`
   - [ ] Script SQL de creación de ENUMs guardado en `backend/migrations/001_enums.sql`
 - **Dependencias:** T-F01-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -45,7 +45,7 @@
   - [ ] Trigger o lógica de backend que crea el registro en `users` al crear usuario en Supabase Auth
   - [ ] Scripts en `backend/migrations/002_users.sql`
 - **Dependencias:** T-F02-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -59,7 +59,7 @@
   - [ ] Tabla `modality_level_limits`: `id UUID PK`, `modality_id UUID FK(modalities)`, `level academic_level NOT NULL`, `max_members INT NOT NULL`, `updated_by UUID FK(users)`, `updated_at TIMESTAMPTZ`, `UNIQUE(modality_id, level)`
   - [ ] Scripts en `backend/migrations/003_programs_modalities.sql`
 - **Dependencias:** T-F02-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -73,7 +73,7 @@
   - [ ] Constraint: `start_date < end_date` en `date_windows`; `valid_until > granted_at::date` en `extemporaneous_windows`
   - [ ] Scripts en `backend/migrations/004_date_windows.sql`
 - **Dependencias:** T-F02-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -85,7 +85,7 @@
   - [ ] Tabla `thesis_projects`: `id UUID PK`, `title VARCHAR(100) NOT NULL`, `modality_id UUID FK(modalities)`, `academic_program_id UUID FK(academic_programs)`, `period VARCHAR(10) NOT NULL`, `research_line VARCHAR(200) NOT NULL`, `research_group research_group NOT NULL`, `suggested_director VARCHAR(150)`, `has_company_link BOOLEAN DEFAULT false`, `status project_status NOT NULL DEFAULT 'pendiente_evaluacion_idea'`, `plagiarism_suspended BOOLEAN DEFAULT false`, `plagiarism_suspended_at TIMESTAMPTZ`, `created_at TIMESTAMPTZ`, `updated_at TIMESTAMPTZ`
   - [ ] Script en `backend/migrations/005_thesis_projects.sql`
 - **Dependencias:** T-F02-03, T-F02-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -100,7 +100,7 @@
   - [ ] Tabla `project_jurors`: `id UUID PK`, `project_id UUID FK`, `docente_id UUID FK(users)`, `juror_number SMALLINT CHECK(juror_number IN (1,2,3))`, `stage juror_stage NOT NULL`, `assigned_by UUID FK(users)`, `assigned_at TIMESTAMPTZ`, `is_active BOOLEAN DEFAULT true`, `replaced_docente_id UUID FK(users) NULLABLE`, `UNIQUE(project_id, juror_number, stage)`
   - [ ] Scripts en `backend/migrations/006_project_relations.sql`
 - **Dependencias:** T-F02-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -113,7 +113,7 @@
   - [ ] Tabla `attachments`: `id UUID PK`, `submission_id UUID FK(submissions)`, `attachment_type attachment_type NOT NULL`, `file_name VARCHAR(255) NOT NULL`, `file_url TEXT NOT NULL` (URL Supabase Storage), `uploaded_by UUID FK(users)`, `uploaded_at TIMESTAMPTZ NOT NULL DEFAULT now()`
   - [ ] Scripts en `backend/migrations/007_submissions_attachments.sql`
 - **Dependencias:** T-F02-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -125,7 +125,7 @@
   - [ ] Tabla `evaluations`: `id UUID PK`, `project_id UUID FK(thesis_projects)`, `submission_id UUID FK(submissions)`, `juror_id UUID FK(users)`, `juror_number SMALLINT CHECK(juror_number IN (1,2,3))`, `stage VARCHAR NOT NULL` (valores: `anteproyecto | producto_final`), `score DECIMAL(3,1) CHECK(score >= 0 AND score <= 5.0)`, `observations TEXT`, `submitted_at TIMESTAMPTZ`, `start_date TIMESTAMPTZ` (inicio del conteo del plazo), `due_date TIMESTAMPTZ` (start_date + N días hábiles), `is_extemporaneous BOOLEAN DEFAULT false`, `revision_number INT CHECK(revision_number IN (1,2))`
   - [ ] Script en `backend/migrations/008_evaluations.sql`
 - **Dependencias:** T-F02-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -138,7 +138,7 @@
   - [ ] Tabla `sustentation_evaluations`: `id UUID PK`, `sustentation_id UUID FK(sustentations)`, `juror_id UUID FK(users)`, `juror_number SMALLINT CHECK(juror_number IN (1,2))`, `score DECIMAL(3,1) CHECK(score >= 0 AND score <= 5.0)`, `submitted_at TIMESTAMPTZ`, `submitted_by UUID FK(users)`, `UNIQUE(sustentation_id, juror_number)`
   - [ ] Script en `backend/migrations/009_sustentations.sql`
 - **Dependencias:** T-F02-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -150,7 +150,7 @@
   - [ ] Tabla `acts` (nombre exacto del DATA-MODEL): `id UUID PK`, `project_id UUID FK(thesis_projects) UNIQUE`, `issued_by UUID FK(users) NULLABLE` (null hasta emisión por Admin), `issued_at TIMESTAMPTZ NULLABLE` (null hasta emisión por Admin), `library_authorization BOOLEAN NULLABLE` (null hasta que el estudiante la diligencie), `act_file_url TEXT` (URL Supabase Storage del PDF del acta)
   - [ ] Script en `backend/migrations/010_acts.sql`
 - **Dependencias:** T-F02-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -163,7 +163,7 @@
   - [ ] Tabla `project_status_history`: `id UUID PK`, `project_id UUID FK(thesis_projects)`, `previous_status VARCHAR`, `new_status VARCHAR NOT NULL`, `changed_by UUID FK(users) NOT NULL`, `changed_at TIMESTAMPTZ NOT NULL DEFAULT now()`, `notes TEXT` (motivo del cambio)
   - [ ] Scripts en `backend/migrations/011_messages_history.sql`
 - **Dependencias:** T-F02-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -181,4 +181,4 @@
   - [ ] Script de verificación de integridad ejecutado sin errores
   - [ ] Script en `backend/migrations/012_indexes.sql`
 - **Dependencias:** T-F02-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

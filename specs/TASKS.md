@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-01
-**Próxima tarea:** `T-F02-01` — Crear migraciones de base de datos
+**Próxima tarea:** `T-F03-01` — Implementar router de autenticación
 
 ---
 
@@ -54,6 +54,7 @@
 - `T-F01-06` — Configurar middleware de autenticación JWT en FastAPI — 2026-03-29
 - `T-F01-07` — Crear utilidad de cálculo de días hábiles — 2026-03-29
 - `T-F01-08` — Crear archivo de festivos USC (USC_HOLIDAYS_FILE) — 2026-03-29
+- `T-F02-01` a `T-F02-12` — FASE-02: Base de datos (ENUMs, tablas, índices) — 2026-03-29
 
 ---
 

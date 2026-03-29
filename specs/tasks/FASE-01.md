@@ -25,12 +25,12 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Inicializar proyecto Python con `uv` o `pip`. Instalar dependencias base: `fastapi`, `uvicorn`, `pydantic`, `python-jose`, `asyncpg`, `supabase-py`, `python-multipart`, `black`, `flake8`. Crear `requirements.txt` o `pyproject.toml`.
 - **Criterios de aceptación:**
-  - [ ] `backend/requirements.txt` (o `pyproject.toml`) con todas las dependencias listadas
-  - [ ] `backend/app/main.py` con instancia de FastAPI, CORS configurado para `localhost:5173` y ruta de health check `GET /health → 200 { "status": "ok" }`
-  - [ ] Servidor arranca con `uvicorn app.main:app --reload` sin errores
-  - [ ] `black` y `flake8` configurados (archivos `pyproject.toml` / `.flake8`)
+  - [x] `backend/requirements.txt` (o `pyproject.toml`) con todas las dependencias listadas
+  - [x] `backend/app/main.py` con instancia de FastAPI, CORS configurado para `localhost:5173` y ruta de health check `GET /health → 200 { "status": "ok" }`
+  - [x] Servidor arranca con `uvicorn app.main:app --reload` sin errores
+  - [x] `black` y `flake8` configurados (archivos `pyproject.toml` / `.flake8`)
 - **Dependencias:** T-F01-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

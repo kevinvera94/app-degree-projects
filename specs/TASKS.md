@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-01
-**Próxima tarea:** `T-F01-02` — Configurar proyecto backend (FastAPI)
+**Próxima tarea:** `T-F03-01` — Implementar router de autenticación
 
 ---
 
@@ -47,6 +47,14 @@
 ## Completadas
 
 - `T-F01-01` — Inicializar estructura de carpetas del proyecto — 2026-03-29
+- `T-F01-02` — Configurar proyecto backend (FastAPI) — 2026-03-29
+- `T-F01-03` — Configurar proyecto frontend (React + Vite) — 2026-03-29
+- `T-F01-04` — Configurar Supabase (proyecto + Auth + Storage) — 2026-03-29
+- `T-F01-05` — Configurar variables de entorno locales — 2026-03-29
+- `T-F01-06` — Configurar middleware de autenticación JWT en FastAPI — 2026-03-29
+- `T-F01-07` — Crear utilidad de cálculo de días hábiles — 2026-03-29
+- `T-F01-08` — Crear archivo de festivos USC (USC_HOLIDAYS_FILE) — 2026-03-29
+- `T-F02-01` a `T-F02-12` — FASE-02: Base de datos (ENUMs, tablas, índices) — 2026-03-29
 
 ---
 

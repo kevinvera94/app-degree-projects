@@ -1,0 +1,29 @@
+# Web framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# Data validation
+pydantic==2.10.4
+pydantic-settings==2.7.0
+
+# Auth / JWT
+python-jose[cryptography]==3.3.0
+
+# Database
+asyncpg==0.30.0
+sqlalchemy[asyncio]==2.0.37
+
+# Supabase
+supabase==2.11.0
+
+# File uploads
+python-multipart==0.0.20
+
+# Config
+python-dotenv==1.0.1
+
+# Dev tools
+black==24.10.0
+flake8==7.1.1
+pytest==8.3.5
+pytest-asyncio==0.25.3

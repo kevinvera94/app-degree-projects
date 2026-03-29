@@ -59,12 +59,12 @@
 - **Referencias:** `specs/arch/API.md` §/academic-programs, RF-01-07
 - **Descripción:** Gestión de programas académicos. Catálogo configurable por el Administrador.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/academic-programs` retorna lista con filtro opcional `is_active` → `200` (todos los roles)
-  - [ ] `POST /api/v1/academic-programs` crea programa → `201` (solo Administrador)
-  - [ ] `PATCH /api/v1/academic-programs/{id}` edita nombre, nivel, `is_active` → `200` (solo Administrador)
-  - [ ] Schemas Pydantic correspondientes creados
+  - [x] `GET /api/v1/academic-programs` retorna lista con filtro opcional `is_active` → `200` (todos los roles)
+  - [x] `POST /api/v1/academic-programs` crea programa → `201` (solo Administrador)
+  - [x] `PATCH /api/v1/academic-programs/{id}` edita nombre, nivel, `is_active` → `200` (solo Administrador)
+  - [x] Schemas Pydantic correspondientes creados
 - **Dependencias:** T-F03-01, T-F02-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

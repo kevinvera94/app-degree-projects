@@ -12,12 +12,12 @@
 - **Referencias:** `specs/arch/API.md` §/auth, `specs/arch/AUTH.md`
 - **Descripción:** Endpoint que retorna el perfil del usuario autenticado: datos del sistema más rol. Requiere JWT válido.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/auth/me` retorna `{ id, full_name, email, role, is_active }` con JWT válido → `200`
-  - [ ] Sin JWT → `401`
-  - [ ] Usuario no encontrado en tabla `users` → `404`
-  - [ ] Schema Pydantic `UserMeResponse` creado en `backend/app/schemas/`
+  - [x] `GET /api/v1/auth/me` retorna `{ id, full_name, email, role, is_active }` con JWT válido → `200`
+  - [x] Sin JWT → `401`
+  - [x] Usuario no encontrado en tabla `users` → `404`
+  - [x] Schema Pydantic `UserMeResponse` creado en `backend/app/schemas/`
 - **Dependencias:** T-F01-06, T-F02-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -26,15 +26,15 @@
 - **Referencias:** `specs/arch/API.md` §/users, RF-01-01, RF-01-04, RF-01-05
 - **Descripción:** Endpoints para crear, listar, ver y editar usuarios. Solo accesible para Administrador.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/users` con filtros `role` e `is_active` → `200` lista paginada (solo Administrador)
-  - [ ] `POST /api/v1/users` crea usuario en Supabase Auth (con service role key) y en tabla `users` → `201`
-  - [ ] `GET /api/v1/users/{id}` → `200` detalle (solo Administrador)
-  - [ ] `PATCH /api/v1/users/{id}` edita `full_name`, `email`, `role` → `200` (solo Administrador)
-  - [ ] Validación: email único, rol válido
-  - [ ] `GET /users?role=docente&is_active=true` retorna solo docentes activos (para selectores de asignación)
-  - [ ] Schemas Pydantic `UserCreate`, `UserUpdate`, `UserResponse` creados
+  - [x] `GET /api/v1/users` con filtros `role` e `is_active` → `200` lista paginada (solo Administrador)
+  - [x] `POST /api/v1/users` crea usuario en Supabase Auth (con service role key) y en tabla `users` → `201`
+  - [x] `GET /api/v1/users/{id}` → `200` detalle (solo Administrador)
+  - [x] `PATCH /api/v1/users/{id}` edita `full_name`, `email`, `role` → `200` (solo Administrador)
+  - [x] Validación: email único, rol válido
+  - [x] `GET /users?role=docente&is_active=true` retorna solo docentes activos (para selectores de asignación)
+  - [x] Schemas Pydantic `UserCreate`, `UserUpdate`, `UserResponse` creados
 - **Dependencias:** T-F03-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -43,14 +43,14 @@
 - **Referencias:** `specs/arch/API.md` §/users, RF-04-07, RF-04-08, RF-04-09, `specs/arch/AUTH.md` §Docente inactivo
 - **Descripción:** Desactivar un docente bloquea su acceso, marca sus asignaciones activas como inactivas y genera alertas al Administrador sobre trabajos afectados.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /users/{id}/deactivate` → `200` (solo Administrador)
-  - [ ] Marca `users.is_active = false`
-  - [ ] Deshabilita el usuario en Supabase Auth (bloquea login)
-  - [ ] Marca `is_active = false` en todos los registros activos de `project_directors` y `project_jurors`
-  - [ ] Crea mensajes automáticos en `messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
-  - [ ] Retorna en el cuerpo la lista de `project_ids` afectados para que el frontend muestre las alertas
+  - [x] `PATCH /users/{id}/deactivate` → `200` (solo Administrador)
+  - [x] Marca `users.is_active = false`
+  - [x] Deshabilita el usuario en Supabase Auth (bloquea login)
+  - [x] Marca `is_active = false` en todos los registros activos de `project_directors` y `project_jurors`
+  - [x] Crea mensajes automáticos en `messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
+  - [x] Retorna en el cuerpo la lista de `project_ids` afectados para que el frontend muestre las alertas
 - **Dependencias:** T-F03-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -59,12 +59,12 @@
 - **Referencias:** `specs/arch/API.md` §/academic-programs, RF-01-07
 - **Descripción:** Gestión de programas académicos. Catálogo configurable por el Administrador.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/academic-programs` retorna lista con filtro opcional `is_active` → `200` (todos los roles)
-  - [ ] `POST /api/v1/academic-programs` crea programa → `201` (solo Administrador)
-  - [ ] `PATCH /api/v1/academic-programs/{id}` edita nombre, nivel, `is_active` → `200` (solo Administrador)
-  - [ ] Schemas Pydantic correspondientes creados
+  - [x] `GET /api/v1/academic-programs` retorna lista con filtro opcional `is_active` → `200` (todos los roles)
+  - [x] `POST /api/v1/academic-programs` crea programa → `201` (solo Administrador)
+  - [x] `PATCH /api/v1/academic-programs/{id}` edita nombre, nivel, `is_active` → `200` (solo Administrador)
+  - [x] Schemas Pydantic correspondientes creados
 - **Dependencias:** T-F03-01, T-F02-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -73,15 +73,15 @@
 - **Referencias:** `specs/arch/API.md` §/modalities, RF-01-07, `specs/BRIEF.md` §8
 - **Descripción:** Gestión de modalidades y sus límites de integrantes por nivel académico. Incluye la tabla `modality_level_limits`.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/modalities` → `200` lista (todos los roles)
-  - [ ] `POST /api/v1/modalities` → `201` (solo Administrador)
-  - [ ] `PATCH /api/v1/modalities/{id}` → `200` edita `name`, `max_members_default`, `is_active` (solo Administrador)
-  - [ ] `GET /api/v1/modalities/{id}/limits` → `200` lista de límites por nivel (solo Administrador)
-  - [ ] `PUT /api/v1/modalities/{id}/limits/{level}` → `200/201` crea o actualiza límite específico (solo Administrador)
-  - [ ] `DELETE /api/v1/modalities/{id}/limits/{level}` → `204` elimina límite (usa `max_members_default`) (solo Administrador)
-  - [ ] Función de servicio `get_max_members(modality_id, level)` que consulta `modality_level_limits` y cae de regreso a `max_members_default` si no hay límite específico
+  - [x] `GET /api/v1/modalities` → `200` lista (todos los roles)
+  - [x] `POST /api/v1/modalities` → `201` (solo Administrador)
+  - [x] `PATCH /api/v1/modalities/{id}` → `200` edita `name`, `max_members_default`, `is_active` (solo Administrador)
+  - [x] `GET /api/v1/modalities/{id}/limits` → `200` lista de límites por nivel (solo Administrador)
+  - [x] `PUT /api/v1/modalities/{id}/limits/{level}` → `200/201` crea o actualiza límite específico (solo Administrador)
+  - [x] `DELETE /api/v1/modalities/{id}/limits/{level}` → `204` elimina límite (usa `max_members_default`) (solo Administrador)
+  - [x] Función de servicio `get_max_members(modality_id, level)` que consulta `modality_level_limits` y cae de regreso a `max_members_default` si no hay límite específico
 - **Dependencias:** T-F03-01, T-F02-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

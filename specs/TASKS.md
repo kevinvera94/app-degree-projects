@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-01
-**Próxima tarea:** `T-F03-01` — Implementar router de autenticación
+**Fase activa:** FASE-03
+**Próxima tarea:** `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`)
 
 ---
 
@@ -17,9 +17,9 @@
 
 | Fase | Archivo | Descripción | Tareas | Estado |
 |---|---|---|:---:|:---:|
-| FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ⬜ |
-| FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ⬜ |
-| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ⬜ |
+| FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ✅ |
+| FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
+| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | 🔄 |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ⬜ |
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ⬜ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
@@ -55,6 +55,11 @@
 - `T-F01-07` — Crear utilidad de cálculo de días hábiles — 2026-03-29
 - `T-F01-08` — Crear archivo de festivos USC (USC_HOLIDAYS_FILE) — 2026-03-29
 - `T-F02-01` a `T-F02-12` — FASE-02: Base de datos (ENUMs, tablas, índices) — 2026-03-29
+- `T-F03-01` — Implementar `GET /auth/me` — 2026-03-29
+- `T-F03-02` — Implementar CRUD de usuarios (`/users`) — 2026-03-29
+- `T-F03-03` — Implementar desactivación de docentes (`PATCH /users/{id}/deactivate`) — 2026-03-29
+- `T-F03-04` — Implementar CRUD de programas académicos (`/academic-programs`) — 2026-03-29
+- `T-F03-05` — Implementar CRUD de modalidades y límites (`/modalities`) — 2026-03-29
 
 ---
 

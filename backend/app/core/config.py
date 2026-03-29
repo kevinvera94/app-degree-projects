@@ -1,3 +1,4 @@
+from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,6 +7,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
+        env_parse_delimiter=",",
     )
 
     # Base de datos
@@ -20,10 +22,8 @@ class Settings(BaseSettings):
 
     # App
     app_env: str = "development"
-    secret_key: str = "change-me-in-production"
-    allowed_origins: list[str] = [
-        "http://localhost:5173",
-    ]
+    secret_key: SecretStr
+    allowed_origins: list[str] = ["http://localhost:5173"]
 
     # Plazos (días hábiles)
     juror_evaluation_deadline_days: int = 15
@@ -33,6 +33,18 @@ class Settings(BaseSettings):
 
     # Festivos
     usc_holidays_file: str = "config/usc_holidays.json"
+
+    @model_validator(mode="after")
+    def validate_secret_key_in_production(self) -> "Settings":
+        if self.app_env == "production":
+            known_bad = {"change-me-in-production", "secret", ""}
+            value = self.secret_key.get_secret_value()
+            if value in known_bad or len(value) < 32:
+                raise ValueError(
+                    "SECRET_KEY inseguro en producción: "
+                    "debe tener al menos 32 caracteres y ser único."
+                )
+        return self
 
 
 settings = Settings()

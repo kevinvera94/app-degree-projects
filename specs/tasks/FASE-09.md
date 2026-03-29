@@ -186,11 +186,11 @@
 - **Referencias:** RF-13-02..RF-13-05
 - **Descripción:** El Administrador emite el acta, opcionalmente adjuntando el documento escaneado.
 - **Criterios de aceptación:**
-  - [ ] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado` y autorización de biblioteca diligenciada
-  - [ ] Si autorización no diligenciada: botón deshabilitado con tooltip explicativo
-  - [ ] Modal: campo "Número de acta" (texto), campo para subir archivo PDF del acta (opcional)
-  - [ ] Llama `POST /projects/{id}/act`
-  - [ ] Al éxito: estado cambia a `acta_generada`, muestra enlace de descarga del acta
+  - [ ] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado`
+  - [ ] El botón indica si el estudiante ya diligencio la autorización de biblioteca (verificar `acts.library_authorization != null`). Si no: botón deshabilitado con tooltip "El estudiante aún no ha diligenciado la autorización de biblioteca"
+  - [ ] Modal: campo para subir archivo PDF del acta (opcional — `DATA-MODEL.acts.act_file_url` puede ser null). Nota: `acts` no tiene campo `act_number` según DATA-MODEL — remover ese campo si se incluyó
+  - [ ] Llama `POST /projects/{id}/act` (multipart si hay archivo, JSON si no)
+  - [ ] Al éxito: estado cambia a `acta_generada`. Si hay `act_file_url`: muestra botón de descarga
 - **Dependencias:** T-F09-10
 - **Estado:** ⬜ Pendiente
 

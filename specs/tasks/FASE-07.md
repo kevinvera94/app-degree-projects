@@ -69,11 +69,12 @@
 - **Referencias:** RF-13-01
 - **Descripción:** Una vez en estado `trabajo_aprobado`, el sistema habilita al estudiante para diligenciar el formato de autorización de publicación en biblioteca.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/act` body con `library_authorization: boolean` → inicialmente solo guarda la autorización (paso previo al acta) — o alternativamente existe un endpoint dedicado `PATCH /projects/{id}/library-authorization`
+  - [ ] **Endpoint dedicado:** `PATCH /projects/{id}/library-authorization` body: `{ library_authorization: true|false }` → `200` (solo Estudiante con pertenencia activa)
   - [ ] Valida estado `trabajo_aprobado` → `409` si distinto
-  - [ ] Solo el estudiante con pertenencia activa puede diligenciarla → `403` para otros roles
-  - [ ] Una vez diligenciada, queda guardada en `project_acts` (con `issued_at = null` hasta que el Admin emita el acta)
-  - [ ] Mensaje automático al Administrador: "El estudiante [nombre] ha diligenciado la autorización de biblioteca para el trabajo [título]."
+  - [ ] Solo el estudiante puede diligenciar → `403` para Admin y Docente
+  - [ ] Crea (o actualiza si ya existe) el registro en tabla `acts` con `library_authorization`, `issued_at = null` (pendiente de emisión por Admin)
+  - [ ] Mensaje automático al Administrador: "El estudiante [nombre] ha diligenciado la autorización de biblioteca para [título]."
+  - [ ] Si el estudiante intenta diligenciar de nuevo: idempotente → `200` (actualiza el valor)
 - **Dependencias:** T-F07-02
 - **Estado:** ⬜ Pendiente
 
@@ -84,14 +85,15 @@
 - **Referencias:** RF-13-02..RF-13-05
 - **Descripción:** El Administrador emite el acta de sustentación/aprobación. El estado cambia a `acta_generada`.
 - **Criterios de aceptación:**
-  - [ ] `POST /api/v1/projects/{id}/act` body: `{ act_number?, file? (multipart) }` → `201` (solo Administrador)
-  - [ ] Valida que la autorización de biblioteca ya fue diligenciada → `409` si no
+  - [ ] `POST /api/v1/projects/{id}/act` body: `multipart/form-data` con campo opcional `file` (PDF del acta) → `201` (solo Administrador)
+  - [ ] Valida que exista registro en `acts` con `library_authorization` diligenciada por el estudiante → `409` si no
   - [ ] Valida estado `trabajo_aprobado` → `409` si distinto
-  - [ ] Si se adjunta archivo del acta: sube a Supabase Storage y registra `storage_path`
-  - [ ] `status → acta_generada`, registra en `project_status_history`
+  - [ ] Si se adjunta archivo: sube a Supabase Storage y registra `acts.act_file_url`. Si no: `act_file_url = null` (el acta puede registrarse sin PDF digital)
+  - [ ] Actualiza `acts.issued_by = current_admin_id`, `acts.issued_at = now()`
+  - [ ] `project.status → acta_generada`, registra en `project_status_history`
   - [ ] Mensaje automático al estudiante: "Tu acta ha sido emitida. Puedes descargarla desde el sistema."
   - [ ] `GET /projects/{id}/act` → `200` detalle del acta (todos con pertenencia)
-  - [ ] El estudiante puede descargar el acta: genera URL firmada desde `storage_path`
+  - [ ] Si `act_file_url` existe: genera URL firmada (TTL 1h) para descarga del estudiante
 - **Dependencias:** T-F07-04
 - **Estado:** ⬜ Pendiente
 

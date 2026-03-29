@@ -13,9 +13,9 @@
 - **Descripción:** El estudiante inscribe una nueva idea de trabajo de grado. Se validan integrantes, ventana activa, límites de integrantes y estado previo del estudiante.
 - **Criterios de aceptación:**
   - [ ] `POST /api/v1/projects` (solo Estudiante) → `201` con el proyecto creado
-  - [ ] Body: `{ title, modality_id, academic_program_id, research_group, profundization_line, suggested_director?, member_ids[], prerequisite_declaration: true }`
+  - [ ] Body: `{ title, modality_id, academic_program_id, research_group, research_line, suggested_director?, member_ids[], prerequisite_declaration: true }` (`research_line` = línea de profundización, campo `research_line` en DATA-MODEL)
   - [ ] Valida ventana activa para `inscripcion_idea` (global o extemporánea) → `409` si no hay ventana
-  - [ ] Todos los `member_ids` deben ser UUIDs de usuarios activos con rol `estudiante` → `400` si no
+  - [ ] Todos los `member_ids` deben existir en la tabla `users` con `role = estudiante` e `is_active = true` (RF-03-02: pre-registrados antes de inscribir) → `400` si alguno no existe o no cumple el rol
   - [ ] Valida que el número de integrantes ≤ límite de `get_max_members(modality_id, program.level)` → `400` si excede
   - [ ] Valida que `prerequisite_declaration = true` → `400` si false
   - [ ] Valida que el estudiante solicitante no tenga ya un trabajo activo (no en estado terminal) → `409`
@@ -50,7 +50,7 @@
 - **Criterios de aceptación:**
   - [ ] `PATCH /api/v1/projects/{id}/status` body: `{ action: "aprobar" }` (solo Administrador)
   - [ ] Requiere que ya exista al menos un director asignado vía `POST /projects/{id}/directors` previo, O el body puede incluir `director_ids[]` directamente → `400` si no hay director
-  - [ ] `POST /api/v1/projects/{id}/directors` body: `{ user_id, juror_number? }` → `201`. Valida: docente activo, máx. 2 directores por proyecto
+  - [ ] `POST /api/v1/projects/{id}/directors` body: `{ user_id, order: 1|2 }` → `201`. Valida: docente activo (`is_active = true`), `order` en (1,2), máx. 2 directores activos por proyecto
   - [ ] `DELETE /api/v1/projects/{id}/directors/{directorId}` → `204` (solo Administrador)
   - [ ] Al aprobar: `status → idea_aprobada`, registra en `project_status_history`
   - [ ] Envía mensaje automático al estudiante: "Tu idea ha sido aprobada. Director asignado: [nombre]"

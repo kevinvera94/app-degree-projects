@@ -142,7 +142,7 @@
 
 ---
 
-### T-F02-10 — Crear tabla `project_acts`
+### T-F02-10 — Crear tabla `acts`
 - **Módulo(s):** MOD-13
 - **Referencias:** `specs/arch/DATA-MODEL.md`
 - **Descripción:** Tabla para registro del acta final de aprobación del trabajo de grado.
@@ -154,7 +154,7 @@
 
 ---
 
-### T-F02-11 — Crear tablas `project_messages` y `project_status_history`
+### T-F02-11 — Crear tablas `messages` y `project_status_history`
 - **Módulo(s):** MOD-15, MOD-16
 - **Referencias:** `specs/arch/DATA-MODEL.md`
 - **Descripción:** Tablas para mensajería asíncrona e historial de cambios de estado.
@@ -172,11 +172,11 @@
 - **Referencias:** `specs/arch/DATA-MODEL.md`
 - **Descripción:** Agregar índices para queries frecuentes y verificar que todas las foreign keys y constraints se aplicaron correctamente.
 - **Criterios de aceptación:**
-  - [ ] Índices en `thesis_projects`: `status`, `modality_id`, `academic_period`, `academic_program_id`
-  - [ ] Índices en `project_members`: `project_id`, `user_id`
-  - [ ] Índices en `project_jurors`: `project_id`, `user_id`, `stage`
+  - [ ] Índices en `thesis_projects`: `status`, `modality_id`, `period`, `academic_program_id`
+  - [ ] Índices en `project_members`: `project_id`, `student_id`
+  - [ ] Índices en `project_jurors`: `project_id`, `docente_id`, `stage`
   - [ ] Índices en `evaluations`: `project_id`, `stage`, `juror_id`
-  - [ ] Índices en `project_messages`: `project_id`, `recipient_id`, `is_read`
+  - [ ] Índices en `messages`: `project_id`, `recipient_id`, `is_read`
   - [ ] Índices en `project_status_history`: `project_id`, `changed_at`
   - [ ] Script de verificación de integridad ejecutado sin errores
   - [ ] Script en `backend/migrations/012_indexes.sql`

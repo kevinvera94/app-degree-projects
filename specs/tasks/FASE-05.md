@@ -9,7 +9,8 @@
 
 - La utilidad de días hábiles (T-F01-07) es prerequisito para los plazos.
 - El anonimato de jurados se aplica desde la capa de servicio, no solo en el schema de respuesta.
-- Los mensajes automáticos se crean como registros en `project_messages` (RF-15-09).
+- Los mensajes automáticos se crean como registros en `messages` (RF-15-09) — nombre exacto de la tabla en DATA-MODEL.
+- El flujo de radicación tiene **dos pasos**: (1) `POST /submissions` crea la radicación con status `pendiente`, (2) `PATCH /submissions/{id}/confirm` valida adjuntos y cambia el estado del proyecto. Ver T-F05-01.
 
 ---
 
@@ -20,17 +21,17 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/submissions, RF-05-01..RF-05-06
 - **Descripción:** El estudiante radica el anteproyecto subiendo los documentos obligatorios. La radicación se confirma solo cuando todos los adjuntos requeridos están presentes.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", academic_period }` → `201` crea `submission` (solo Estudiante, con pertenencia activa)
+  - [ ] **Paso 1 — Crear radicación:** `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto" }` → `201` crea `submission` con `status = "pendiente"` y `revision_number = 1` (solo Estudiante con pertenencia activa). No incluir `academic_period` en el body — se hereda de `thesis_projects.period`
   - [ ] Valida estado `idea_aprobada` → `409` si estado distinto
-  - [ ] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay
-  - [ ] `POST /submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage
-  - [ ] `GET /submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
-  - [ ] `DELETE /submissions/{subId}/attachments/{attId}` solo antes de confirmar radicación → `204`
-  - [ ] Al confirmar radicación: valida adjuntos obligatorios presentes según modalidad:
+  - [ ] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay. Si es extemporánea: `is_extemporaneous = true`. Si es global: guarda `date_window_id`
+  - [ ] **Paso 2 — Subir adjuntos:** `POST /projects/{id}/submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage, guarda `file_url`
+  - [ ] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
+  - [ ] `DELETE /projects/{id}/submissions/{subId}/attachments/{attId}` solo cuando `submission.status = "pendiente"` → `204`; si ya confirmada → `409`
+  - [ ] **Paso 3 — Confirmar radicación:** `PATCH /projects/{id}/submissions/{subId}/confirm` → `200` (solo Estudiante). Valida adjuntos obligatorios según modalidad:
     - Todas las modalidades: `plantilla`, `carta_aval`, `reporte_similitud`
-    - Modalidad `Investigación`: además `aval_etica`
-  - [ ] Si falta adjunto obligatorio → `400` con lista de adjuntos faltantes
-  - [ ] Al confirmar: `status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
+    - Modalidad `Investigación` (detectada por `modalities.requires_ethics_approval = true`): además `aval_etica`
+  - [ ] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
+  - [ ] Al confirmar: `submission.status → "en_revision"`, `project.status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
   - [ ] Envía mensaje automático al Administrador: "Nuevo anteproyecto radicado: [título]"
 - **Dependencias:** T-F04-08, T-F01-04
 - **Estado:** ⬜ Pendiente
@@ -45,7 +46,7 @@
   - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "anteproyecto" }` → `201` (solo Administrador)
   - [ ] Valida estado `anteproyecto_pendiente_evaluacion` → `409` si estado distinto
   - [ ] Solo muestra docentes con `is_active = true` en el selector (filtro en `GET /users?role=docente&is_active=true`)
-  - [ ] Al asignar, registra `assigned_at = now()` y calcula `deadline_date = add_business_days(now(), 15, period)` en la evaluación correspondiente
+  - [ ] Al asignar, registra `project_jurors.assigned_at = now()`. Crea registro en `evaluations` con `start_date = assigned_at` y `due_date = add_business_days(assigned_at, 15, project.period)`, `revision_number = 1`
   - [ ] No permite asignar el mismo docente como Jurado 1 y Jurado 2 → `400`
   - [ ] `GET /projects/{id}/jurors` → `200`. Para Estudiante: oculta `user_id` y `full_name`, muestra solo `juror_number`. Para Admin/Director: visibilidad completa
   - [ ] `DELETE /projects/{id}/jurors/{jurorId}` → `204` (solo Administrador, solo si no hay calificación registrada aún)
@@ -60,9 +61,13 @@
 - **Descripción:** Cada jurado registra su calificación individual. El sistema marca extemporáneas automáticamente y evalúa el resultado cuando ambos han calificado.
 - **Criterios de aceptación:**
   - [ ] `POST /projects/{id}/evaluations` body: `{ stage: "anteproyecto", score: 0.0–5.0, observations: texto }` → `201` (solo Docente con rol jurado asignado en esta etapa)
-  - [ ] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403`
-  - [ ] Si `submitted_at > deadline_date` → `is_extemporaneous = true` (no bloquea, solo marca)
-  - [ ] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver API.md): Estudiante no ve identidad de jurado; Admin ve todo; Director ve identidad
+  - [ ] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403` si no
+  - [ ] Si `submitted_at > evaluations.due_date` → `is_extemporaneous = true` (no bloquea, solo marca)
+  - [ ] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver esquemas en `specs/arch/API.md` línea 139-154):
+    - **Estudiante:** `juror_id` y `full_name` **nunca** incluidos — solo `juror_number`, `score`, `observations`, `submitted_at`
+    - **Administrador:** visibilidad completa incluyendo `juror_id`, `juror_name`, `is_extemporaneous`
+    - **Docente (Director):** incluye `juror_id` y `juror_name`
+  - [ ] El serializer aplica el filtro de identidad en la **capa de servicio**, no solo en el frontend (AUTH.md línea 79)
   - [ ] `GET /projects/{id}/evaluations/{evalId}` → `200` (Administrador, Docente)
 - **Dependencias:** T-F05-02
 - **Estado:** ⬜ Pendiente
@@ -76,7 +81,7 @@
 - **Criterios de aceptación:**
   - [ ] Función de servicio `evaluate_anteproyecto_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
   - [ ] Ambas ≥ 4.0 → `anteproyecto_aprobado` → `en_desarrollo` (transición automática). Bloquea adición de nuevos integrantes (`project_members` queda cerrado)
-  - [ ] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `deadline_date = add_business_days(now(), 10, period)`
+  - [ ] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `due_date = add_business_days(now(), 10, project.period)` y lo registra en el contexto del estado para mostrárselo al estudiante
   - [ ] Ambas < 3.0 → `anteproyecto_reprobado` → `idea_aprobada` (retorno automático). Conserva integrantes existentes
   - [ ] Un jurado ≥ 4.0 y el otro < 3.0 (divergencia) → notifica al Administrador para designar Jurado 3 (mensaje automático). Estado queda en `anteproyecto_pendiente_evaluacion`
   - [ ] Al reprobarse: mensaje automático al estudiante: "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo."
@@ -112,9 +117,9 @@
   - [ ] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", is_correction: true, academic_period }` → `201` (solo Estudiante)
   - [ ] Valida estado `correcciones_anteproyecto_solicitadas` → `409` si estado distinto
   - [ ] Valida que haya ventana activa para `radicacion_anteproyecto` O que el plazo original no haya vencido → `409` si la ventana está cerrada y el plazo venció
-  - [ ] Al confirmar radicación de corrección: `status → anteproyecto_corregido_entregado`. Registra `start_date = submissions.submitted_at`. Calcula nuevo `deadline_date = add_business_days(start_date, 10, period)` para jurados
-  - [ ] El plazo de los jurados se actualiza en las evaluaciones existentes (segunda revisión)
-  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [deadline_date]"
+  - [ ] Al confirmar radicación de corrección (`PATCH /submissions/{subId}/confirm`): `submission.status → "en_revision"`, `project.status → anteproyecto_corregido_entregado`. Registra `evaluations.start_date = submissions.submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, project.period)` con `revision_number = 2`
+  - [ ] Crea nuevos registros en `evaluations` para la segunda revisión (mismos jurados, `revision_number = 2`)
+  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [due_date]"
 - **Dependencias:** T-F05-04
 - **Estado:** ⬜ Pendiente
 
@@ -141,11 +146,11 @@
 - **Descripción:** En la segunda revisión, los jurados solo pueden aprobar o reprobar (no solicitar más correcciones). El sistema ejecuta las transiciones finales.
 - **Criterios de aceptación:**
   - [ ] Los jurados registran calificaciones en la segunda revisión igual que en la primera, pero el sistema valida que solo se permitan `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
-  - [ ] La diferenciación de "primera" o "segunda" revisión se detecta por `submissions.is_correction`
+  - [ ] La diferenciación de "primera" o "segunda" revisión se detecta por `evaluations.revision_number` (1 o 2)
   - [ ] Al completarse la segunda revisión:
     - Ambas aprobadas → `en_desarrollo` (igual que primera revisión)
     - Una o ambas reprobadas → `idea_aprobada` (retorno, conserva integrantes)
-  - [ ] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, pero con `is_correction = true`)
+  - [ ] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, con `stage = "anteproyecto"` y `revision_number = 2`). Se asigna un nuevo Jurado 3 si no hay uno activo de la primera revisión para esta etapa
   - [ ] Registra en `project_status_history`
 - **Dependencias:** T-F05-07
 - **Estado:** ⬜ Pendiente

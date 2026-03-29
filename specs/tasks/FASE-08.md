@@ -7,7 +7,7 @@
 
 ## Notas de fase
 
-- Los mensajes automáticos generados por el sistema en fases anteriores (notificaciones de cambio de estado, calificaciones, correcciones) **ya utilizan** la tabla `project_messages`. Esta fase implementa los endpoints de lectura y escritura manual.
+- Los mensajes automáticos generados por el sistema en fases anteriores (notificaciones de cambio de estado, calificaciones, correcciones) **ya utilizan** la tabla `messages` (nombre exacto en DATA-MODEL). Esta fase implementa los endpoints de lectura y escritura manual.
 - El anonimato del jurado en mensajería se implementa en el campo `sender_display` de la tabla, no en la capa de presentación.
 
 ---

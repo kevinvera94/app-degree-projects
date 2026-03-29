@@ -52,8 +52,8 @@
     - Solo Investigación: aval del comité de ética
   - [ ] Área de subida por adjunto: tipo de documento, botón "Seleccionar archivo" (acepta PDF, máx. 20MB), previsualización del nombre del archivo subido
   - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Llama `POST /submissions`, luego `POST /submissions/{subId}/attachments` para cada archivo
-  - [ ] Al confirmar: llama endpoint de confirmación → al éxito: estado cambia, redirige al dashboard
+  - [ ] Flujo 3 pasos: (1) `POST /projects/{id}/submissions { stage: "anteproyecto" }`, (2) `POST .../attachments` para cada archivo, (3) `PATCH .../confirm` para confirmar
+  - [ ] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
   - [ ] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
 - **Dependencias:** T-F10-02
 - **Estado:** ⬜ Pendiente
@@ -87,8 +87,9 @@
   - [ ] Si el plazo venció y no hay ventana activa: muestra aviso "El plazo venció. La entrega estará disponible cuando se abra la siguiente ventana de radicación"
   - [ ] Misma interfaz de subida de documentos que radicación inicial
   - [ ] Los mismos adjuntos obligatorios de la radicación original son requeridos en la corrección
-  - [ ] Llama `POST /submissions { is_correction: true }`
-  - [ ] Al éxito: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
+  - [ ] Flujo de 3 pasos: (1) `POST /submissions { stage }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
+  - [ ] El `stage` correcto es `"correcciones_anteproyecto"` o `"correcciones_producto_final"` (valores del DATA-MODEL, no enviar `is_correction`)
+  - [ ] Al confirmar: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
 - **Dependencias:** T-F10-04
 - **Estado:** ⬜ Pendiente
 
@@ -106,7 +107,7 @@
     - Solo Innovación y Emprendimiento: certificación de inscripción del Plan de Negocio
     - Opcional (si vinculado a empresa): carta de impacto (con aviso de que el Admin la validará)
   - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Llama `POST /submissions { stage: "producto_final" }` y sube adjuntos
+  - [ ] Flujo 3 pasos: (1) `POST /submissions { stage: "producto_final" }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
 - **Dependencias:** T-F10-05
 - **Estado:** ⬜ Pendiente
 
@@ -119,9 +120,10 @@
 - **Criterios de aceptación:**
   - [ ] Sección "Acta y biblioteca" visible en dashboard cuando `status = trabajo_aprobado` o `acta_generada`
   - [ ] Formulario con pregunta clara: "¿Autoriza la publicación de su trabajo en la biblioteca de la USC?" con opciones Sí / No y descripción de implicaciones
-  - [ ] Llama `POST /projects/{id}/act { library_authorization: bool }`
+  - [ ] Llama `PATCH /projects/{id}/library-authorization { library_authorization: true|false }` (endpoint dedicado, distinto al `POST /act`)
   - [ ] Muestra confirmación: "Tu autorización ha sido registrada. El Administrador emitirá el acta pronto."
-  - [ ] Cuando `status = acta_generada`: botón "Descargar acta" → llama `GET /projects/{id}/act` para obtener URL firmada → abre en nueva pestaña
+  - [ ] Cuando `status = acta_generada` y el acta tiene `act_file_url`: botón "Descargar acta" → `GET /projects/{id}/act` retorna URL firmada → abre en nueva pestaña
+  - [ ] Si el acta no tiene archivo adjunto (`act_file_url = null`): mostrar "El acta fue registrada pero no tiene archivo digital adjunto. Contacta a la secretaría."
 - **Dependencias:** T-F10-06
 - **Estado:** ⬜ Pendiente
 

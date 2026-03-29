@@ -79,6 +79,7 @@ app-degree-projects/
       API.md
       AUTH.md
       INFRA.md
+      ENUMS.md
   frontend/                  ← React + Vite
     src/
       components/
@@ -110,6 +111,7 @@ app-degree-projects/
 | `specs/arch/API.md` | Endpoints por router, métodos, descripción y roles permitidos |
 | `specs/arch/AUTH.md` | Estrategia de autenticación, flujo JWT, matriz de permisos por rol |
 | `specs/arch/INFRA.md` | Variables de entorno, despliegue, entornos dev/prod |
+| `specs/arch/ENUMS.md` | Referencia centralizada de todos los valores enum y constantes del sistema |
 | `specs/DESIGN.md` | Paleta de colores, tokens visuales e identidad gráfica USC |
 
 ---

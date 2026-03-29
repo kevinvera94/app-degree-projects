@@ -14,4 +14,4 @@
 | RF-15-06 | El jurado puede enviar mensajes al estudiante de un trabajo asignado. El sistema muestra al estudiante solo "Jurado 1" o "Jurado 2", sin revelar el nombre real | Docente (Jurado) |
 | RF-15-07 | El Administrador puede enviar mensajes a cualquier usuario del sistema | Administrador |
 | RF-15-08 | Todos los mensajes quedan asociados al historial del trabajo de grado correspondiente | Sistema |
-| RF-15-09 | El sistema genera una notificación interna al usuario cuando recibe un nuevo mensaje | Sistema |
+| RF-15-09 | La bandeja de mensajes es el **único canal de comunicación asíncrona** del sistema. Las "notificaciones" mencionadas en otros módulos (ej. RF-06-11) se refieren a mensajes automáticos creados en la bandeja del receptor. El indicador visual de "no leído" (badge) en la UI avisa al usuario que tiene mensajes pendientes | Sistema |

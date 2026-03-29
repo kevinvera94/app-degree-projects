@@ -43,7 +43,9 @@ STUDENT_CORRECTION_DEADLINE_DAYS=10
 JUROR_EXPIRY_ALERT_DAYS=3          # días hábiles antes del vencimiento para alertar
 
 # Festivos USC (archivo JSON con fechas del calendario académico)
-# Formato: ["2026-01-01", "2026-03-23", ...] — se actualiza cada periodo académico
+# Formato: { "2026-1": ["2026-01-01","2026-03-23"], "2026-2": ["2026-07-01","2026-12-25"] }
+# Claves = periodo académico. Se actualiza al inicio de cada periodo.
+# Si el archivo no existe o está vacío, solo se excluyen fines de semana.
 USC_HOLIDAYS_FILE=config/usc_holidays.json
 ```
 

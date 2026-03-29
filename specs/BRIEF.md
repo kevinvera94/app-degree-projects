@@ -40,7 +40,7 @@ Estos son los actores identificados en la Resolución 004/2025 y su rol en el pr
 | Actor | Rol en el proceso |
 |---|---|
 | **Estudiante** | Inscribe la idea, diligencia anteproyecto, adjunta informe final, recibe notificaciones, sube correcciones, diligencia autorización de biblioteca |
-| **Comité de Trabajos de Grado (CTG)** | Conformado por el decano, directores de programas, coordinador CEII y coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas. Coordinado por un integrante designado por rotación anual |
+| **CTG (Comité de Trabajos de Grado)** | Conformado por el decano, directores de programas, coordinador CEII y coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas. Coordinado por un integrante designado por rotación anual |
 | **Secretaria de facultad** | Apoyo administrativo del CTG. Operadora principal del sistema en nombre del CTG |
 | **Director de trabajo de grado** | Docente (máx. 2 por trabajo) que acompaña al estudiante, da Vo.Bo. y verifica reporte de similitud ≤20% antes de radicar. El primero debe ser docente USC en ejercicio |
 | **Jurado 1 / Jurado 2** | Docentes evaluadores designados por el CTG. Anónimos para el estudiante. Mismos jurados para anteproyecto y producto final cuando sea posible |

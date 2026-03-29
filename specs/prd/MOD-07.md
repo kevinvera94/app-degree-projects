@@ -11,5 +11,5 @@
 | RF-07-03 | El sistema muestra al estudiante los días hábiles restantes para entregar las correcciones | Sistema |
 | RF-07-04 | Si el estudiante no entrega dentro del plazo de 10 días hábiles, el sistema bloquea la entrega y registra el incumplimiento. El estudiante debe radicar en la siguiente ventana de fechas | Sistema |
 | RF-07-05 | Si el estudiante tampoco entrega en la siguiente oportunidad, el Administrador puede marcar el trabajo como **Proceso reiniciado**, lo que obliga al estudiante a comenzar desde cero (nueva inscripción de idea) | Administrador |
-| RF-07-06 | En la segunda revisión, los jurados reciben el documento corregido y tienen 10 días hábiles. Solo pueden registrar Aprobado o Reprobado | Docente (Jurado) |
+| RF-07-06 | En la segunda revisión, el sistema registra la fecha de entrega del documento corregido y calcula una nueva fecha límite de **10 días hábiles adicionales** para los jurados. Solo pueden registrar Aprobado o Reprobado (sin opción de nuevas correcciones) | Sistema / Docente (Jurado) |
 | RF-07-07 | El sistema aplica la lógica de resultado de la segunda revisión igual que en la primera, excepto que no hay opción de devolver para correcciones nuevamente | Sistema |

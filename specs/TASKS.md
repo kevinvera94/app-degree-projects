@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-03
-**Próxima tarea:** `T-F03-03` — Implementar desactivación de docentes (`PATCH /users/{id}/deactivate`)
+**Próxima tarea:** `T-F03-04` — Implementar CRUD de programas académicos (`/academic-programs`)
 
 ---
 
@@ -57,6 +57,7 @@
 - `T-F02-01` a `T-F02-12` — FASE-02: Base de datos (ENUMs, tablas, índices) — 2026-03-29
 - `T-F03-01` — Implementar `GET /auth/me` — 2026-03-29
 - `T-F03-02` — Implementar CRUD de usuarios (`/users`) — 2026-03-29
+- `T-F03-03` — Implementar desactivación de docentes (`PATCH /users/{id}/deactivate`) — 2026-03-29
 
 ---
 

@@ -43,14 +43,14 @@
 - **Referencias:** `specs/arch/API.md` §/users, RF-04-07, RF-04-08, RF-04-09, `specs/arch/AUTH.md` §Docente inactivo
 - **Descripción:** Desactivar un docente bloquea su acceso, marca sus asignaciones activas como inactivas y genera alertas al Administrador sobre trabajos afectados.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /users/{id}/deactivate` → `200` (solo Administrador)
-  - [ ] Marca `users.is_active = false`
-  - [ ] Deshabilita el usuario en Supabase Auth (bloquea login)
-  - [ ] Marca `is_active = false` en todos los registros activos de `project_directors` y `project_jurors`
-  - [ ] Crea mensajes automáticos en `messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
-  - [ ] Retorna en el cuerpo la lista de `project_ids` afectados para que el frontend muestre las alertas
+  - [x] `PATCH /users/{id}/deactivate` → `200` (solo Administrador)
+  - [x] Marca `users.is_active = false`
+  - [x] Deshabilita el usuario en Supabase Auth (bloquea login)
+  - [x] Marca `is_active = false` en todos los registros activos de `project_directors` y `project_jurors`
+  - [x] Crea mensajes automáticos en `messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
+  - [x] Retorna en el cuerpo la lista de `project_ids` afectados para que el frontend muestre las alertas
 - **Dependencias:** T-F03-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

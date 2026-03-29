@@ -50,3 +50,8 @@ class PaginatedUsersResponse(BaseModel):
     total: int
     page: int
     size: int
+
+
+class DeactivateUserResponse(BaseModel):
+    user_id: UUID
+    affected_project_ids: list[UUID]

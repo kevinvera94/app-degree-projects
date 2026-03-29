@@ -10,6 +10,7 @@ from app.core.database import get_db
 from app.core.dependencies import CurrentUser, require_admin
 from app.core.supabase_client import supabase_admin
 from app.schemas.user import (
+    DeactivateUserResponse,
     PaginatedUsersResponse,
     UserCreate,
     UserResponse,
@@ -147,3 +148,78 @@ async def update_user(
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     return UserResponse(**row)
+
+
+@router.patch("/{user_id}/deactivate", response_model=DeactivateUserResponse)
+async def deactivate_user(
+    user_id: UUID,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> DeactivateUserResponse:
+    # Verificar que el usuario existe
+    result = await db.execute(
+        text("SELECT id FROM public.users WHERE id = :id"),
+        {"id": user_id},
+    )
+    if result.mappings().first() is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+
+    # Bloquear login en Supabase Auth primero (si falla, no se toca la BD)
+    try:
+        supabase_admin.auth.admin.update_user_by_id(str(user_id), {"ban_duration": "876600h"})
+    except AuthApiError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    # Marcar usuario como inactivo
+    await db.execute(
+        text("UPDATE public.users SET is_active = false WHERE id = :id"),
+        {"id": user_id},
+    )
+
+    # Obtener proyectos afectados (antes de desactivar asignaciones)
+    dirs = await db.execute(
+        text("SELECT DISTINCT project_id FROM public.project_directors WHERE docente_id = :id AND is_active = true"),
+        {"id": user_id},
+    )
+    jurors = await db.execute(
+        text("SELECT DISTINCT project_id FROM public.project_jurors WHERE docente_id = :id AND is_active = true"),
+        {"id": user_id},
+    )
+    affected_project_ids = list({
+        *(r["project_id"] for r in dirs.mappings()),
+        *(r["project_id"] for r in jurors.mappings()),
+    })
+
+    # Desactivar asignaciones activas
+    await db.execute(
+        text("UPDATE public.project_directors SET is_active = false WHERE docente_id = :id AND is_active = true"),
+        {"id": user_id},
+    )
+    await db.execute(
+        text("UPDATE public.project_jurors SET is_active = false WHERE docente_id = :id AND is_active = true"),
+        {"id": user_id},
+    )
+
+    # Crear mensaje de alerta por cada proyecto afectado
+    for project_id in affected_project_ids:
+        await db.execute(
+            text("""
+                INSERT INTO public.messages
+                    (project_id, sender_id, recipient_id, content, sender_display)
+                VALUES
+                    (:project_id, :sender_id, :recipient_id, :content, 'Sistema')
+            """),
+            {
+                "project_id": project_id,
+                "sender_id": current_user.id,
+                "recipient_id": current_user.id,
+                "content": (
+                    "Un docente asignado a este trabajo ha sido desactivado. "
+                    "Se requiere reasignación de director o jurado."
+                ),
+            },
+        )
+
+    await db.commit()
+
+    return DeactivateUserResponse(user_id=user_id, affected_project_ids=affected_project_ids)

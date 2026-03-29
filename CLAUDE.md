@@ -54,7 +54,8 @@ Eres un arquitecto de software con 15 años de experiencia en sistemas empresari
 
 ### Al terminar
 - Commit con mensaje descriptivo en español
-- Mover la tarea a "Completadas" en `specs/TASKS.md` con la fecha
+- En `specs/tasks/FASE-XX.md`: marcar cada criterio de aceptación con `[x]` y cambiar `**Estado:** ⬜ Pendiente` → `**Estado:** ✅ Completada` (sin fecha)
+- En `specs/TASKS.md`: agregar la tarea a la sección "Completadas" con la fecha y actualizar "Próxima tarea"
 - Reportar qué se hizo y cuál es la siguiente tarea recomendada
 
 ### Restricciones

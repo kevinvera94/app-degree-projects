@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-03
-**Próxima tarea:** `T-F03-05` — Implementar CRUD de modalidades y límites (`/modalities`)
+**Próxima tarea:** `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`)
 
 ---
 
@@ -59,6 +59,7 @@
 - `T-F03-02` — Implementar CRUD de usuarios (`/users`) — 2026-03-29
 - `T-F03-03` — Implementar desactivación de docentes (`PATCH /users/{id}/deactivate`) — 2026-03-29
 - `T-F03-04` — Implementar CRUD de programas académicos (`/academic-programs`) — 2026-03-29
+- `T-F03-05` — Implementar CRUD de modalidades y límites (`/modalities`) — 2026-03-29
 
 ---
 

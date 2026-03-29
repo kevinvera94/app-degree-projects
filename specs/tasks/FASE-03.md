@@ -73,15 +73,15 @@
 - **Referencias:** `specs/arch/API.md` §/modalities, RF-01-07, `specs/BRIEF.md` §8
 - **Descripción:** Gestión de modalidades y sus límites de integrantes por nivel académico. Incluye la tabla `modality_level_limits`.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/modalities` → `200` lista (todos los roles)
-  - [ ] `POST /api/v1/modalities` → `201` (solo Administrador)
-  - [ ] `PATCH /api/v1/modalities/{id}` → `200` edita `name`, `max_members_default`, `is_active` (solo Administrador)
-  - [ ] `GET /api/v1/modalities/{id}/limits` → `200` lista de límites por nivel (solo Administrador)
-  - [ ] `PUT /api/v1/modalities/{id}/limits/{level}` → `200/201` crea o actualiza límite específico (solo Administrador)
-  - [ ] `DELETE /api/v1/modalities/{id}/limits/{level}` → `204` elimina límite (usa `max_members_default`) (solo Administrador)
-  - [ ] Función de servicio `get_max_members(modality_id, level)` que consulta `modality_level_limits` y cae de regreso a `max_members_default` si no hay límite específico
+  - [x] `GET /api/v1/modalities` → `200` lista (todos los roles)
+  - [x] `POST /api/v1/modalities` → `201` (solo Administrador)
+  - [x] `PATCH /api/v1/modalities/{id}` → `200` edita `name`, `max_members_default`, `is_active` (solo Administrador)
+  - [x] `GET /api/v1/modalities/{id}/limits` → `200` lista de límites por nivel (solo Administrador)
+  - [x] `PUT /api/v1/modalities/{id}/limits/{level}` → `200/201` crea o actualiza límite específico (solo Administrador)
+  - [x] `DELETE /api/v1/modalities/{id}/limits/{level}` → `204` elimina límite (usa `max_members_default`) (solo Administrador)
+  - [x] Función de servicio `get_max_members(modality_id, level)` que consulta `modality_level_limits` y cae de regreso a `max_members_default` si no hay límite específico
 - **Dependencias:** T-F03-01, T-F02-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

@@ -236,7 +236,7 @@
   - [ ] Hilo de mensajes por proyecto (ordenados cronológicamente)
   - [ ] Formulario de nuevo mensaje: selector de destinatario (integrante, director, jurado o grupo)
   - [ ] Mensajes leídos/no leídos diferenciados visualmente
-  - [ ] Al abrir un mensaje no leído: llama `PATCH /messages/{msgId}/read`
+  - [ ] Al abrir un mensaje no leído: llama `PATCH /projects/{id}/messages/{msgId}/read`
 - **Dependencias:** T-F09-12
 - **Estado:** ⬜ Pendiente
 

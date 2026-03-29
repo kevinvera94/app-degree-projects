@@ -47,7 +47,7 @@
   - [ ] Marca `users.is_active = false`
   - [ ] Deshabilita el usuario en Supabase Auth (bloquea login)
   - [ ] Marca `is_active = false` en todos los registros activos de `project_directors` y `project_jurors`
-  - [ ] Crea mensajes automáticos en `project_messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
+  - [ ] Crea mensajes automáticos en `messages` para el Administrador, uno por cada trabajo afectado, indicando que requiere reasignación
   - [ ] Retorna en el cuerpo la lista de `project_ids` afectados para que el frontend muestre las alertas
 - **Dependencias:** T-F03-02
 - **Estado:** ⬜ Pendiente

@@ -83,13 +83,13 @@
 - **Referencias:** `specs/arch/AUTH.md` (sección Dependencias de seguridad)
 - **Descripción:** Implementar las dependencias de seguridad de FastAPI: `get_current_user`, `require_admin`, `require_docente`, `require_project_member`. Verificar JWT HS256 con `SUPABASE_JWT_SECRET`. Extraer `sub`, `role`, `email` del token.
 - **Criterios de aceptación:**
-  - [ ] `backend/app/core/dependencies.py` con las 4 funciones de seguridad documentadas en AUTH.md
-  - [ ] Request sin JWT → `401 Unauthorized`
-  - [ ] Request con JWT de rol equivocado → `403 Forbidden`
-  - [ ] Request con JWT válido → usuario extraído correctamente
-  - [ ] Tests unitarios de `get_current_user` con tokens válidos e inválidos
+  - [x] `backend/app/core/dependencies.py` con las 4 funciones de seguridad documentadas en AUTH.md
+  - [x] Request sin JWT → `401 Unauthorized`
+  - [x] Request con JWT de rol equivocado → `403 Forbidden`
+  - [x] Request con JWT válido → usuario extraído correctamente
+  - [x] Tests unitarios de `get_current_user` con tokens válidos e inválidos
 - **Dependencias:** T-F01-02, T-F01-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

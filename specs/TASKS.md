@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-01
-**Próxima tarea:** `T-F01-06` — Configurar middleware de autenticación JWT en FastAPI
+**Próxima tarea:** `T-F01-07` — Crear utilidad de cálculo de días hábiles
 
 ---
 
@@ -51,6 +51,7 @@
 - `T-F01-03` — Configurar proyecto frontend (React + Vite) — 2026-03-29
 - `T-F01-04` — Configurar Supabase (proyecto + Auth + Storage) — 2026-03-29
 - `T-F01-05` — Configurar variables de entorno locales — 2026-03-29
+- `T-F01-06` — Configurar middleware de autenticación JWT en FastAPI — 2026-03-29
 
 ---
 

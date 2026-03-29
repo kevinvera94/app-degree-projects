@@ -54,13 +54,13 @@
 - **Referencias:** `specs/arch/INFRA.md`, `specs/arch/AUTH.md`
 - **Descripción:** Crear proyecto en Supabase (o verificar que existe). Habilitar Auth con proveedor email/password. Crear bucket de Storage `attachments` con política de acceso privado (solo URLs firmadas). Obtener y documentar `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`.
 - **Criterios de aceptación:**
-  - [ ] Proyecto Supabase creado y accesible
-  - [ ] Auth habilitado con email/password
-  - [ ] Bucket `attachments` creado con acceso privado
-  - [ ] Variables documentadas en `specs/arch/INFRA.md` (sin valores reales; solo nombres de variables)
-  - [ ] Archivo `.env.example` en `backend/` y `frontend/` con todas las variables necesarias (sin valores reales)
+  - [x] Proyecto Supabase creado y accesible
+  - [x] Auth habilitado con email/password
+  - [x] Bucket `degree-projects-docs` creado con acceso privado
+  - [x] Variables documentadas en `specs/arch/INFRA.md` (sin valores reales; solo nombres de variables)
+  - [x] Archivo `.env.example` en `backend/` y `frontend/` con todas las variables necesarias (sin valores reales)
 - **Dependencias:** T-F01-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

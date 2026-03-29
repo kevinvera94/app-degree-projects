@@ -54,7 +54,10 @@
 |---|---|---|---|
 | GET | `/modalities` | Listar modalidades con configuración | Todos |
 | POST | `/modalities` | Crear modalidad | Administrador |
-| PATCH | `/modalities/{id}` | Editar modalidad (ej. max_members) | Administrador |
+| PATCH | `/modalities/{id}` | Editar modalidad (ej. max_members por defecto) | Administrador |
+| GET | `/modalities/{id}/limits` | Listar límites de integrantes por nivel para esta modalidad | Administrador |
+| PUT | `/modalities/{id}/limits/{level}` | Crear o actualizar límite específico para modalidad+nivel | Administrador |
+| DELETE | `/modalities/{id}/limits/{level}` | Eliminar límite específico (usa el max_members por defecto) | Administrador |
 
 ---
 
@@ -129,9 +132,26 @@
 
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| GET | `/projects/{id}/evaluations` | Listar calificaciones (anonimizadas para Estudiante) | Todos (con pertenencia) |
+| GET | `/projects/{id}/evaluations` | Listar calificaciones. Respuesta varía por rol — ver esquemas abajo | Todos (con pertenencia) |
 | POST | `/projects/{id}/evaluations` | Registrar calificación (marca extemporánea si procede) | Docente (Jurado asignado) |
 | GET | `/projects/{id}/evaluations/{evalId}` | Detalle de calificación | Administrador, Docente |
+
+**Esquemas de respuesta por rol — `GET /projects/{id}/evaluations`:**
+
+**Estudiante** — `juror_id` y `full_name` nunca se incluyen:
+```json
+{ "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z" }
+```
+
+**Administrador** — visibilidad completa:
+```json
+{ "id": "uuid", "juror_id": "uuid", "juror_name": "Dr. Garcia", "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z", "is_extemporaneous": false }
+```
+
+**Docente como Director** — ve identidad de jurados de sus propios trabajos:
+```json
+{ "juror_id": "uuid", "juror_name": "Dr. Garcia", "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z" }
+```
 
 ---
 

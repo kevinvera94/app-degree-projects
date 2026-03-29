@@ -78,13 +78,29 @@ Configurable por el Administrador.
 | `id` | uuid PK | |
 | `name` | varchar(100) | Ej.: `Investigación`, `Monografía` |
 | `levels` | enum[] | Niveles en que aplica la modalidad |
-| `max_members` | integer | Máx. integrantes (configurable) |
+| `max_members` | integer | Límite de integrantes por defecto. Se sobreescribe por `modality_level_limits` si existe registro específico para ese nivel |
 | `requires_sustentation` | boolean | `false` para Diplomado tecnológico |
 | `requires_ethics_approval` | boolean | `true` para Investigación |
 | `requires_business_plan_cert` | boolean | `true` para Innovación y Emprendimiento |
 | `is_active` | boolean | |
 | `created_by` | uuid FK → users | Administrador que creó/configuró la modalidad |
 | `created_at` | timestamp | |
+
+---
+
+### `modality_level_limits`
+Límites de integrantes específicos por modalidad y nivel académico. Sobreescribe `modalities.max_members` cuando existe.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | uuid PK | |
+| `modality_id` | uuid FK → modalities | |
+| `level` | enum | `tecnologico` \| `profesional` \| `maestria_profundizacion` \| `maestria_investigacion` \| `especializacion` \| `doctorado` |
+| `max_members` | integer | Límite específico para esta combinación modalidad+nivel |
+| `updated_by` | uuid FK → users | Administrador que configuró el límite |
+| `updated_at` | timestamp | |
+
+> **Unicidad:** `UNIQUE(modality_id, level)` — una sola regla por combinación.
 
 ---
 
@@ -142,24 +158,25 @@ Entidad central del sistema.
 **Estados del trabajo (`status`):**
 ```
 pendiente_evaluacion_idea
-idea_aprobada                          ← también estado de retorno tras anteproyecto_reprobado
+idea_aprobada                           ← retorno desde: anteproyecto_reprobado, reprobado en 2a revisión anteproyecto
 idea_rechazada
 anteproyecto_pendiente_evaluacion
 anteproyecto_aprobado
-anteproyecto_reprobado                 → retorna a idea_aprobada (nueva radicación de anteproyecto)
-correcciones_anteproyecto_solicitadas
-anteproyecto_corregido_entregado
-en_desarrollo                          ← transición automática al aprobarse el anteproyecto
+anteproyecto_reprobado                  → retorna a idea_aprobada (integrantes conservados, max 3)
+correcciones_anteproyecto_solicitadas   ← permanece aquí si el estudiante no entrega en plazo (espera nueva ventana)
+anteproyecto_corregido_entregado        → inicia 2a revisión automáticamente
+en_desarrollo                           ← transición automática al aprobarse el anteproyecto (1a o 2a revisión)
 producto_final_entregado
 en_revision_jurados_producto_final
-correcciones_producto_final_solicitadas
-producto_final_corregido_entregado
+correcciones_producto_final_solicitadas ← permanece aquí si el estudiante no entrega en plazo
+producto_final_corregido_entregado      → inicia 2a revisión automáticamente
 aprobado_para_sustentacion
 sustentacion_programada
-trabajo_aprobado                       ← Diplomado tecnológico llega aquí directamente desde producto_final aprobado
-reprobado_en_sustentacion              → nueva inscripción de idea desde cero
+trabajo_aprobado                        ← Diplomado tecnológico llega aquí directamente desde producto_final aprobado
+reprobado_en_sustentacion               → nueva inscripción de idea desde cero
 acta_generada
-suspendido_por_plagio                  ← puede ocurrir en cualquier etapa
+suspendido_por_plagio                   ← puede ocurrir en cualquier etapa
+cancelado                               ← Admin archiva un trabajo abandonado (no fuerza nueva inscripción)
 ```
 
 ---
@@ -236,7 +253,7 @@ Documentos adjuntos a una radicación.
 |---|---|---|
 | `id` | uuid PK | |
 | `submission_id` | uuid FK → submissions | |
-| `attachment_type` | enum | `plantilla` \| `carta_aval` \| `reporte_similitud` \| `aval_etica` \| `certificacion_plan_negocio` \| `carta_impacto` \| `autorizacion_biblioteca` \| `otro` |
+| `attachment_type` | enum | `plantilla` \| `carta_aval` \| `reporte_similitud` \| `aval_etica` \| `certificacion_plan_negocio` \| `carta_impacto` \| `autorizacion_biblioteca` \| `retiro_integrante` \| `otro` |
 | `file_name` | varchar(255) | |
 | `file_url` | text | URL de Supabase Storage |
 | `uploaded_at` | timestamp | |

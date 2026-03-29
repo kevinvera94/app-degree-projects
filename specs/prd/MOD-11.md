@@ -6,5 +6,6 @@
 
 | ID | Requerimiento | Actor |
 |---|---|---|
-| RF-11-01 | Las reglas de plazos (10 días hábiles para el estudiante), bloqueos por incumplimiento y reinicio de proceso son idénticas a las del MOD-07 | Sistema |
-| RF-11-02 | En la segunda revisión, el sistema calcula una nueva fecha límite de **10 días hábiles adicionales** para los jurados desde la entrega del documento corregido. Solo pueden registrar Aprobado o Reprobado | Sistema / Docente (Jurado) |
+| RF-11-01 | Las reglas de plazos (10 días hábiles para el estudiante), bloqueos por incumplimiento y comportamiento de no-reinicio son idénticas a las del MOD-07. El estado permanece en **Correcciones producto final solicitadas** hasta que se abra una nueva ventana de fechas | Sistema |
+| RF-11-02 | Cuando el estudiante radica el documento corregido, el sistema transiciona a **Producto final corregido entregado**, registra `start_date = submissions.submitted_at` y calcula la nueva fecha límite de **10 días hábiles adicionales** para los jurados. Solo pueden registrar Aprobado o Reprobado | Sistema |
+| RF-11-03 | En segunda revisión de producto final, si hay divergencia (un jurado aprueba y otro reprueba), se asigna un **Jurado 3 adicional** igual que en primera revisión (MOD-10 RF-10-03 / MOD-06 RF-06-08). El Jurado 3 solo puede aprobar o reprobar | Sistema / Administrador |

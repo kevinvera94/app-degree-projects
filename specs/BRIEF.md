@@ -143,7 +143,7 @@ Para el sistema, los actores anteriores se agrupan en **3 roles**. Al registrar 
 
 ### ETAPA 8 — Sustentación pública
 38. Una vez aprobado el producto final, el Administrador registra fecha, hora y lugar de la **sustentación pública** y notifica a director, estudiantes y jurados
-39. Calificación de la sustentación: ≥4.0 aprobado, <4.0 reprobado
+39. Cada jurado registra su calificación numérica individual (escala 0.0 a 5.0). El sistema calcula el promedio: promedio ≥ 4.0 → **Aprobado** / promedio < 4.0 → **Reprobado**. No existe Jurado 3 en sustentación
 40. Si reprobación → el estudiante debe presentar nueva propuesta desde cero
 41. **Excepción:** la modalidad **Diplomado en programas tecnológicos** no requiere sustentación pública. Una vez aprobado el producto final se pasa directamente a la generación del acta
 
@@ -215,7 +215,7 @@ Suspendido por plagio (puede ocurrir en cualquier etapa)
 - El director debe verificar similitud ≤20% antes de firmar el aval (Art. 31° literal i)
 - Los jurados del anteproyecto deben ser los mismos del producto final cuando sea posible
 - **Plazo para correcciones:** 10 días hábiles con Vo.Bo. del director (desde la notificación de correcciones)
-- **Plazo de evaluación jurados:** 15 días hábiles (primera revisión), 10 días hábiles (segunda revisión) — contados desde la asignación del jurado
+- **Plazo de evaluación jurados:** 15 días hábiles (primera revisión, contados desde la asignación del jurado) / 10 días hábiles (segunda revisión, contados desde la entrega del documento corregido por el estudiante)
 - **Días hábiles:** se excluyen fines de semana y festivos del calendario académico USC. El sistema usa un archivo de festivos configurable por periodo (`USC_HOLIDAYS_FILE`)
 - Las calificaciones registradas fuera del plazo quedan marcadas como **extemporáneas** (no se bloquean)
 - Si un jurado reprueba y el otro aprueba → se designa **Jurado 3** (solo aprueba o reprueba)

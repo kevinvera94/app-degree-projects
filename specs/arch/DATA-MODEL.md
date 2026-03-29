@@ -257,9 +257,10 @@ Calificaciones emitidas por jurados.
 | `stage` | enum | `anteproyecto` \| `producto_final` |
 | `score` | decimal(3,1) | Calificación numérica |
 | `observations` | text | |
-| `submitted_at` | timestamp | |
-| `due_date` | timestamp | Fecha límite calculada como: `assigned_at + N días hábiles` excluyendo fines de semana y festivos del `USC_HOLIDAYS_FILE`. N=15 para primera revisión, N=10 para segunda |
-| `is_extemporaneous` | boolean | Registrada fuera del plazo |
+| `submitted_at` | timestamp | Cuándo el jurado envió la calificación |
+| `start_date` | timestamp | Inicio del conteo del plazo. **Revisión 1:** se toma de `project_jurors.assigned_at` al crear la evaluación. **Revisión 2:** se toma de `submissions.submitted_at` del documento corregido entregado por el estudiante |
+| `due_date` | timestamp | Fecha límite calculada: `start_date + N días hábiles` (excluye fines de semana y festivos del `USC_HOLIDAYS_FILE`). N=15 para revisión 1, N=10 para revisión 2 |
+| `is_extemporaneous` | boolean | `true` si `submitted_at > due_date` |
 | `revision_number` | integer | `1` o `2` |
 
 ---
@@ -324,7 +325,7 @@ Mensajería asíncrona entre usuarios del trabajo.
 | `sent_at` | timestamp | |
 | `is_read` | boolean | |
 | `read_at` | timestamp nullable | |
-| `sender_display` | varchar(50) | Nombre visible para el receptor. Si el emisor es jurado, el sistema lo establece automáticamente como "Jurado 1" o "Jurado 2" según `project_jurors.juror_number`. Para otros roles, se usa `users.full_name` |
+| `sender_display` | varchar(50) | Nombre visible para el receptor. Si el emisor es jurado, el sistema lo establece automáticamente como "Jurado 1", "Jurado 2" o "Jurado 3" según `project_jurors.juror_number`. Para otros roles, se usa `users.full_name` |
 
 ---
 

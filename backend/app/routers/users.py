@@ -33,7 +33,9 @@ async def list_users(
     db: AsyncSession = Depends(get_db),
 ) -> PaginatedUsersResponse:
     if role is not None and role not in VALID_ROLES:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Rol inválido")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Rol inválido"
+        )
 
     filters = []
     params: dict = {"limit": size, "offset": (page - 1) * size}
@@ -54,7 +56,10 @@ async def list_users(
     total: int = count_result.scalar_one()
 
     rows_result = await db.execute(
-        text(f"SELECT {_SELECT_FIELDS} FROM public.users {where} ORDER BY created_at DESC LIMIT :limit OFFSET :offset"),
+        text(
+            f"SELECT {_SELECT_FIELDS} FROM public.users"
+            f" {where} ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+        ),
         params,
     )
     items = [UserResponse(**row) for row in rows_result.mappings()]
@@ -68,19 +73,25 @@ async def create_user(
     _: CurrentUser = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-    body.validate_role()
-
     try:
-        supabase_admin.auth.admin.create_user({
-            "email": body.email,
-            "password": body.password,
-            "user_metadata": {"full_name": body.full_name, "role": body.role},
-            "app_metadata": {"role": body.role},
-            "email_confirm": True,
-        })
+        supabase_admin.auth.admin.create_user(
+            {
+                "email": body.email,
+                "password": body.password,
+                "user_metadata": {"full_name": body.full_name, "role": body.role},
+                "app_metadata": {"role": body.role},
+                "email_confirm": True,
+            }
+        )
     except AuthApiError as e:
-        if "already registered" in str(e).lower() or "already been registered" in str(e).lower():
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El email ya está registrado")
+        if (
+            "already registered" in str(e).lower()
+            or "already been registered" in str(e).lower()
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El email ya está registrado",
+            )
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     result = await db.execute(
@@ -89,7 +100,10 @@ async def create_user(
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error al crear el usuario")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al crear el usuario",
+        )
 
     return UserResponse(**row)
 
@@ -106,7 +120,9 @@ async def get_user(
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado"
+        )
     return UserResponse(**row)
 
 
@@ -117,22 +133,29 @@ async def update_user(
     _: CurrentUser = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
-    body.validate_role()
-
     allowed = {"full_name", "email", "role"}
-    updates = {k: v for k, v in body.model_dump(exclude_none=True).items() if k in allowed}
+    updates = {
+        k: v for k, v in body.model_dump(exclude_none=True).items() if k in allowed
+    }
 
     if not updates:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Sin campos para actualizar")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Sin campos para actualizar"
+        )
 
     set_clause = ", ".join(f"{k} = :{k}" for k in updates)
     result = await db.execute(
-        text(f"UPDATE public.users SET {set_clause} WHERE id = :id RETURNING {_SELECT_FIELDS}"),
+        text(
+            f"UPDATE public.users"
+            f" SET {set_clause} WHERE id = :id RETURNING {_SELECT_FIELDS}"
+        ),
         {**updates, "id": user_id},
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado"
+        )
     await db.commit()
 
     # Sincronizar email y/o rol en Supabase Auth
@@ -162,11 +185,15 @@ async def deactivate_user(
         {"id": user_id},
     )
     if result.mappings().first() is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado"
+        )
 
     # Bloquear login en Supabase Auth primero (si falla, no se toca la BD)
     try:
-        supabase_admin.auth.admin.update_user_by_id(str(user_id), {"ban_duration": "876600h"})
+        supabase_admin.auth.admin.update_user_by_id(
+            str(user_id), {"ban_duration": "876600h"}
+        )
     except AuthApiError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
@@ -178,37 +205,53 @@ async def deactivate_user(
 
     # Obtener proyectos afectados (antes de desactivar asignaciones)
     dirs = await db.execute(
-        text("SELECT DISTINCT project_id FROM public.project_directors WHERE docente_id = :id AND is_active = true"),
+        text(
+            "SELECT DISTINCT project_id FROM public.project_directors"
+            " WHERE docente_id = :id AND is_active = true"
+        ),
         {"id": user_id},
     )
     jurors = await db.execute(
-        text("SELECT DISTINCT project_id FROM public.project_jurors WHERE docente_id = :id AND is_active = true"),
+        text(
+            "SELECT DISTINCT project_id FROM public.project_jurors"
+            " WHERE docente_id = :id AND is_active = true"
+        ),
         {"id": user_id},
     )
-    affected_project_ids = list({
-        *(r["project_id"] for r in dirs.mappings()),
-        *(r["project_id"] for r in jurors.mappings()),
-    })
+    affected_project_ids = list(
+        {
+            *(r["project_id"] for r in dirs.mappings()),
+            *(r["project_id"] for r in jurors.mappings()),
+        }
+    )
 
     # Desactivar asignaciones activas
     await db.execute(
-        text("UPDATE public.project_directors SET is_active = false WHERE docente_id = :id AND is_active = true"),
+        text(
+            "UPDATE public.project_directors"
+            " SET is_active = false WHERE docente_id = :id AND is_active = true"
+        ),
         {"id": user_id},
     )
     await db.execute(
-        text("UPDATE public.project_jurors SET is_active = false WHERE docente_id = :id AND is_active = true"),
+        text(
+            "UPDATE public.project_jurors"
+            " SET is_active = false WHERE docente_id = :id AND is_active = true"
+        ),
         {"id": user_id},
     )
 
     # Crear mensaje de alerta por cada proyecto afectado
     for project_id in affected_project_ids:
         await db.execute(
-            text("""
+            text(
+                """
                 INSERT INTO public.messages
                     (project_id, sender_id, recipient_id, content, sender_display)
                 VALUES
                     (:project_id, :sender_id, :recipient_id, :content, 'Sistema')
-            """),
+            """
+            ),
             {
                 "project_id": project_id,
                 "sender_id": current_user.id,
@@ -222,4 +265,6 @@ async def deactivate_user(
 
     await db.commit()
 
-    return DeactivateUserResponse(user_id=user_id, affected_project_ids=affected_project_ids)
+    return DeactivateUserResponse(
+        user_id=user_id, affected_project_ids=affected_project_ids
+    )

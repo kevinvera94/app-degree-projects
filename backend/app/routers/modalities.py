@@ -48,10 +48,9 @@ async def create_modality(
     current_user: CurrentUser = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ) -> ModalityResponse:
-    body.validate_levels()
-
     result = await db.execute(
-        text(f"""
+        text(
+            f"""
             INSERT INTO public.modalities
                 (name, levels, max_members, requires_sustentation,
                  requires_ethics_approval, requires_business_plan_cert, created_by)
@@ -59,7 +58,8 @@ async def create_modality(
                 (:name, :levels, :max_members, :requires_sustentation,
                  :requires_ethics_approval, :requires_business_plan_cert, :created_by)
             RETURNING {_SELECT_MODALITY}
-        """),
+        """
+        ),
         {
             "name": body.name,
             "levels": body.levels,
@@ -83,19 +83,28 @@ async def update_modality(
     db: AsyncSession = Depends(get_db),
 ) -> ModalityResponse:
     allowed = {"name", "max_members", "is_active"}
-    updates = {k: v for k, v in body.model_dump(exclude_none=True).items() if k in allowed}
+    updates = {
+        k: v for k, v in body.model_dump(exclude_none=True).items() if k in allowed
+    }
 
     if not updates:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Sin campos para actualizar")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Sin campos para actualizar"
+        )
 
     set_clause = ", ".join(f"{k} = :{k}" for k in updates)
     result = await db.execute(
-        text(f"UPDATE public.modalities SET {set_clause} WHERE id = :id RETURNING {_SELECT_MODALITY}"),
+        text(
+            f"UPDATE public.modalities"
+            f" SET {set_clause} WHERE id = :id RETURNING {_SELECT_MODALITY}"
+        ),
         {**updates, "id": modality_id},
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
+        )
     await db.commit()
     return _to_modality_response(row)
 
@@ -112,10 +121,15 @@ async def list_modality_limits(
         {"id": modality_id},
     )
     if exists.mappings().first() is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
+        )
 
     result = await db.execute(
-        text(f"SELECT {_SELECT_LIMIT} FROM public.modality_level_limits WHERE modality_id = :id ORDER BY level"),
+        text(
+            f"SELECT {_SELECT_LIMIT} FROM public.modality_level_limits"
+            " WHERE modality_id = :id ORDER BY level"
+        ),
         {"id": modality_id},
     )
     return [ModalityLimitResponse(**row) for row in result.mappings()]
@@ -131,7 +145,9 @@ async def upsert_modality_limit(
     response: Response = None,
 ) -> ModalityLimitResponse:
     if level not in VALID_LEVELS:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nivel académico inválido")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Nivel académico inválido"
+        )
 
     # Verificar que la modalidad existe
     exists = await db.execute(
@@ -139,23 +155,33 @@ async def upsert_modality_limit(
         {"id": modality_id},
     )
     if exists.mappings().first() is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
+        )
 
     # Determinar si es insert o update para el status code
     existing = await db.execute(
-        text("SELECT id FROM public.modality_level_limits WHERE modality_id = :mid AND level = :level"),
+        text(
+            "SELECT id FROM public.modality_level_limits"
+            " WHERE modality_id = :mid AND level = :level"
+        ),
         {"mid": modality_id, "level": level},
     )
     is_new = existing.mappings().first() is None
 
     result = await db.execute(
-        text(f"""
-            INSERT INTO public.modality_level_limits (modality_id, level, max_members, updated_by)
+        text(
+            f"""
+            INSERT INTO public.modality_level_limits
+                (modality_id, level, max_members, updated_by)
             VALUES (:modality_id, :level, :max_members, :updated_by)
             ON CONFLICT (modality_id, level) DO UPDATE
-                SET max_members = :max_members, updated_by = :updated_by, updated_at = now()
+                SET max_members = :max_members,
+                    updated_by = :updated_by,
+                    updated_at = now()
             RETURNING {_SELECT_LIMIT}
-        """),
+        """
+        ),
         {
             "modality_id": modality_id,
             "level": level,
@@ -179,9 +205,14 @@ async def delete_modality_limit(
     db: AsyncSession = Depends(get_db),
 ) -> None:
     result = await db.execute(
-        text("DELETE FROM public.modality_level_limits WHERE modality_id = :mid AND level = :level"),
+        text(
+            "DELETE FROM public.modality_level_limits"
+            " WHERE modality_id = :mid AND level = :level"
+        ),
         {"mid": modality_id, "level": level},
     )
     if result.rowcount == 0:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Límite no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Límite no encontrado"
+        )
     await db.commit()

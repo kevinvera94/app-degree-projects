@@ -11,14 +11,16 @@ async def get_max_members(db: AsyncSession, modality_id: UUID, level: str) -> in
     cae de regreso al max_members por defecto de la modalidad.
     """
     result = await db.execute(
-        text("""
+        text(
+            """
             SELECT COALESCE(
                 (SELECT max_members FROM public.modality_level_limits
                  WHERE modality_id = :modality_id AND level = :level),
                 (SELECT max_members FROM public.modalities
                  WHERE id = :modality_id)
             ) AS max_members
-        """),
+        """
+        ),
         {"modality_id": modality_id, "level": level},
     )
     value = result.scalar_one_or_none()

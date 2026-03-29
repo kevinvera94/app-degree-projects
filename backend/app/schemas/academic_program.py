@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 VALID_LEVELS = {
     "tecnologico",
@@ -18,9 +18,14 @@ class AcademicProgramCreate(BaseModel):
     level: str
     faculty: str = Field("Ingeniería", max_length=100)
 
-    def validate_level(self) -> None:
-        if self.level not in VALID_LEVELS:
-            raise ValueError(f"Nivel inválido. Debe ser uno de: {', '.join(sorted(VALID_LEVELS))}")
+    @field_validator("level")
+    @classmethod
+    def validate_level(cls, v: str) -> str:
+        if v not in VALID_LEVELS:
+            raise ValueError(
+                f"Nivel inválido. Debe ser uno de: {', '.join(sorted(VALID_LEVELS))}"
+            )
+        return v
 
 
 class AcademicProgramUpdate(BaseModel):
@@ -28,9 +33,14 @@ class AcademicProgramUpdate(BaseModel):
     level: Optional[str] = None
     is_active: Optional[bool] = None
 
-    def validate_level(self) -> None:
-        if self.level is not None and self.level not in VALID_LEVELS:
-            raise ValueError(f"Nivel inválido. Debe ser uno de: {', '.join(sorted(VALID_LEVELS))}")
+    @field_validator("level")
+    @classmethod
+    def validate_level(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v not in VALID_LEVELS:
+            raise ValueError(
+                f"Nivel inválido. Debe ser uno de: {', '.join(sorted(VALID_LEVELS))}"
+            )
+        return v
 
 
 class AcademicProgramResponse(BaseModel):

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.academic_program import VALID_LEVELS
 
@@ -15,12 +15,14 @@ class ModalityCreate(BaseModel):
     requires_ethics_approval: bool = False
     requires_business_plan_cert: bool = False
 
-    def validate_levels(self) -> None:
-        invalid = [l for l in self.levels if l not in VALID_LEVELS]
-        if invalid:
-            raise ValueError(f"Niveles inválidos: {', '.join(invalid)}")
+    @model_validator(mode="after")
+    def validate_levels(self) -> "ModalityCreate":
         if not self.levels:
             raise ValueError("Debe especificar al menos un nivel académico")
+        invalid = [lvl for lvl in self.levels if lvl not in VALID_LEVELS]
+        if invalid:
+            raise ValueError(f"Niveles inválidos: {', '.join(invalid)}")
+        return self
 
 
 class ModalityUpdate(BaseModel):

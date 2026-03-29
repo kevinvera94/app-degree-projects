@@ -15,10 +15,15 @@ async def get_me(
     db: AsyncSession = Depends(get_db),
 ) -> UserMeResponse:
     result = await db.execute(
-        text("SELECT id, full_name, email, role, is_active FROM public.users WHERE id = :id"),
+        text(
+            "SELECT id, full_name, email, role, is_active"
+            " FROM public.users WHERE id = :id"
+        ),
         {"id": current_user.id},
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado"
+        )
     return UserMeResponse(**row)

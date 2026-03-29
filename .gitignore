@@ -15,6 +15,7 @@
 
 # Dependencies
 node_modules/
+frontend/.vite/
 .pnp
 .pnp.js
 
@@ -38,6 +39,7 @@ yarn-error.log*
 
 # Python
 __pycache__/
+*.code-workspace
 *.py[cod]
 *.pyo
 .venv/

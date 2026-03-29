@@ -253,7 +253,7 @@ Documentos adjuntos a una radicación.
 |---|---|---|
 | `id` | uuid PK | |
 | `submission_id` | uuid FK → submissions | |
-| `attachment_type` | enum | `plantilla` \| `carta_aval` \| `reporte_similitud` \| `aval_etica` \| `certificacion_plan_negocio` \| `carta_impacto` \| `autorizacion_biblioteca` \| `otro` |
+| `attachment_type` | enum | `plantilla` \| `carta_aval` \| `reporte_similitud` \| `aval_etica` \| `certificacion_plan_negocio` \| `carta_impacto` \| `autorizacion_biblioteca` \| `retiro_integrante` \| `otro` |
 | `file_name` | varchar(255) | |
 | `file_url` | text | URL de Supabase Storage |
 | `uploaded_at` | timestamp | |

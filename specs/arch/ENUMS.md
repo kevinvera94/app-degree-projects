@@ -54,14 +54,14 @@
 
 ---
 
-## Tipos de ventana de fechas (`date_windows.type`)
+## Tipos de ventana de fechas (`date_windows.window_type`)
+> Las ventanas extemporáneas son una entidad separada (`extemporaneous_windows`), no un valor de este enum.
 
 | Valor | Descripción |
 |---|---|
 | `inscripcion_idea` | Ventana para inscribir nuevas ideas |
 | `radicacion_anteproyecto` | Ventana para radicar anteproyectos |
 | `radicacion_producto_final` | Ventana para radicar producto final |
-| `extemporanea` | Ventana individual habilitada para un trabajo específico |
 
 ---
 
@@ -81,13 +81,24 @@
 
 ---
 
-## Etapas de evaluación (`evaluations.stage`, `project_jurors.stage`)
+## Etapas de evaluación (`evaluations.stage`)
+> Aplica a la entidad `evaluations` (anteproyecto y producto final). La sustentación usa su propia entidad `sustentation_evaluations`.
 
 | Valor | Descripción |
 |---|---|
 | `anteproyecto` | Evaluación del documento de anteproyecto |
 | `producto_final` | Evaluación del producto final |
-| `sustentacion` | Calificación de la sustentación pública |
+
+---
+
+## Etapas de asignación de jurado (`project_jurors.stage`)
+> Incluye `sustentacion` porque los jurados también se asignan para evaluar la sustentación.
+
+| Valor | Descripción |
+|---|---|
+| `anteproyecto` | Jurado asignado para evaluar el anteproyecto |
+| `producto_final` | Jurado asignado para evaluar el producto final |
+| `sustentacion` | Jurado asignado para la sustentación pública |
 
 ---
 

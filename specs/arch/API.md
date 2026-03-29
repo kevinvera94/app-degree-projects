@@ -138,17 +138,19 @@
 
 **Esquemas de respuesta por rol — `GET /projects/{id}/evaluations`:**
 
+**Estudiante** — `juror_id` y `full_name` nunca se incluyen:
 ```json
-// Estudiante (juror_id y full_name NUNCA se incluyen)
-{ "juror_number": 1, "score": 4.5, "observations": "...", "submitted_at": "..." }
+{ "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z" }
+```
 
-// Administrador (visibilidad completa)
-{ "id": "uuid", "juror_id": "uuid", "juror_name": "Dr. García", "juror_number": 1,
-  "score": 4.5, "observations": "...", "submitted_at": "...", "is_extemporaneous": false }
+**Administrador** — visibilidad completa:
+```json
+{ "id": "uuid", "juror_id": "uuid", "juror_name": "Dr. Garcia", "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z", "is_extemporaneous": false }
+```
 
-// Docente como Director (ve identidad de jurados de sus trabajos, sin otras)
-{ "juror_id": "uuid", "juror_name": "Dr. García", "juror_number": 1,
-  "score": 4.5, "observations": "...", "submitted_at": "..." }
+**Docente como Director** — ve identidad de jurados de sus propios trabajos:
+```json
+{ "juror_id": "uuid", "juror_name": "Dr. Garcia", "juror_number": 1, "score": 4.5, "observations": "texto", "submitted_at": "2026-03-28T10:00:00Z" }
 ```
 
 ---

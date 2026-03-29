@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-01
-**Próxima tarea:** `T-F01-07` — Crear utilidad de cálculo de días hábiles
+**Próxima tarea:** `T-F02-01` — Crear migraciones de base de datos
 
 ---
 
@@ -52,6 +52,8 @@
 - `T-F01-04` — Configurar Supabase (proyecto + Auth + Storage) — 2026-03-29
 - `T-F01-05` — Configurar variables de entorno locales — 2026-03-29
 - `T-F01-06` — Configurar middleware de autenticación JWT en FastAPI — 2026-03-29
+- `T-F01-07` — Crear utilidad de cálculo de días hábiles — 2026-03-29
+- `T-F01-08` — Crear archivo de festivos USC (USC_HOLIDAYS_FILE) — 2026-03-29
 
 ---
 

@@ -98,13 +98,13 @@
 - **Referencias:** `specs/arch/INFRA.md` (sección USC_HOLIDAYS_FILE), `specs/BRIEF.md` §9
 - **Descripción:** Implementar `backend/app/utils/business_days.py` con función `add_business_days(start_date, days, period)` que excluye fines de semana y festivos del calendario USC según el archivo `USC_HOLIDAYS_FILE` configurable por periodo.
 - **Criterios de aceptación:**
-  - [ ] Función `add_business_days(start: date, n: int, period: str) -> date` implementada
-  - [ ] Función `count_business_days_between(start: date, end: date, period: str) -> int` implementada
-  - [ ] Función `is_overdue(deadline: date, submitted_at: datetime, period: str) -> bool` implementada
-  - [ ] Carga de `USC_HOLIDAYS_FILE` JSON por periodo (formato documentado en INFRA.md)
-  - [ ] Tests unitarios con fechas que crucen festivos y fines de semana
+  - [x] Función `add_business_days(start: date, n: int, period: str) -> date` implementada
+  - [x] Función `count_business_days_between(start: date, end: date, period: str) -> int` implementada
+  - [x] Función `is_overdue(deadline: date, submitted_at: datetime, period: str) -> bool` implementada
+  - [x] Carga de `USC_HOLIDAYS_FILE` JSON por periodo (formato documentado en INFRA.md)
+  - [x] Tests unitarios con fechas que crucen festivos y fines de semana
 - **Dependencias:** T-F01-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -113,9 +113,9 @@
 - **Referencias:** `specs/arch/INFRA.md` (sección USC_HOLIDAYS_FILE)
 - **Descripción:** Crear el archivo JSON de festivos USC para los periodos académicos 2025-1, 2025-2 y 2026-1, siguiendo el formato definido en INFRA.md (festivos nacionales de Colombia + días no hábiles propios de la USC).
 - **Criterios de aceptación:**
-  - [ ] Archivo `backend/app/data/usc_holidays.json` creado con periodos 2025-1, 2025-2 y 2026-1
-  - [ ] Incluye festivos nacionales de Colombia según Ley 51/1983 y normas concordantes
-  - [ ] Ruta del archivo configurada en `USC_HOLIDAYS_FILE` (variable de entorno)
-  - [ ] La utilidad `business_days.py` lo carga correctamente
+  - [x] Archivo `backend/app/data/usc_holidays.json` creado con periodos 2025-1, 2025-2 y 2026-1
+  - [x] Incluye festivos nacionales de Colombia según Ley 51/1983 y normas concordantes
+  - [x] Ruta del archivo configurada en `USC_HOLIDAYS_FILE` (variable de entorno)
+  - [x] La utilidad `business_days.py` lo carga correctamente
 - **Dependencias:** T-F01-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     juror_expiry_alert_days: int = 3
 
     # Festivos
-    usc_holidays_file: str = "config/usc_holidays.json"
+    usc_holidays_file: str = "app/data/usc_holidays.json"
 
     @computed_field  # type: ignore[prop-decorator]
     @property

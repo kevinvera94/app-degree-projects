@@ -12,12 +12,12 @@
 - **Referencias:** `specs/arch/API.md` §/auth, `specs/arch/AUTH.md`
 - **Descripción:** Endpoint que retorna el perfil del usuario autenticado: datos del sistema más rol. Requiere JWT válido.
 - **Criterios de aceptación:**
-  - [x] `GET /api/v1/auth/me` retorna `{ id, full_name, email, role, is_active }` con JWT válido → `200`
-  - [x] Sin JWT → `401`
-  - [x] Usuario no encontrado en tabla `users` → `404`
-  - [x] Schema Pydantic `UserMeResponse` creado en `backend/app/schemas/`
+  - [ ] `GET /api/v1/auth/me` retorna `{ id, full_name, email, role, is_active }` con JWT válido → `200`
+  - [ ] Sin JWT → `401`
+  - [ ] Usuario no encontrado en tabla `users` → `404`
+  - [ ] Schema Pydantic `UserMeResponse` creado en `backend/app/schemas/`
 - **Dependencias:** T-F01-06, T-F02-02
-- **Estado:** ✅ Completada — 2026-03-29
+- **Estado:** ✅ Completada
 
 ---
 
@@ -26,15 +26,15 @@
 - **Referencias:** `specs/arch/API.md` §/users, RF-01-01, RF-01-04, RF-01-05
 - **Descripción:** Endpoints para crear, listar, ver y editar usuarios. Solo accesible para Administrador.
 - **Criterios de aceptación:**
-  - [x] `GET /api/v1/users` con filtros `role` e `is_active` → `200` lista paginada (solo Administrador)
-  - [x] `POST /api/v1/users` crea usuario en Supabase Auth (con service role key) y en tabla `users` → `201`
-  - [x] `GET /api/v1/users/{id}` → `200` detalle (solo Administrador)
-  - [x] `PATCH /api/v1/users/{id}` edita `full_name`, `email`, `role` → `200` (solo Administrador)
-  - [x] Validación: email único, rol válido
-  - [x] `GET /users?role=docente&is_active=true` retorna solo docentes activos (para selectores de asignación)
-  - [x] Schemas Pydantic `UserCreate`, `UserUpdate`, `UserResponse` creados
+  - [ ] `GET /api/v1/users` con filtros `role` e `is_active` → `200` lista paginada (solo Administrador)
+  - [ ] `POST /api/v1/users` crea usuario en Supabase Auth (con service role key) y en tabla `users` → `201`
+  - [ ] `GET /api/v1/users/{id}` → `200` detalle (solo Administrador)
+  - [ ] `PATCH /api/v1/users/{id}` edita `full_name`, `email`, `role` → `200` (solo Administrador)
+  - [ ] Validación: email único, rol válido
+  - [ ] `GET /users?role=docente&is_active=true` retorna solo docentes activos (para selectores de asignación)
+  - [ ] Schemas Pydantic `UserCreate`, `UserUpdate`, `UserResponse` creados
 - **Dependencias:** T-F03-01
-- **Estado:** ✅ Completada — 2026-03-29
+- **Estado:** ✅ Completada
 
 ---
 

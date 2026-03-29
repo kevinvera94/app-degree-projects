@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-01
-**Próxima tarea:** `T-F03-01` — Implementar router de autenticación
+**Fase activa:** FASE-03
+**Próxima tarea:** `T-F03-02` — Implementar CRUD de usuarios (`/users`)
 
 ---
 
@@ -55,6 +55,7 @@
 - `T-F01-07` — Crear utilidad de cálculo de días hábiles — 2026-03-29
 - `T-F01-08` — Crear archivo de festivos USC (USC_HOLIDAYS_FILE) — 2026-03-29
 - `T-F02-01` a `T-F02-12` — FASE-02: Base de datos (ENUMs, tablas, índices) — 2026-03-29
+- `T-F03-01` — Implementar `GET /auth/me` — 2026-03-29
 
 ---
 

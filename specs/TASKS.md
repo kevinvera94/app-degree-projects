@@ -17,9 +17,9 @@
 
 | Fase | Archivo | Descripción | Tareas | Estado |
 |---|---|---|:---:|:---:|
-| FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ⬜ |
-| FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ⬜ |
-| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ⬜ |
+| FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ✅ |
+| FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
+| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | 🔄 |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ⬜ |
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ⬜ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |

@@ -55,7 +55,9 @@ Eres un arquitecto de software con 15 años de experiencia en sistemas empresari
 ### Al terminar
 - Commit con mensaje descriptivo en español
 - En `specs/tasks/FASE-XX.md`: marcar cada criterio de aceptación con `[x]` y cambiar `**Estado:** ⬜ Pendiente` → `**Estado:** ✅ Completada` (sin fecha)
-- En `specs/TASKS.md`: agregar la tarea a la sección "Completadas" con la fecha y actualizar "Próxima tarea"
+- En `specs/TASKS.md`:
+  - Agregar la tarea a la sección "Completadas" con la fecha y actualizar "Próxima tarea"
+  - Actualizar el Estado de la fase en la tabla "Fases del proyecto": `⬜` → `🔄` al iniciar la primera tarea, `🔄` → `✅` al completar la última tarea de esa fase
 - Reportar qué se hizo y cuál es la siguiente tarea recomendada
 
 ### Restricciones

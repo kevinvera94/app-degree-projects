@@ -36,10 +36,15 @@ SECRET_KEY=your-secret-key
 ALLOWED_ORIGINS=http://localhost:5173,https://your-app.vercel.app
 
 # Configuración de plazos (días hábiles)
+# Días hábiles = días calendario - fines de semana - festivos del calendario académico USC
 JUROR_EVALUATION_DEADLINE_DAYS=15
 JUROR_SECOND_REVIEW_DEADLINE_DAYS=10
 STUDENT_CORRECTION_DEADLINE_DAYS=10
-JUROR_EXPIRY_ALERT_DAYS=3          # días antes del vencimiento para alertar
+JUROR_EXPIRY_ALERT_DAYS=3          # días hábiles antes del vencimiento para alertar
+
+# Festivos USC (archivo JSON con fechas del calendario académico)
+# Formato: ["2026-01-01", "2026-03-23", ...] — se actualiza cada periodo académico
+USC_HOLIDAYS_FILE=config/usc_holidays.json
 ```
 
 ### Frontend (`frontend/.env`)
@@ -182,8 +187,10 @@ Bucket: degree-projects-docs/
       acta_{project_id}.pdf
 ```
 
-- Acceso: **privado** — URLs firmadas con expiración (Supabase Signed URLs)
+- Acceso: **privado** — URLs firmadas con expiración de **1 hora** (Supabase Signed URLs)
 - Solo el backend genera URLs firmadas; el cliente nunca accede directamente al bucket
+- **Límite de tamaño por archivo:** 20 MB. Tipos aceptados: `.pdf` únicamente
+- Validación de tipo y tamaño se realiza en el backend antes de subir a Storage
 
 ---
 

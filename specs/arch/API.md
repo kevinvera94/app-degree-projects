@@ -29,11 +29,12 @@
 
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| GET | `/users` | Listar usuarios (filtros: rol, activo) | Administrador |
+| GET | `/users` | Listar usuarios. Query params: `role` (administrador \| docente \| estudiante), `is_active` (true \| false) | Administrador |
+| GET | `/users?role=docente&is_active=true` | Selector de docentes activos para asignar como director o jurado — filtro obligatorio en formularios de asignación | Administrador |
 | POST | `/users` | Crear usuario y asignar rol | Administrador |
 | GET | `/users/{id}` | Detalle de usuario | Administrador |
 | PATCH | `/users/{id}` | Editar datos o rol | Administrador |
-| PATCH | `/users/{id}/deactivate` | Desactivar acceso | Administrador |
+| PATCH | `/users/{id}/deactivate` | Desactivar docente: bloquea acceso, marca `is_active=false` en sus `project_directors` y `project_jurors` activos, y genera alertas de reasignación para el Administrador | Administrador |
 
 ---
 
@@ -86,7 +87,7 @@
 |---|---|---|---|
 | GET | `/projects/{id}/members` | Listar integrantes | Todos (con pertenencia) |
 | POST | `/projects/{id}/members` | Agregar integrante (solo antes de anteproyecto aprobado) | Administrador |
-| PATCH | `/projects/{id}/members/{memberId}/remove` | Retirar integrante | Administrador |
+| PATCH | `/projects/{id}/members/{memberId}/remove` | Retirar integrante (requiere adjunto con justificación + aval director, multipart/form-data) | Administrador |
 
 ### Directores
 
@@ -138,9 +139,9 @@
 
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| GET | `/projects/{id}/sustentation` | Detalle de sustentación | Todos (con pertenencia) |
+| GET | `/projects/{id}/sustentation` | Detalle de sustentación y calificaciones (juror_id oculto para estudiante) | Todos (con pertenencia) |
 | POST | `/projects/{id}/sustentation` | Registrar fecha, hora y lugar | Administrador |
-| PATCH | `/projects/{id}/sustentation` | Registrar calificación de la sustentación | Administrador |
+| POST | `/projects/{id}/sustentation/evaluations` | Registrar calificación individual del jurado. El sistema calcula `final_score` y `is_approved` cuando ambos jurados han calificado | Docente (Jurado asignado), Administrador |
 
 ---
 

@@ -40,7 +40,7 @@ Estos son los actores identificados en la Resolución 004/2025 y su rol en el pr
 | Actor | Rol en el proceso |
 |---|---|
 | **Estudiante** | Inscribe la idea, diligencia anteproyecto, adjunta informe final, recibe notificaciones, sube correcciones, diligencia autorización de biblioteca |
-| **Comité de Trabajos de Grado (CTG)** | Conformado por el decano, directores de programas, coordinador CEII y coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas. Coordinado por un integrante designado por rotación anual |
+| **CTG (Comité de Trabajos de Grado)** | Conformado por el decano, directores de programas, coordinador CEII y coordinador de Extensión. Aprueba/rechaza ideas y anteproyectos, asigna director y jurados, establece fechas, emite actas. Coordinado por un integrante designado por rotación anual |
 | **Secretaria de facultad** | Apoyo administrativo del CTG. Operadora principal del sistema en nombre del CTG |
 | **Director de trabajo de grado** | Docente (máx. 2 por trabajo) que acompaña al estudiante, da Vo.Bo. y verifica reporte de similitud ≤20% antes de radicar. El primero debe ser docente USC en ejercicio |
 | **Jurado 1 / Jurado 2** | Docentes evaluadores designados por el CTG. Anónimos para el estudiante. Mismos jurados para anteproyecto y producto final cuando sea posible |
@@ -101,8 +101,8 @@ Para el sistema, los actores anteriores se agrupan en **3 roles**. Al registrar 
     - **3.0 a 3.9 → Devuelto para correcciones**
     - **< 3.0 → Reprobado**
 13. Si un jurado reprueba y el otro aprueba → el Administrador designa un **Jurado 3**. Este solo puede aprobar o reprobar (no devolver para correcciones)
-14. Si reprobación unánime → el estudiante debe presentar nueva propuesta desde cero (estado **"Anteproyecto reprobado"**)
-15. Si aprobado → estado **"Anteproyecto aprobado"**. A partir de este punto **no se pueden agregar integrantes nuevos**
+14. Si reprobación unánime → estado **"Anteproyecto reprobado"**. El sistema retorna el trabajo a **"Idea aprobada"**. La idea permanece vigente; el estudiante debe radicar un nuevo anteproyecto desde cero dentro de las ventanas de fechas habilitadas
+15. Si aprobado → estado **"Anteproyecto aprobado"**. A partir de este punto **no se pueden agregar integrantes nuevos**. El sistema transiciona automáticamente a **"En desarrollo"**
 16. Las calificaciones registradas fuera del plazo de 15 días hábiles quedan marcadas como **extemporáneas** en el sistema
 
 ### ETAPA 4b — Correcciones al anteproyecto (si aplica)
@@ -143,7 +143,7 @@ Para el sistema, los actores anteriores se agrupan en **3 roles**. Al registrar 
 
 ### ETAPA 8 — Sustentación pública
 38. Una vez aprobado el producto final, el Administrador registra fecha, hora y lugar de la **sustentación pública** y notifica a director, estudiantes y jurados
-39. Calificación de la sustentación: ≥4.0 aprobado, <4.0 reprobado
+39. Cada jurado registra su calificación numérica individual (escala 0.0 a 5.0). El sistema calcula el promedio: promedio ≥ 4.0 → **Aprobado** / promedio < 4.0 → **Reprobado**. No existe Jurado 3 en sustentación
 40. Si reprobación → el estudiante debe presentar nueva propuesta desde cero
 41. **Excepción:** la modalidad **Diplomado en programas tecnológicos** no requiere sustentación pública. Una vez aprobado el producto final se pasa directamente a la generación del acta
 
@@ -214,12 +214,14 @@ Suspendido por plagio (puede ocurrir en cualquier etapa)
 - El retiro de un integrante requiere solicitud al CTG con justificación y aval del director
 - El director debe verificar similitud ≤20% antes de firmar el aval (Art. 31° literal i)
 - Los jurados del anteproyecto deben ser los mismos del producto final cuando sea posible
-- **Plazo para correcciones:** 10 días hábiles con Vo.Bo. del director
-- **Plazo de evaluación jurados:** 15 días hábiles (primera revisión), 10 días hábiles (segunda revisión)
+- **Plazo para correcciones:** 10 días hábiles con Vo.Bo. del director (desde la notificación de correcciones)
+- **Plazo de evaluación jurados:** 15 días hábiles (primera revisión, contados desde la asignación del jurado) / 10 días hábiles (segunda revisión, contados desde la entrega del documento corregido por el estudiante)
+- **Días hábiles:** se excluyen fines de semana y festivos del calendario académico USC. El sistema usa un archivo de festivos configurable por periodo (`USC_HOLIDAYS_FILE`)
 - Las calificaciones registradas fuera del plazo quedan marcadas como **extemporáneas** (no se bloquean)
 - Si un jurado reprueba y el otro aprueba → se designa **Jurado 3** (solo aprueba o reprueba)
 - **Jurado 3 no existe en sustentación** — en esa etapa solo hay Aprobado o Reprobado
-- Reprobación unánime en cualquier etapa → nueva propuesta desde cero (nueva inscripción + asignación de director)
+- Reprobación unánime de anteproyecto → retorna a **Idea aprobada** (el estudiante rehace el anteproyecto)
+- Reprobación en sustentación → nueva inscripción de idea desde cero
 - Plagio comprobado → suspensión y remisión al comité de ética y disciplina
 - Un trabajo puede tener hasta **2 directores**; el primero debe ser docente USC en ejercicio
 - La aprobación final requiere producto final aprobado + sustentación pública aprobada, **excepto** Diplomado en programas tecnológicos (solo producto final)

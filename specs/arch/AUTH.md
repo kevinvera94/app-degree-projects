@@ -55,7 +55,8 @@ Cliente (React)            Supabase Auth             Backend FastAPI
 | Asignar director al trabajo | ✅ | ❌ | ❌ | ❌ |
 | Radicar anteproyecto | ❌ | ❌ | ❌ | ✅ |
 | Asignar jurados | ✅ | ❌ | ❌ | ❌ |
-| Registrar calificación | ❌ | ❌ | ✅ (asignados) | ❌ |
+| Registrar calificación (anteproyecto / producto final) | ❌ | ❌ | ✅ (asignados) | ❌ |
+| Registrar calificación de sustentación | ✅ | ❌ | ✅ (asignados) | ❌ |
 | Ver identidad de jurados | ✅ | ✅ (propio trab.) | ❌ | ❌ |
 | Emitir Vo.Bo. del director | ❌ | ✅ (asignados) | ❌ | ❌ |
 | Radicar producto final | ❌ | ❌ | ❌ | ✅ |
@@ -89,6 +90,13 @@ Además del rol, el backend valida que el usuario **pertenezca al proyecto** ant
 | `docente` (Director) | Debe estar en `project_directors` con `is_active = true` |
 | `docente` (Jurado) | Debe estar en `project_jurors` con `is_active = true` |
 | `administrador` | Acceso a todos los proyectos sin restricción de pertenencia |
+
+> **Docente inactivo (`is_active = false`):**
+> - Pierde **acceso inmediato** al sistema (login bloqueado por Supabase Auth).
+> - Sus registros en `project_directors` y `project_jurors` quedan con `is_active = false` automáticamente.
+> - El sistema **alerta al Administrador** para que reasigne al docente en todos los trabajos afectados.
+> - El Administrador debe designar un reemplazo antes de que el proceso pueda continuar.
+> - No aparece en los selectores de asignación para nuevos trabajos (RF-04-07).
 
 ---
 

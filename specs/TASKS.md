@@ -1,7 +1,7 @@
 # TASKS.md — Plan de tareas del proyecto
 > Índice de fases. Cada fase tiene su archivo de detalle en `specs/tasks/`.
 > Convención: una tarea = una sesión de agente (atómica, verificable, independiente).
-> Última actualización: 2026-03-28
+> Última actualización: 2026-03-29
 
 ---
 

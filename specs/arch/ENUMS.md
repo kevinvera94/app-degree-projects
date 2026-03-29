@@ -21,6 +21,7 @@
 | `en_revision_jurados_producto_final` | Jurados evaluando el producto final |
 | `correcciones_producto_final_solicitadas` | Jurados solicitaron correcciones al producto final |
 | `producto_final_corregido_entregado` | Estudiante entregó correcciones al producto final — 2a revisión iniciada |
+| `producto_final_reprobado` | Producto final reprobado unánimemente (1a o 2a revisión) — retorna a `en_desarrollo`; nueva radicación en siguiente ventana |
 | `aprobado_para_sustentacion` | Producto final aprobado, pendiente de programar sustentación |
 | `sustentacion_programada` | Sustentación con fecha, hora y lugar registrados |
 | `trabajo_aprobado` | Sustentación aprobada (o Diplomado tecnológico sin sustentación). Pendiente de acta |

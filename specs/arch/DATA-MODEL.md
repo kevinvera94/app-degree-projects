@@ -170,6 +170,7 @@ producto_final_entregado
 en_revision_jurados_producto_final
 correcciones_producto_final_solicitadas ← permanece aquí si el estudiante no entrega en plazo
 producto_final_corregido_entregado      → inicia 2a revisión automáticamente
+producto_final_reprobado                → retorna a en_desarrollo (integrantes conservados); nueva radicación en siguiente ventana
 aprobado_para_sustentacion
 sustentacion_programada
 trabajo_aprobado                        ← Diplomado tecnológico llega aquí directamente desde producto_final aprobado

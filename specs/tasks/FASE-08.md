@@ -19,14 +19,14 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/messages, RF-15-01..RF-15-09
 - **Descripción:** Endpoints para leer y enviar mensajes de la bandeja de un trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/projects/{id}/messages` → `200` lista de mensajes del trabajo, ordenados por `created_at` DESC (todos con pertenencia)
-  - [ ] Cada mensaje incluye: `id`, `sender_display`, `content`, `is_read`, `created_at`
+  - [ ] `GET /api/v1/projects/{id}/messages` → `200` lista de mensajes del trabajo, ordenados por `sent_at` DESC (todos con pertenencia)
+  - [ ] Cada mensaje incluye: `id`, `sender_display`, `content`, `is_read`, `sent_at`
   - [ ] El campo `sender_display` muestra el nombre real si el emisor es Administrador o Director; muestra "Jurado 1" o "Jurado 2" si es Jurado (determinado por `project_jurors`)
   - [ ] `POST /api/v1/projects/{id}/messages` body: `{ content, recipient_id? }` → `201` (todos con pertenencia)
   - [ ] Valida que el emisor tenga pertenencia activa en el proyecto → `403`
   - [ ] Valida reglas de mensajería por rol (RF-15-02..RF-15-07): Estudiante → Director o Jurado; Director → Estudiante o Admin; Jurado → Estudiante; Admin → cualquiera → `403` si la combinación emisor/receptor no está permitida
   - [ ] Al enviar: si el receptor es el Estudiante y el emisor es Jurado, `sender_display = "Jurado N"` (anonimato)
-  - [ ] Mensaje creado en `project_messages` con `is_read = false` para el receptor
+  - [ ] Mensaje creado en `messages` con `is_read = false` para el receptor
 - **Dependencias:** T-F02-11, T-F04-01
 - **Estado:** ⬜ Pendiente
 
@@ -39,7 +39,7 @@
 - **Criterios de aceptación:**
   - [ ] `PATCH /api/v1/projects/{id}/messages/{msgId}/read` → `200` (todos con pertenencia)
   - [ ] Solo el receptor del mensaje puede marcarlo como leído → `403` si el solicitante no es el `recipient_id`
-  - [ ] Actualiza `project_messages.is_read = true`
+  - [ ] Actualiza `messages.is_read = true`
   - [ ] Si el mensaje ya está leído: idempotente → `200`
 - **Dependencias:** T-F08-01
 - **Estado:** ⬜ Pendiente
@@ -52,7 +52,7 @@
 - **Descripción:** Endpoint auxiliar que retorna el número de mensajes no leídos del usuario autenticado, para mostrar el badge en la interfaz.
 - **Criterios de aceptación:**
   - [ ] `GET /api/v1/messages/unread-count` → `200 { "unread": N }` (todos los roles)
-  - [ ] Cuenta mensajes en `project_messages` donde `recipient_id = current_user.id` Y `is_read = false`
+  - [ ] Cuenta mensajes en `messages` donde `recipient_id = current_user.id` Y `is_read = false`
   - [ ] Respuesta eficiente (COUNT query, no traer todos los mensajes)
 - **Dependencias:** T-F08-02
 - **Estado:** ⬜ Pendiente

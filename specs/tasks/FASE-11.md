@@ -6,7 +6,7 @@
 
 ## Notas de fase
 
-- Los tests unitarios e de integración del backend ya se crean en cada fase (FASE-03 a FASE-08). Esta fase cubre la configuración del entorno de tests, el reporte de cobertura y los tests E2E de regresión.
+- Los tests unitarios y de integración del backend ya se crean en cada fase (FASE-03 a FASE-08). Esta fase cubre la configuración del entorno de tests, el reporte de cobertura y los tests E2E de regresión.
 - El deploy es manual para el MVP; no se configura CI/CD automático en esta fase.
 
 ---
@@ -78,7 +78,7 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Configurar las variables de entorno para los entornos de producción en Render (backend) y Vercel (frontend).
 - **Criterios de aceptación:**
-  - [ ] Variables de entorno configuradas en Render (backend): `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `USC_HOLIDAYS_FILE`, `ALLOWED_ORIGINS`
+  - [ ] Variables de entorno configuradas en Render (backend): `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `SUPABASE_STORAGE_BUCKET`, `DATABASE_URL`, `USC_HOLIDAYS_FILE`, `ALLOWED_ORIGINS`, `APP_ENV`, `SECRET_KEY`, `JUROR_EXPIRY_ALERT_DAYS`
   - [ ] Variables de entorno configuradas en Vercel (frontend): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL` (URL de Render)
   - [ ] `ALLOWED_ORIGINS` en backend incluye el dominio de Vercel
   - [ ] El archivo `USC_HOLIDAYS_FILE` está disponible en el entorno de Render (como variable de entorno con JSON incrustado o path de archivo incluido en el build)

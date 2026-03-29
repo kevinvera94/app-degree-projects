@@ -104,11 +104,11 @@
 - **Referencias:** RF-11-01..RF-11-04
 - **Descripción:** Flujo de correcciones del producto final. Análogo a MOD-07 pero con retorno a `en_desarrollo` en lugar de `idea_aprobada`.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "producto_final", is_correction: true, academic_period }` → `201` (solo Estudiante)
+  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "correcciones_producto_final" }` → `201` (solo Estudiante)
   - [ ] Valida estado `correcciones_producto_final_solicitadas` → `409` si distinto
   - [ ] Valida ventana activa para `radicacion_producto_final` O plazo vigente → `409` si ambos vencidos
-  - [ ] Al confirmar: `status → producto_final_corregido_entregado`. Registra `start_date = submitted_at`. Calcula nuevo `deadline_date = add_business_days(start_date, 10, period)`
-  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones del producto final. Plazo: [deadline_date]"
+  - [ ] Al confirmar: `status → producto_final_corregido_entregado`. Registra `start_date = submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, period)`
+  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones del producto final. Plazo: [due_date]"
 - **Dependencias:** T-F06-04
 - **Estado:** ⬜ Pendiente
 
@@ -122,7 +122,7 @@
   - [ ] Segunda revisión: solo acepta `score >= 4.0` o `score < 3.0` → `400` si `3.0 <= score < 4.0`
   - [ ] Ambas aprobadas → `aprobado_para_sustentacion` (o `trabajo_aprobado` para Diplomado)
   - [ ] Ambas reprobadas (o J3 reprueba) → `producto_final_reprobado` → `en_desarrollo`
-  - [ ] Divergencia → Jurado 3 (mismo flujo de T-F06-05 pero con `is_correction = true`)
+  - [ ] Divergencia → Jurado 3 (mismo flujo de T-F06-05 pero con `stage: "correcciones_producto_final"`)
   - [ ] Bloqueo de entrega de correcciones por incumplimiento de plazo: mismo comportamiento que MOD-07 (T-F05-07)
 - **Dependencias:** T-F06-06
 - **Estado:** ⬜ Pendiente

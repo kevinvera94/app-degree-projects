@@ -105,7 +105,7 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/extemporaneous-window, RF-02-04
 - **Descripción:** Habilitar o revocar ventanas extemporáneas individuales para un trabajo de grado específico.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/extemporaneous-window` body: `{ window_type, start_date, end_date }` → `201` (solo Administrador)
+  - [ ] `POST /projects/{id}/extemporaneous-window` body: `{ window_type, valid_until, notes? }` → `201` (solo Administrador)
   - [ ] `DELETE /projects/{id}/extemporaneous-window` → `204` (solo Administrador). Si no existe → `404`
   - [ ] La ventana extemporánea queda en `extemporaneous_windows` asociada al proyecto
   - [ ] `is_window_active()` del T-F03-06 la considera al verificar si una radicación está permitida

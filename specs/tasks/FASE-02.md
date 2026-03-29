@@ -147,7 +147,7 @@
 - **Referencias:** `specs/arch/DATA-MODEL.md`
 - **Descripción:** Tabla para registro del acta final de aprobación del trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] Tabla `acts` (nombre exacto del DATA-MODEL): `id UUID PK`, `project_id UUID FK(thesis_projects) UNIQUE`, `issued_by UUID FK(users)`, `issued_at TIMESTAMPTZ NOT NULL`, `library_authorization BOOLEAN NOT NULL`, `act_file_url TEXT` (URL Supabase Storage del PDF del acta)
+  - [ ] Tabla `acts` (nombre exacto del DATA-MODEL): `id UUID PK`, `project_id UUID FK(thesis_projects) UNIQUE`, `issued_by UUID FK(users) NULLABLE` (null hasta emisión por Admin), `issued_at TIMESTAMPTZ NULLABLE` (null hasta emisión por Admin), `library_authorization BOOLEAN NULLABLE` (null hasta que el estudiante la diligencie), `act_file_url TEXT` (URL Supabase Storage del PDF del acta)
   - [ ] Script en `backend/migrations/010_acts.sql`
 - **Dependencias:** T-F02-05
 - **Estado:** ⬜ Pendiente

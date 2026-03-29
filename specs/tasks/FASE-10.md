@@ -206,7 +206,7 @@
   - [ ] Formulario de respuesta al pie del hilo
   - [ ] Estudiante puede iniciar mensaje a Director o Jurado (selector con opciones anónimas para jurados)
   - [ ] Docente como Director puede enviar mensaje a Estudiante o Admin
-  - [ ] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /messages/{msgId}/read`)
+  - [ ] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /projects/{id}/messages/{msgId}/read`)
 - **Dependencias:** T-F10-11
 - **Estado:** ⬜ Pendiente
 

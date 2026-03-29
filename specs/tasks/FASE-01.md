@@ -39,13 +39,13 @@
 - **Referencias:** `specs/arch/INFRA.md`, `specs/DESIGN.md`
 - **Descripción:** Inicializar proyecto React con Vite. Instalar dependencias base: `react-router-dom`, `axios`, `@supabase/supabase-js`, `tailwindcss` (o librería de estilos acordada). Configurar paleta de colores USC.
 - **Criterios de aceptación:**
-  - [ ] `frontend/package.json` con todas las dependencias
-  - [ ] Vite arranca en `localhost:5173` sin errores
-  - [ ] Ruta de prueba `/` muestra página básica
-  - [ ] Paleta USC configurada en Tailwind (o CSS variables): `--usc-navy: #0D2B5E`, `--usc-blue: #1B6BB5`, `--usc-gold: #C9A840`, `--usc-gold-light: #F0D269`, `--usc-warning: #F59E0B`
-  - [ ] ESLint + Prettier configurados con reglas básicas
+  - [x] `frontend/package.json` con todas las dependencias
+  - [x] Vite arranca en `localhost:5173` sin errores
+  - [x] Ruta de prueba `/` muestra página básica
+  - [x] Paleta USC configurada en Tailwind (o CSS variables): `--usc-navy: #0D2B5E`, `--usc-blue: #1B6BB5`, `--usc-gold: #C9A840`, `--usc-gold-light: #F0D269`, `--usc-warning: #F59E0B`
+  - [x] ESLint + Prettier configurados con reglas básicas
 - **Dependencias:** T-F01-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

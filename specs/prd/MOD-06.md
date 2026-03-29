@@ -6,7 +6,7 @@
 
 | ID | Requerimiento | Actor |
 |---|---|---|
-| RF-06-01 | El Administrador puede asignar Jurado 1 y Jurado 2 a un anteproyecto en estado **Anteproyecto pendiente de evaluación**, seleccionando docentes registrados en el sistema | Administrador |
+| RF-06-01 | El Administrador puede asignar Jurado 1 y Jurado 2 a un anteproyecto en estado **Anteproyecto pendiente de evaluación**. El selector solo muestra docentes con `is_active = true` | Administrador |
 | RF-06-02 | Al asignar jurados, el sistema registra la fecha de asignación e inicia el conteo del plazo de 15 días hábiles | Sistema |
 | RF-06-03 | El sistema notifica a cada jurado asignado con acceso al documento del anteproyecto | Sistema |
 | RF-06-04 | El estudiante ve a los jurados únicamente como "Jurado 1" y "Jurado 2", sin revelar su identidad | Sistema |

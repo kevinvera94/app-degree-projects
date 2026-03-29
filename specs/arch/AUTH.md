@@ -91,7 +91,7 @@ Además del rol, el backend valida que el usuario **pertenezca al proyecto** ant
 | `docente` (Jurado) | Debe estar en `project_jurors` con `is_active = true` |
 | `administrador` | Acceso a todos los proyectos sin restricción de pertenencia |
 
-> **H47 — Docente "en ejercicio":** El sistema no valida automáticamente si el primer director es docente USC en ejercicio. Es responsabilidad del Administrador verificarlo al asignar el director (RF-04-06).
+> **Docente "en ejercicio":** El sistema valida `is_active = true` en el usuario antes de permitir su selección como director o jurado. La verificación de si un docente está efectivamente en ejercicio es responsabilidad operativa del Administrador, quien debe marcar `is_active = false` cuando el docente deja de estarlo. Un docente inactivo no aparece en los selectores de asignación (RF-04-07).
 
 ---
 

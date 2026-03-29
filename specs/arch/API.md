@@ -29,11 +29,12 @@
 
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| GET | `/users` | Listar usuarios (filtros: rol, activo) | Administrador |
+| GET | `/users` | Listar usuarios (filtros: `rol`, `is_active`) | Administrador |
+| GET | `/users?role=docente&is_active=true` | Selector de docentes activos para asignar como director o jurado — este filtro es obligatorio en los formularios de asignación | Administrador |
 | POST | `/users` | Crear usuario y asignar rol | Administrador |
 | GET | `/users/{id}` | Detalle de usuario | Administrador |
 | PATCH | `/users/{id}` | Editar datos o rol | Administrador |
-| PATCH | `/users/{id}/deactivate` | Desactivar acceso | Administrador |
+| PATCH | `/users/{id}/deactivate` | Desactivar docente (ya no está en ejercicio) — lo excluye automáticamente de nuevas asignaciones | Administrador |
 
 ---
 

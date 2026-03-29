@@ -16,7 +16,7 @@
   - [ ] `README.md` en la raíz con nombre del proyecto, stack y enlace a `specs/BRIEF.md`
   - [ ] `.gitignore` actualizado con patrones para Python (`.venv`, `__pycache__`, `.env`) y Node (`node_modules`, `dist`, `.env.local`)
 - **Dependencias:** —
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

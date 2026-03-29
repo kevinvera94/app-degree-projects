@@ -91,7 +91,12 @@ Además del rol, el backend valida que el usuario **pertenezca al proyecto** ant
 | `docente` (Jurado) | Debe estar en `project_jurors` con `is_active = true` |
 | `administrador` | Acceso a todos los proyectos sin restricción de pertenencia |
 
-> **Docente "en ejercicio":** El sistema valida `is_active = true` en el usuario antes de permitir su selección como director o jurado. La verificación de si un docente está efectivamente en ejercicio es responsabilidad operativa del Administrador, quien debe marcar `is_active = false` cuando el docente deja de estarlo. Un docente inactivo no aparece en los selectores de asignación (RF-04-07).
+> **Docente inactivo (`is_active = false`):**
+> - Pierde **acceso inmediato** al sistema (login bloqueado por Supabase Auth).
+> - Sus registros en `project_directors` y `project_jurors` quedan con `is_active = false` automáticamente.
+> - El sistema **alerta al Administrador** para que reasigne al docente en todos los trabajos afectados.
+> - El Administrador debe designar un reemplazo antes de que el proceso pueda continuar.
+> - No aparece en los selectores de asignación para nuevos trabajos (RF-04-07).
 
 ---
 

@@ -13,7 +13,7 @@
 | RF-06-05 | Cada jurado puede registrar su calificación numérica (escala 0.0 a 5.0) y observaciones para el estudiante | Docente (Jurado) |
 | RF-06-06 | Las calificaciones registradas después de vencido el plazo de 15 días hábiles quedan marcadas automáticamente como **extemporáneas** con la fecha real de entrega | Sistema |
 | RF-06-07 | El sistema aplica la siguiente lógica al recibir ambas calificaciones: ambas ≥ 4.0 → **Anteproyecto aprobado** / ambas entre 3.0 y 3.9 → **Correcciones solicitadas** / ambas < 3.0 → **Anteproyecto reprobado** / una aprueba y la otra reprueba → notifica al Administrador para designar Jurado 3 | Sistema |
-| RF-06-08 | El Administrador puede asignar un Jurado 3 cuando el sistema lo requiera. El Jurado 3 solo puede registrar Aprobado o Reprobado, sin opción de devolver para correcciones | Administrador |
+| RF-06-08 | El Administrador asigna un **Jurado 3 adicional** cuando el sistema lo requiera (quedan 3 evaluadores activos). El Jurado 3 solo puede registrar Aprobado o Reprobado, sin opción de devolver para correcciones | Administrador |
 | RF-06-09 | Si el Jurado 3 reprueba → **Anteproyecto reprobado**. Si aprueba → **Anteproyecto aprobado** | Sistema |
 | RF-06-10 | Al aprobarse el anteproyecto, el sistema bloquea la adición de nuevos integrantes al trabajo | Sistema |
 | RF-06-11 | El sistema notifica al estudiante el resultado con las observaciones de los jurados (sin revelar su identidad). Las observaciones se entregan por dos canales: (1) campo `observations` de la evaluación visible en el detalle del trabajo, y (2) mensaje automático en la bandeja del estudiante firmado como "Jurado 1" o "Jurado 2" | Sistema |

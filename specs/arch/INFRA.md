@@ -187,8 +187,10 @@ Bucket: degree-projects-docs/
       acta_{project_id}.pdf
 ```
 
-- Acceso: **privado** — URLs firmadas con expiración (Supabase Signed URLs)
+- Acceso: **privado** — URLs firmadas con expiración de **1 hora** (Supabase Signed URLs)
 - Solo el backend genera URLs firmadas; el cliente nunca accede directamente al bucket
+- **Límite de tamaño por archivo:** 20 MB. Tipos aceptados: `.pdf` únicamente
+- Validación de tipo y tamaño se realiza en el backend antes de subir a Storage
 
 ---
 

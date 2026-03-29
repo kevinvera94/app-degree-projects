@@ -34,7 +34,7 @@
 | POST | `/users` | Crear usuario y asignar rol | Administrador |
 | GET | `/users/{id}` | Detalle de usuario | Administrador |
 | PATCH | `/users/{id}` | Editar datos o rol | Administrador |
-| PATCH | `/users/{id}/deactivate` | Desactivar docente (ya no está en ejercicio) — lo excluye automáticamente de nuevas asignaciones | Administrador |
+| PATCH | `/users/{id}/deactivate` | Desactivar docente: bloquea acceso, marca `is_active=false` en sus `project_directors` y `project_jurors` activos, y genera alertas de reasignación para el Administrador | Administrador |
 
 ---
 
@@ -139,9 +139,9 @@
 
 | Método | Ruta | Descripción | Roles |
 |---|---|---|---|
-| GET | `/projects/{id}/sustentation` | Detalle de sustentación | Todos (con pertenencia) |
+| GET | `/projects/{id}/sustentation` | Detalle de sustentación y calificaciones (juror_id oculto para estudiante) | Todos (con pertenencia) |
 | POST | `/projects/{id}/sustentation` | Registrar fecha, hora y lugar | Administrador |
-| PATCH | `/projects/{id}/sustentation` | Registrar calificación de la sustentación | Docente (Jurado asignado), Administrador |
+| POST | `/projects/{id}/sustentation/evaluations` | Registrar calificación individual del jurado. El sistema calcula `final_score` y `is_approved` cuando ambos jurados han calificado | Docente (Jurado asignado), Administrador |
 
 ---
 

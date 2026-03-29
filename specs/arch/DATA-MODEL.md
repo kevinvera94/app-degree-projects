@@ -130,11 +130,12 @@ Entidad central del sistema.
 | `academic_program_id` | uuid FK → academic_programs | |
 | `period` | varchar(10) | Periodo de inscripción |
 | `research_line` | varchar(200) | Línea de investigación |
-| `research_group` | enum | `GIEIAM` \| `COMBA_ID` |
+| `research_group` | enum | `GIEIAM` \| `COMBA_ID` (representa "COMBA I+D") |
 | `suggested_director` | varchar(150) | Opcional, texto libre |
 | `has_company_link` | boolean | Vinculado a empresa/organización |
 | `status` | enum | Ver estados abajo |
 | `plagiarism_suspended` | boolean | Suspendido por plagio |
+| `plagiarism_suspended_at` | timestamp nullable | Fecha de la suspensión por plagio |
 | `created_at` | timestamp | |
 | `updated_at` | timestamp | |
 
@@ -155,7 +156,7 @@ correcciones_producto_final_solicitadas
 producto_final_corregido_entregado
 aprobado_para_sustentacion
 sustentacion_programada
-trabajo_aprobado
+trabajo_aprobado                       ← Diplomado tecnológico llega aquí directamente desde producto_final aprobado
 reprobado_en_sustentacion              → nueva inscripción de idea desde cero
 acta_generada
 suspendido_por_plagio                  ← puede ocurrir en cualquier etapa
@@ -257,7 +258,7 @@ Calificaciones emitidas por jurados.
 | `score` | decimal(3,1) | Calificación numérica |
 | `observations` | text | |
 | `submitted_at` | timestamp | |
-| `due_date` | timestamp | Fecha límite (15 o 10 días hábiles) |
+| `due_date` | timestamp | Fecha límite calculada como: `assigned_at + N días hábiles` excluyendo fines de semana y festivos del `USC_HOLIDAYS_FILE`. N=15 para primera revisión, N=10 para segunda |
 | `is_extemporaneous` | boolean | Registrada fuera del plazo |
 | `revision_number` | integer | `1` o `2` |
 
@@ -272,12 +273,27 @@ Registro de la sustentación pública.
 | `project_id` | uuid FK → thesis_projects unique | |
 | `scheduled_at` | timestamp | Fecha y hora programada |
 | `location` | varchar(200) | Lugar |
-| `score` | decimal(3,1) nullable | Calificación registrada |
-| `is_approved` | boolean nullable | |
-| `scored_by` | uuid FK → users nullable | Jurado o Administrador que registró la calificación |
-| `scored_at` | timestamp nullable | |
+| `final_score` | decimal(3,1) nullable | Promedio calculado de las calificaciones de los jurados |
+| `is_approved` | boolean nullable | Calculado: `final_score >= 4.0` |
 | `registered_at` | timestamp | Fecha de programación de la sustentación |
 | `registered_by` | uuid FK → users | Administrador que programó la sustentación |
+
+---
+
+### `sustentation_evaluations`
+Calificación individual de cada jurado en la sustentación (D4: promediadas para el resultado final).
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | uuid PK | |
+| `sustentation_id` | uuid FK → sustentations | |
+| `juror_id` | uuid FK → users | Jurado que registró la calificación |
+| `juror_number` | integer | `1` o `2` — anonimato para el estudiante |
+| `score` | decimal(3,1) | Calificación 0.0 a 5.0 |
+| `submitted_at` | timestamp | |
+| `submitted_by` | uuid FK → users | Jurado o Administrador que registró |
+
+> **Regla:** cuando ambos jurados han enviado su calificación, el sistema calcula `sustentations.final_score = promedio(score_jurado1, score_jurado2)` y determina `is_approved`. No existe Jurado 3 en sustentación.
 
 ---
 
@@ -308,7 +324,7 @@ Mensajería asíncrona entre usuarios del trabajo.
 | `sent_at` | timestamp | |
 | `is_read` | boolean | |
 | `read_at` | timestamp nullable | |
-| `sender_display` | varchar(50) | Ej. `Jurado 1` para mantener anonimato |
+| `sender_display` | varchar(50) | Nombre visible para el receptor. Si el emisor es jurado, el sistema lo establece automáticamente como "Jurado 1" o "Jurado 2" según `project_jurors.juror_number`. Para otros roles, se usa `users.full_name` |
 
 ---
 
@@ -321,7 +337,7 @@ Trazabilidad de cada cambio de estado.
 | `project_id` | uuid FK → thesis_projects | |
 | `previous_status` | varchar | |
 | `new_status` | varchar | |
-| `changed_by` | uuid FK → users | |
+| `changed_by` | uuid FK → users NOT NULL | Usuario (o sistema automático vía service account) que causó el cambio |
 | `changed_at` | timestamp | |
 | `notes` | text nullable | Motivo del cambio |
 
@@ -339,4 +355,5 @@ Trazabilidad de cada cambio de estado.
 | `submissions` → `attachments` | 1:N | Mín. 3 obligatorios |
 | `thesis_projects` → `evaluations` | 1:N | Por jurado, por etapa |
 | `thesis_projects` → `sustentations` | 1:1 | Una sola sustentación |
+| `sustentations` → `sustentation_evaluations` | 1:N | Una por jurado (máx. 2) |
 | `thesis_projects` → `acts` | 1:1 | Un solo acta |

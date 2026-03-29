@@ -1,4 +1,4 @@
-from pydantic import SecretStr, model_validator
+from pydantic import SecretStr, computed_field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,7 +7,6 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
-        env_parse_delimiter=",",
     )
 
     # Base de datos
@@ -23,7 +22,8 @@ class Settings(BaseSettings):
     # App
     app_env: str = "development"
     secret_key: SecretStr
-    allowed_origins: list[str] = ["http://localhost:5173"]
+    # CSV en el .env: ALLOWED_ORIGINS=http://localhost:5173,https://app.vercel.app
+    allowed_origins: str = "http://localhost:5173"
 
     # Plazos (días hábiles)
     juror_evaluation_deadline_days: int = 15
@@ -33,6 +33,11 @@ class Settings(BaseSettings):
 
     # Festivos
     usc_holidays_file: str = "config/usc_holidays.json"
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
 
     @model_validator(mode="after")
     def validate_secret_key_in_production(self) -> "Settings":

@@ -69,12 +69,12 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Crear archivos `.env` locales (no comiteados) para backend y frontend con los valores reales de Supabase y configuración de desarrollo.
 - **Criterios de aceptación:**
-  - [ ] `backend/.env` con: `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `USC_HOLIDAYS_FILE`
-  - [ ] `frontend/.env.local` con: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL=http://localhost:8000/api/v1`
-  - [ ] Backend puede conectarse a la BD de Supabase desde local
+  - [x] `backend/.env` con: `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `USC_HOLIDAYS_FILE`
+  - [x] `frontend/.env.local` con: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL=http://localhost:8000/api/v1`
+  - [x] Backend puede conectarse a la BD de Supabase desde local
   - [ ] Frontend puede inicializar el cliente Supabase desde local
 - **Dependencias:** T-F01-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

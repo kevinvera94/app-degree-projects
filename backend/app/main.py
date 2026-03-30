@@ -10,6 +10,7 @@ from app.routers import (
     jurors,
     modalities,
     projects,
+    reports,
     submissions,
     users,
 )
@@ -40,6 +41,7 @@ app.include_router(projects.router, prefix="/api/v1")
 app.include_router(submissions.router, prefix="/api/v1")
 app.include_router(jurors.router, prefix="/api/v1")
 app.include_router(evaluations.router, prefix="/api/v1")
+app.include_router(reports.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

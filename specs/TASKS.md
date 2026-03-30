@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F06-10` — Implementar señales de estado para el Administrador
+**Próxima tarea:** `T-F07-01` — Implementar registro de sustentación
 
 ---
 
@@ -22,7 +22,7 @@
 | FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ✅ |
-| FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | 🔄 |
+| FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ✅ |
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ⬜ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
 | FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ⬜ |
@@ -91,6 +91,8 @@
 - `T-F06-07` — Implementar segunda revisión del producto final — 2026-03-30
 - `T-F06-08` — Implementar suspensión por plagio — 2026-03-30
 - `T-F06-09` — Tests de integración: producto final y correcciones — 2026-03-30
+- `T-F06-10` — Implementar señales de estado para el Administrador — 2026-03-30
+- `T-F06-11` — Implementar reporte de correcciones sin respuesta — 2026-03-30
 
 ---
 

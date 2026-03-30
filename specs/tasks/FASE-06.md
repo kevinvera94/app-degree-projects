@@ -171,11 +171,11 @@
 - **Referencias:** RF-17-02, `specs/arch/API.md` §/reports
 - **Descripción:** Endpoint de reporte de proyectos pendientes de evaluación (sin jurados asignados o sin calificación registrada).
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/projects/pending-review` → `200` lista de proyectos en estados: `anteproyecto_pendiente_evaluacion`, `producto_final_entregado`, `en_revision_jurados_producto_final` (sin calificación completa)
-  - [ ] Cada ítem indica el número de días transcurridos desde la radicación
-  - [ ] Solo Administrador → `403` para otros roles
+  - [x] `GET /api/v1/reports/projects/pending-review` → `200` lista de proyectos en estados: `anteproyecto_pendiente_evaluacion`, `producto_final_entregado`, `en_revision_jurados_producto_final` (sin calificación completa)
+  - [x] Cada ítem indica el número de días transcurridos desde la radicación
+  - [x] Solo Administrador → `403` para otros roles
 - **Dependencias:** T-F06-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -184,8 +184,8 @@
 - **Referencias:** RF-17-03, `specs/arch/API.md` §/reports
 - **Descripción:** Reporte de proyectos con correcciones solicitadas donde el estudiante no ha respondido.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/projects/pending-corrections` → `200` lista de proyectos en estados: `correcciones_anteproyecto_solicitadas`, `correcciones_producto_final_solicitadas`
-  - [ ] Cada ítem incluye: `project_id`, `title`, `status`, `deadline_date`, días hábiles restantes (puede ser negativo si ya venció)
-  - [ ] Solo Administrador
+  - [x] `GET /api/v1/reports/projects/pending-corrections` → `200` lista de proyectos en estados: `correcciones_anteproyecto_solicitadas`, `correcciones_producto_final_solicitadas`
+  - [x] Cada ítem incluye: `project_id`, `title`, `status`, `deadline_date`, días hábiles restantes (puede ser negativo si ya venció)
+  - [x] Solo Administrador
 - **Dependencias:** T-F06-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

@@ -6,8 +6,8 @@ Rutas implementadas (T-F05-03):
   GET  /projects/{id}/evaluations              — listar calificaciones (respuesta diferenciada por rol)
   GET  /projects/{id}/evaluations/{evalId}     — detalle de calificación (Admin, Docente)
 
-La lógica de resultado (transiciones de estado al completarse ambas calificaciones)
-se implementa en T-F05-04 (evaluate_anteproyecto_result).
+Lógica de resultado (T-F05-04): evaluate_anteproyecto_result se invoca
+automáticamente desde POST /evaluations al registrar la segunda calificación.
 """
 
 from datetime import datetime, timezone
@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_docente
+from app.services.evaluation_service import evaluate_anteproyecto_result
 from app.schemas.evaluation import (
     EvaluationAdminResponse,
     EvaluationCreate,
@@ -143,7 +144,8 @@ async def submit_evaluation(
     El jurado registra su calificación.
     - Solo el docente asignado como jurado en esta etapa puede calificar.
     - Marca automáticamente como extemporánea si submitted_at > due_date.
-    - La lógica de transición de estado (T-F05-04) se engancha aquí una vez implementada.
+    - Llama a evaluate_anteproyecto_result (T-F05-04) antes del commit para que
+      la transición de estado quede en la misma transacción.
     """
     # Verificar que el docente es jurado activo asignado para esta etapa
     juror_result = await db.execute(
@@ -202,6 +204,15 @@ async def submit_evaluation(
         },
     )
     updated_row = dict(updated.mappings().first())
+
+    # Disparar lógica de resultado (T-F05-04) — dentro de la misma transacción
+    if body.stage == "anteproyecto":
+        await evaluate_anteproyecto_result(
+            project_id=project_id,
+            db=db,
+            triggered_by=current_user.id,
+            revision_number=updated_row["revision_number"],
+        )
 
     await db.commit()
 

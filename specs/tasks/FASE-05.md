@@ -79,17 +79,17 @@
 - **Referencias:** RF-06-07, RF-06-08, RF-06-09, RF-06-11, RF-06-12, RF-06-13
 - **Descripción:** Lógica central: cuando ambos jurados han calificado, el sistema determina el resultado y ejecuta las transiciones de estado correspondientes. Incluye manejo de Jurado 3.
 - **Criterios de aceptación:**
-  - [ ] Función de servicio `evaluate_anteproyecto_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
-  - [ ] Ambas ≥ 4.0 → `anteproyecto_aprobado` → `en_desarrollo` (transición automática). Bloquea adición de nuevos integrantes (`project_members` queda cerrado)
-  - [ ] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `due_date = add_business_days(now(), 10, project.period)` y lo registra en el contexto del estado para mostrárselo al estudiante
-  - [ ] Ambas < 3.0 → `anteproyecto_reprobado` → `idea_aprobada` (retorno automático). Conserva integrantes existentes
-  - [ ] Un jurado ≥ 4.0 y el otro < 3.0 (divergencia) → notifica al Administrador para designar Jurado 3 (mensaje automático). Estado queda en `anteproyecto_pendiente_evaluacion`
-  - [ ] Al reprobarse: mensaje automático al estudiante: "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo."
-  - [ ] Al aprobarse: mensaje automático al estudiante: "Tu anteproyecto fue aprobado. Estado: En desarrollo."
-  - [ ] Al solicitar correcciones: dos canales (RF-06-11): (1) la vista de evaluaciones muestra calificación y observaciones; (2) mensaje automático en bandeja: "Tienes correcciones pendientes. Ver evaluaciones."
-  - [ ] Todos los cambios de estado registrados en `project_status_history`
+  - [x] Función de servicio `evaluate_anteproyecto_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
+  - [x] Ambas ≥ 4.0 → `anteproyecto_aprobado` → `en_desarrollo` (transición automática). Bloquea adición de nuevos integrantes (`project_members` queda cerrado)
+  - [x] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `due_date = add_business_days(now(), 10, project.period)` y lo registra en el contexto del estado para mostrárselo al estudiante
+  - [x] Ambas < 3.0 → `anteproyecto_reprobado` → `idea_aprobada` (retorno automático). Conserva integrantes existentes
+  - [x] Un jurado ≥ 4.0 y el otro < 3.0 (divergencia) → notifica al Administrador para designar Jurado 3 (mensaje automático). Estado queda en `anteproyecto_pendiente_evaluacion`
+  - [x] Al reprobarse: mensaje automático al estudiante: "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo."
+  - [x] Al aprobarse: mensaje automático al estudiante: "Tu anteproyecto fue aprobado. Estado: En desarrollo."
+  - [x] Al solicitar correcciones: dos canales (RF-06-11): (1) la vista de evaluaciones muestra calificación y observaciones; (2) mensaje automático en bandeja: "Tienes correcciones pendientes. Ver evaluaciones."
+  - [x] Todos los cambios de estado registrados en `project_status_history`
 - **Dependencias:** T-F05-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

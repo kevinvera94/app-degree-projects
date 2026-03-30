@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-05
-**Próxima tarea:** `T-F05-04` — Implementar lógica de resultado del anteproyecto
+**Próxima tarea:** `T-F05-05` — Implementar asignación y registro de Jurado 3 (anteproyecto)
 
 ---
 
@@ -75,6 +75,7 @@
 - `T-F05-01` — Implementar radicación de anteproyecto y adjuntos (`POST /submissions`, `PATCH /confirm`) — 2026-03-29
 - `T-F05-02` — Implementar asignación de jurados al anteproyecto (`POST/GET/DELETE /projects/{id}/jurors`) — 2026-03-29
 - `T-F05-03` — Implementar registro de calificación de jurado (anteproyecto) — 2026-03-30
+- `T-F05-04` — Implementar lógica de resultado del anteproyecto (evaluate_anteproyecto_result) — 2026-03-30
 
 ---
 

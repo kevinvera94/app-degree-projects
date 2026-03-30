@@ -6,7 +6,7 @@ Rutas implementadas:
   GET /reports/projects/pending-corrections — proyectos con correcciones sin respuesta (T-F06-11)
 """
 
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -171,5 +171,131 @@ async def get_pending_corrections(
                 days_remaining=days_remaining,
             )
         )
+
+    return items
+
+
+# ---------------------------------------------------------------------------
+# GET /reports/jurors/late — Calificaciones extemporáneas (T-F07-08)
+# ---------------------------------------------------------------------------
+
+
+class LateEvaluationItem(BaseModel):
+    docente_name: str
+    project_title: str
+    stage: str
+    deadline_date: date
+    submitted_at: datetime
+    days_late: int
+
+
+@router.get(
+    "/jurors/late",
+    response_model=List[LateEvaluationItem],
+)
+async def get_late_jurors(
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> List[LateEvaluationItem]:
+    """
+    Lista evaluaciones registradas fuera del plazo (is_extemporaneous = true).
+    Calcula los días de retraso a partir de due_date y submitted_at.
+    """
+    result = await db.execute(
+        text(
+            """
+            SELECT
+                u.full_name    AS docente_name,
+                p.title        AS project_title,
+                e.stage,
+                e.due_date     AS deadline_date,
+                e.submitted_at,
+                GREATEST(
+                    EXTRACT(DAY FROM e.submitted_at - e.due_date)::integer,
+                    0
+                ) AS days_late
+            FROM public.evaluations e
+            JOIN public.users u ON u.id = e.juror_id
+            JOIN public.thesis_projects p ON p.id = e.project_id
+            WHERE e.is_extemporaneous = true
+              AND e.submitted_at IS NOT NULL
+            ORDER BY e.submitted_at DESC
+            """
+        )
+    )
+    rows = list(result.mappings())
+    return [LateEvaluationItem(**row) for row in rows]
+
+
+# ---------------------------------------------------------------------------
+# GET /reports/jurors/expiring — Plazo próximo a vencer (T-F07-09)
+# ---------------------------------------------------------------------------
+
+
+class ExpiringEvaluationItem(BaseModel):
+    docente_name: str
+    project_title: str
+    stage: str
+    deadline_date: date
+    business_days_remaining: int
+
+
+_DEFAULT_EXPIRING_DAYS = 3  # días hábiles por defecto (RF-01-07 configurable)
+
+
+@router.get(
+    "/jurors/expiring",
+    response_model=List[ExpiringEvaluationItem],
+)
+async def get_expiring_jurors(
+    days: int = _DEFAULT_EXPIRING_DAYS,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> List[ExpiringEvaluationItem]:
+    """
+    Lista evaluaciones sin calificar cuyo due_date vence en los próximos N días hábiles.
+    N se pasa como query param `days` (default: 3).
+    """
+    today = date.today()
+
+    result = await db.execute(
+        text(
+            """
+            SELECT
+                u.full_name    AS docente_name,
+                p.title        AS project_title,
+                e.stage,
+                e.due_date     AS deadline_date,
+                p.period
+            FROM public.evaluations e
+            JOIN public.users u ON u.id = e.juror_id
+            JOIN public.thesis_projects p ON p.id = e.project_id
+            WHERE e.score IS NULL
+              AND e.due_date IS NOT NULL
+              AND e.due_date >= :today
+            ORDER BY e.due_date ASC
+            """
+        ),
+        {"today": today},
+    )
+    rows = list(result.mappings())
+
+    items: List[ExpiringEvaluationItem] = []
+    for row in rows:
+        deadline = row["deadline_date"]
+        if isinstance(deadline, datetime):
+            deadline = deadline.date()
+
+        remaining = count_business_days_between(today, deadline, row["period"])
+        if remaining <= days:
+            items.append(
+                ExpiringEvaluationItem(
+                    docente_name=row["docente_name"],
+                    project_title=row["project_title"],
+                    stage=row["stage"],
+                    deadline_date=deadline,
+                    business_days_remaining=remaining,
+                )
+            )
 
     return items

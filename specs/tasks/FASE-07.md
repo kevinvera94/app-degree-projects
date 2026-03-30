@@ -58,9 +58,9 @@
 - **Descripción:** Validar que no se permita asignación de Jurado 3 en la etapa de sustentación.
 - **Criterios de aceptación:**
   - [x] `POST /projects/{id}/jurors` con `stage = "sustentacion"` y `juror_number = 3` → `400` con mensaje: "No existe Jurado 3 en sustentación"
-  - [ ] Test unitario que verifica este bloqueo
+  - [x] Test unitario que verifica este bloqueo
 - **Dependencias:** T-F07-02
-- **Estado:** 🔄 En progreso (falta test)
+- **Estado:** ✅ Completada
 
 ---
 
@@ -119,18 +119,18 @@
 - **Referencias:** RF-12-01..RF-12-06, RF-13-01..RF-13-05
 - **Descripción:** Tests de integración para todos los flujos de sustentación y generación de acta.
 - **Criterios de aceptación:**
-  - [ ] Test: Diplomado tecnológico no puede programar sustentación → `409`
-  - [ ] Test: programar sustentación sin estado `aprobado_para_sustentacion` → `409`
-  - [ ] Test: flujo completo aprobado (promedio ≥ 4.0) → `trabajo_aprobado`
-  - [ ] Test: flujo completo reprobado (promedio < 4.0) → `reprobado_en_sustentacion`
-  - [ ] Test: intentar asignar J3 en sustentación → `400`
-  - [ ] Test: emitir acta sin autorización de biblioteca → `409`
-  - [ ] Test: emitir acta en estado distinto a `trabajo_aprobado` → `409`
-  - [ ] Test: estudiante puede descargar acta (URL firmada generada)
-  - [ ] Test: estudiante ve calificaciones de sustentación sin identidad de jurado
-  - [ ] Tests en `backend/tests/test_sustentacion.py`
+  - [x] Test: Diplomado tecnológico no puede programar sustentación → `409`
+  - [x] Test: programar sustentación sin estado `aprobado_para_sustentacion` → `409`
+  - [x] Test: flujo completo aprobado (promedio ≥ 4.0) → `trabajo_aprobado`
+  - [x] Test: flujo completo reprobado (promedio < 4.0) → `reprobado_en_sustentacion`
+  - [x] Test: intentar asignar J3 en sustentación → `400`
+  - [x] Test: emitir acta sin autorización de biblioteca → `409`
+  - [x] Test: emitir acta en estado distinto a `trabajo_aprobado` → `409`
+  - [x] Test: estudiante puede descargar acta (URL firmada generada)
+  - [x] Test: estudiante ve calificaciones de sustentación sin identidad de jurado
+  - [x] Tests en `backend/tests/test_sustentacion.py`
 - **Dependencias:** T-F07-05, T-F07-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -139,11 +139,11 @@
 - **Referencias:** RF-17-04, `specs/arch/API.md` §/reports
 - **Descripción:** Reporte para el Administrador de docentes que registraron calificaciones fuera del plazo.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/jurors/late` → `200` lista de evaluaciones con `is_extemporaneous = true`
-  - [ ] Cada ítem: `docente_name`, `project_title`, `stage` (anteproyecto/producto_final), `deadline_date`, `submitted_at`, `days_late`
-  - [ ] Solo Administrador → `403` para otros roles
+  - [x] `GET /api/v1/reports/jurors/late` → `200` lista de evaluaciones con `is_extemporaneous = true`
+  - [x] Cada ítem: `docente_name`, `project_title`, `stage` (anteproyecto/producto_final), `deadline_date`, `submitted_at`, `days_late`
+  - [x] Solo Administrador → `403` para otros roles
 - **Dependencias:** T-F05-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -152,9 +152,9 @@
 - **Referencias:** RF-17-05, `specs/arch/API.md` §/reports
 - **Descripción:** Reporte de jurados con plazo de evaluación activo próximo a vencer.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/jurors/expiring?days=N` → `200` lista de evaluaciones aún sin calificar cuyo `deadline_date` vence en los próximos N días hábiles
-  - [ ] `N` configurable; valor por defecto desde `RF-01-07` (parámetro global del sistema)
-  - [ ] Cada ítem: `docente_name`, `project_title`, `stage`, `deadline_date`, `business_days_remaining`
-  - [ ] Solo Administrador
+  - [x] `GET /api/v1/reports/jurors/expiring?days=N` → `200` lista de evaluaciones aún sin calificar cuyo `deadline_date` vence en los próximos N días hábiles
+  - [x] `N` configurable; valor por defecto desde `RF-01-07` (parámetro global del sistema)
+  - [x] Cada ítem: `docente_name`, `project_title`, `stage`, `deadline_date`, `business_days_remaining`
+  - [x] Solo Administrador
 - **Dependencias:** T-F07-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

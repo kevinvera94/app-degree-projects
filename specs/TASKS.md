@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F07-07` — Tests de integración: sustentación y acta
+**Próxima tarea:** `T-F08-01` — Implementar historial de mensajes por proyecto
 
 ---
 
@@ -23,7 +23,7 @@
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ✅ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ✅ |
-| FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | 🔄 |
+| FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ✅ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
 | FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ⬜ |
 | FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ⬜ |
@@ -99,6 +99,9 @@
 - `T-F07-04` — Implementar autorización de biblioteca — 2026-03-30
 - `T-F07-05` — Implementar emisión del acta — 2026-03-30
 - `T-F07-06` — Implementar asignación de jurados para sustentación — 2026-03-30
+- `T-F07-07` — Tests de integración: sustentación y acta — 2026-03-30
+- `T-F07-08` — Implementar reporte de jurados con calificaciones extemporáneas — 2026-03-30
+- `T-F07-09` — Implementar alerta de vencimiento próximo de jurados — 2026-03-30
 
 ---
 

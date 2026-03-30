@@ -90,13 +90,13 @@
 - **Referencias:** `specs/arch/API.md` §/date-windows, RF-02-01..RF-02-06
 - **Descripción:** Gestión de ventanas de fechas para radicación. Incluye validación de que no haya ventanas activas superpuestas del mismo tipo.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/date-windows` con filtros `window_type`, `academic_period`, `is_active` → `200` (todos los roles)
-  - [ ] `POST /api/v1/date-windows` → `201` (solo Administrador). Valida que `start_date < end_date`
-  - [ ] `PATCH /api/v1/date-windows/{id}` edita fechas, tipo y `is_active`. Solo si `start_date` no ha llegado aún → `200` (solo Administrador)
-  - [ ] `DELETE /api/v1/date-windows/{id}` → `204`. Solo si no hay radicaciones asociadas a esa ventana; si hay → `409` (solo Administrador)
-  - [ ] Función de servicio `is_window_active(window_type, project_id)` usada en radicaciones: verifica ventana global activa o ventana extemporánea del proyecto
+  - [x] `GET /api/v1/date-windows` con filtros `window_type`, `academic_period`, `is_active` → `200` (todos los roles)
+  - [x] `POST /api/v1/date-windows` → `201` (solo Administrador). Valida que `start_date < end_date`
+  - [x] `PATCH /api/v1/date-windows/{id}` edita fechas, tipo y `is_active`. Solo si `start_date` no ha llegado aún → `200` (solo Administrador)
+  - [x] `DELETE /api/v1/date-windows/{id}` → `204`. Solo si no hay radicaciones asociadas a esa ventana; si hay → `409` (solo Administrador)
+  - [x] Función de servicio `is_window_active(window_type, project_id)` usada en radicaciones: verifica ventana global activa o ventana extemporánea del proyecto
 - **Dependencias:** T-F03-01, T-F02-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

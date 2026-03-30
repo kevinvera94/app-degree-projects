@@ -144,13 +144,16 @@ async def assign_juror(
             detail="Trabajo de grado no encontrado",
         )
 
-    # Validar estado del proyecto
-    if project["status"] != "anteproyecto_pendiente_evaluacion":
+    # Validar estado del proyecto según etapa del jurado
+    _valid_states = {
+        "anteproyecto": {"anteproyecto_pendiente_evaluacion"},
+        "producto_final": {"producto_final_entregado", "en_revision_jurados_producto_final"},
+    }
+    if project["status"] not in _valid_states.get(body.stage, set()):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=(
-                "Solo se pueden asignar jurados cuando el anteproyecto"
-                " está pendiente de evaluación. "
+                f"No se pueden asignar jurados de '{body.stage}' en el estado actual. "
                 f"Estado actual: {project['status']}"
             ),
         )
@@ -232,13 +235,29 @@ async def assign_juror(
             ),
         )
 
+    # Para producto_final: buscar el jurado equivalente del anteproyecto para trazabilidad
+    replaced_docente_id = None
+    if body.stage == "producto_final" and body.juror_number in (1, 2):
+        prev_result = await db.execute(
+            text(
+                "SELECT docente_id FROM public.project_jurors"
+                " WHERE project_id = :pid AND stage = 'anteproyecto'"
+                " AND juror_number = :num AND is_active = true LIMIT 1"
+            ),
+            {"pid": project_id, "num": body.juror_number},
+        )
+        prev = prev_result.mappings().first()
+        if prev and prev["docente_id"] != body.user_id:
+            replaced_docente_id = prev["docente_id"]
+
     # Insertar en project_jurors
     now = datetime.now(timezone.utc)
     juror_result = await db.execute(
         text(
             "INSERT INTO public.project_jurors"
-            " (project_id, docente_id, juror_number, stage, assigned_by, assigned_at)"
-            " VALUES (:pid, :did, :num, :stage, :by, :now)"
+            " (project_id, docente_id, juror_number, stage, assigned_by, assigned_at,"
+            "  replaced_docente_id)"
+            " VALUES (:pid, :did, :num, :stage, :by, :now, :replaced)"
             " RETURNING id, project_id, docente_id, juror_number, stage,"
             "           is_active, assigned_at, assigned_by"
         ),
@@ -249,6 +268,7 @@ async def assign_juror(
             "stage": body.stage,
             "by": current_user.id,
             "now": now,
+            "replaced": replaced_docente_id,
         },
     )
     juror_row = dict(juror_result.mappings().first())
@@ -327,6 +347,40 @@ async def assign_juror(
             ),
         },
     )
+
+    # Para producto_final: si J1 y J2 están ahora asignados → en_revision_jurados_producto_final
+    if body.stage == "producto_final" and body.juror_number in (1, 2):
+        count_result = await db.execute(
+            text(
+                "SELECT COUNT(*) FROM public.project_jurors"
+                " WHERE project_id = :pid AND stage = 'producto_final'"
+                " AND juror_number IN (1, 2) AND is_active = true"
+            ),
+            {"pid": project_id},
+        )
+        active_count = count_result.scalar_one()
+        if active_count >= 2:
+            await db.execute(
+                text(
+                    "UPDATE public.thesis_projects"
+                    " SET status = 'en_revision_jurados_producto_final', updated_at = now()"
+                    " WHERE id = :pid"
+                ),
+                {"pid": project_id},
+            )
+            await db.execute(
+                text(
+                    "INSERT INTO public.project_status_history"
+                    " (project_id, previous_status, new_status, changed_by, notes)"
+                    " VALUES (:pid, :prev, 'en_revision_jurados_producto_final', :by, :notes)"
+                ),
+                {
+                    "pid": project_id,
+                    "prev": project["status"],
+                    "by": current_user.id,
+                    "notes": "Jurado 1 y Jurado 2 asignados para producto final. Inicia período de evaluación.",
+                },
+            )
 
     await db.commit()
 

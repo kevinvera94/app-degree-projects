@@ -43,14 +43,14 @@
 - **Referencias:** RF-10-01, RF-10-02
 - **Descripción:** El Administrador asigna Jurado 1 y Jurado 2 al producto final. El sistema sugiere los mismos jurados del anteproyecto cuando estén disponibles.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "producto_final" }` → `201` (solo Administrador)
-  - [ ] Valida estado `producto_final_entregado` → `409` si distinto
-  - [ ] `GET /projects/{id}` incluye en el detalle la sugerencia de jurados (`suggested_jurors[]`): los mismos del anteproyecto que estén activos
-  - [ ] Si se asigna un docente diferente al del anteproyecto: el campo `replaced_docente_id` en `project_jurors` registra el ID del jurado original (trazabilidad)
-  - [ ] Valida docente activo → `400` si inactivo
-  - [ ] Al asignar ambos jurados: `status → en_revision_jurados_producto_final`. Inicia conteo de 15 días hábiles (igual a anteproyecto)
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "producto_final" }` → `201` (solo Administrador)
+  - [x] Valida estado `producto_final_entregado` → `409` si distinto
+  - [x] `GET /projects/{id}` incluye en el detalle la sugerencia de jurados (`suggested_jurors[]`): los mismos del anteproyecto que estén activos
+  - [x] Si se asigna un docente diferente al del anteproyecto: el campo `replaced_docente_id` en `project_jurors` registra el ID del jurado original (trazabilidad)
+  - [x] Valida docente activo → `400` si inactivo
+  - [x] Al asignar ambos jurados: `status → en_revision_jurados_producto_final`. Inicia conteo de 15 días hábiles (igual a anteproyecto)
 - **Dependencias:** T-F06-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

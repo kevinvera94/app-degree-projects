@@ -31,6 +31,7 @@ from app.schemas.project import (
     ProjectMemberInfo,
     ProjectResponse,
     SubmissionBasicInfo,
+    SuggestedJurorInfo,
     TERMINAL_STATUSES,
 )
 from app.services.modality_service import get_max_members
@@ -272,12 +273,31 @@ async def get_project(
     )
     submissions = [SubmissionBasicInfo(**r) for r in subs_result.mappings()]
 
+    # Jurados sugeridos para producto final (anteproyecto J1/J2 activos)
+    # Solo visibles para Admin y Docente; estudiante ve lista vacía
+    if not is_student:
+        suggested_result = await db.execute(
+            text(
+                "SELECT pj.juror_number, pj.docente_id, u.full_name"
+                " FROM public.project_jurors pj"
+                " JOIN public.users u ON u.id = pj.docente_id"
+                " WHERE pj.project_id = :pid AND pj.stage = 'anteproyecto'"
+                " AND pj.juror_number IN (1, 2) AND pj.is_active = true"
+                " ORDER BY pj.juror_number"
+            ),
+            {"pid": project_id},
+        )
+        suggested_jurors = [SuggestedJurorInfo(**r) for r in suggested_result.mappings()]
+    else:
+        suggested_jurors = []
+
     return ProjectDetailResponse(
         **row,
         members=members,
         directors=directors,
         jurors=jurors,
         submissions=submissions,
+        suggested_jurors=suggested_jurors,
     )
 
 

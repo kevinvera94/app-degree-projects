@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F06-02` — Implementar asignación de jurados al producto final
+**Próxima tarea:** `T-F06-03` — Implementar registro de calificación del producto final
 
 ---
 
@@ -83,6 +83,7 @@
 - `T-F05-09` — Implementar historial de radicaciones y adjuntos — 2026-03-30
 - `T-F05-10` — Tests de integración: flujo completo del anteproyecto — 2026-03-30
 - `T-F06-01` — Implementar radicación de producto final — 2026-03-30
+- `T-F06-02` — Implementar asignación de jurados al producto final — 2026-03-30
 
 ---
 

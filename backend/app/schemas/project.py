@@ -130,8 +130,16 @@ class MemberAdd(BaseModel):
     user_id: UUID
 
 
+class SuggestedJurorInfo(BaseModel):
+    """Jurado del anteproyecto sugerido para producto final (Admin/Docente solamente)."""
+    juror_number: int
+    docente_id: UUID
+    full_name: str
+
+
 class ProjectDetailResponse(ProjectResponse):
     members: list[ProjectMemberInfo] = []
     directors: list[ProjectDirectorInfo] = []
     jurors: list[ProjectJurorInfo] = []
     submissions: list[SubmissionBasicInfo] = []
+    suggested_jurors: list[SuggestedJurorInfo] = []

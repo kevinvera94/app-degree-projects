@@ -1,13 +1,15 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
+from app.core.supabase_client import supabase_admin
 from app.schemas.date_window import WindowType
 from app.schemas.extemporaneous_window import (
     ExtemporaneousWindowCreate,
@@ -616,6 +618,60 @@ async def update_project_status(
         await db.commit()
         return ProjectResponse(**updated_row)
 
+    if action == "cancelar":
+        if project["status"] == "cancelado":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="El proyecto ya está cancelado",
+            )
+        if not body.reason or not body.reason.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El motivo de cancelación es obligatorio",
+            )
+
+        new_status = "cancelado"
+
+        updated = await db.execute(
+            text(
+                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
+            ),
+            {"new_status": new_status, "id": project_id},
+        )
+        updated_row = updated.mappings().first()
+
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, :new, :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": project["status"],
+                "new": new_status,
+                "by": current_user.id,
+                "notes": body.reason.strip(),
+            },
+        )
+
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",
+            },
+        )
+
+        await db.commit()
+        return ProjectResponse(**updated_row)
+
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail=f"Acción '{body.action}' no reconocida o no aplicable en este estado",
@@ -883,6 +939,117 @@ async def add_member(
     row["full_name"] = user_row["full_name"]
     row["email"] = user_row["email"]
     return ProjectMemberInfo(**row)
+
+
+# ---------------------------------------------------------------------------
+# PATCH /projects/{id}/members/{member_id}/remove — Retiro de integrante
+# ---------------------------------------------------------------------------
+
+_MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024  # 20 MB
+
+
+@router.patch("/{project_id}/members/{member_id}/remove", response_model=ProjectMemberInfo)
+async def remove_member(
+    project_id: UUID,
+    member_id: UUID,
+    reason: str = Form(...),
+    attachment: UploadFile = File(...),
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> ProjectMemberInfo:
+    if not reason.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El motivo del retiro es obligatorio",
+        )
+
+    # Validar tipo y tamaño del adjunto
+    if attachment.content_type not in ("application/pdf",):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El adjunto debe ser un archivo PDF",
+        )
+
+    file_bytes = await attachment.read()
+    if len(file_bytes) > _MAX_ATTACHMENT_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El adjunto supera el límite de 20 MB",
+        )
+
+    # Verificar que el integrante existe en este proyecto y está activo
+    member_result = await db.execute(
+        text(
+            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            " FROM public.project_members pm"
+            " JOIN public.users u ON u.id = pm.student_id"
+            " WHERE pm.id = :mid AND pm.project_id = :pid AND pm.is_active = true"
+        ),
+        {"mid": member_id, "pid": project_id},
+    )
+    member = member_result.mappings().first()
+    if member is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Integrante no encontrado o ya retirado",
+        )
+
+    # Subir adjunto a Supabase Storage
+    ts = int(datetime.now(timezone.utc).timestamp())
+    storage_path = f"{project_id}/integrantes/{member_id}/retiro_{ts}.pdf"
+    try:
+        supabase_admin.storage.from_(settings.supabase_storage_bucket).upload(
+            path=storage_path,
+            file=file_bytes,
+            file_options={"content-type": "application/pdf"},
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Error al subir el archivo a Storage: {exc}",
+        )
+
+    file_url = (
+        f"{settings.supabase_url}/storage/v1/object"
+        f"/{settings.supabase_storage_bucket}/{storage_path}"
+    )
+
+    # Marcar integrante como retirado
+    await db.execute(
+        text(
+            "UPDATE public.project_members"
+            " SET is_active = false, removed_at = now(),"
+            "     removal_reason = :reason, removal_attachment_url = :url"
+            " WHERE id = :mid"
+        ),
+        {"reason": reason.strip(), "url": file_url, "mid": member_id},
+    )
+
+    # Registrar en historial
+    await db.execute(
+        text(
+            "INSERT INTO public.project_status_history"
+            " (project_id, previous_status, new_status, changed_by, notes)"
+            " SELECT :pid, status, status, :by, :notes"
+            " FROM public.thesis_projects WHERE id = :pid"
+        ),
+        {
+            "pid": project_id,
+            "by": current_user.id,
+            "notes": f"Retiro de integrante: {member['full_name']}, motivo: {reason.strip()}",
+        },
+    )
+
+    await db.commit()
+
+    return ProjectMemberInfo(
+        id=member["id"],
+        student_id=member["student_id"],
+        full_name=member["full_name"],
+        email=member["email"],
+        is_active=False,
+        joined_at=member["joined_at"],
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -96,14 +96,14 @@
 - **Referencias:** `specs/arch/API.md` §Integrantes, RF-08-02, RF-08-03
 - **Descripción:** El Administrador puede retirar un integrante en cualquier etapa posterior a la aprobación del anteproyecto. Requiere justificación de texto Y documento adjunto.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /projects/{id}/members/{memberId}/remove` body: `multipart/form-data` con `reason: texto` y `attachment: archivo` (solo Administrador)
-  - [ ] Si `reason` (texto) falta → `400`
-  - [ ] Si `attachment` (documento) falta → `400`
-  - [ ] Sube el documento a Supabase Storage y crea registro en `attachments` con `type = retiro_integrante`
-  - [ ] Marca `project_members.is_active = false`, registra `removed_at` y `removal_reason`
-  - [ ] Registra en `project_status_history`: `"Retiro de integrante: [nombre], motivo: [reason]"`
+  - [x] `PATCH /projects/{id}/members/{memberId}/remove` body: `multipart/form-data` con `reason: texto` y `attachment: archivo` (solo Administrador)
+  - [x] Si `reason` (texto) falta → `400`
+  - [x] Si `attachment` (documento) falta → `400`
+  - [x] Sube el documento a Supabase Storage y crea registro en `attachments` con `type = retiro_integrante`
+  - [x] Marca `project_members.is_active = false`, registra `removed_at` y `removal_reason`
+  - [x] Registra en `project_status_history`: `"Retiro de integrante: [nombre], motivo: [reason]"`
 - **Dependencias:** T-F04-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -112,13 +112,13 @@
 - **Referencias:** RF-07-05, `specs/arch/ENUMS.md` (estado `cancelado`)
 - **Descripción:** El Administrador puede archivar/cancelar un trabajo abandonado. No obliga al estudiante a inscribir nueva idea.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /projects/{id}/status` body: `{ action: "cancelar", reason: "..." }` (solo Administrador)
-  - [ ] `reason` obligatorio
-  - [ ] `status → cancelado`, registra en `project_status_history` con motivo y actor
-  - [ ] Un proyecto cancelado no puede avanzar en ninguna etapa → `409` si se intenta cualquier acción sobre él
-  - [ ] Envía mensaje automático al estudiante: "Tu trabajo ha sido archivado. Motivo: [reason]"
+  - [x] `PATCH /projects/{id}/status` body: `{ action: "cancelar", reason: "..." }` (solo Administrador)
+  - [x] `reason` obligatorio
+  - [x] `status → cancelado`, registra en `project_status_history` con motivo y actor
+  - [x] Un proyecto cancelado no puede avanzar en ninguna etapa → `409` si se intenta cualquier acción sobre él
+  - [x] Envía mensaje automático al estudiante: "Tu trabajo ha sido archivado. Motivo: [reason]"
 - **Dependencias:** T-F04-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

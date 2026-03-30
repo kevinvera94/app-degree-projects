@@ -2,7 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import academic_programs, auth, date_windows, jurors, modalities, projects, submissions, users
+from app.routers import (
+    academic_programs,
+    auth,
+    date_windows,
+    jurors,
+    modalities,
+    projects,
+    submissions,
+    users,
+)
 
 app = FastAPI(
     title="USC App Degree Projects API",

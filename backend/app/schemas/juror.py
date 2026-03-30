@@ -19,6 +19,7 @@ class JurorResponse(BaseModel):
     Los campos opcionales quedan en None cuando el receptor es Estudiante
     (anonimato aplicado en la capa de servicio, no en el frontend).
     """
+
     id: UUID
     project_id: UUID
     juror_number: int
@@ -33,6 +34,7 @@ class JurorResponse(BaseModel):
 
 class JurorStudentResponse(BaseModel):
     """Respuesta reducida enviada a Estudiantes — sin identidad del jurado."""
+
     juror_number: int
     stage: str
     is_active: bool

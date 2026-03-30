@@ -17,7 +17,9 @@ from app.schemas.date_window import (
 
 router = APIRouter(prefix="/date-windows", tags=["date-windows"])
 
-_SELECT = "id, period, window_type, start_date, end_date, is_active, created_by, created_at"
+_SELECT = (
+    "id, period, window_type, start_date, end_date, is_active, created_by, created_at"
+)
 
 
 @router.get("", response_model=list[DateWindowResponse])
@@ -43,7 +45,9 @@ async def list_date_windows(
 
     where = f" WHERE {' AND '.join(conditions)}" if conditions else ""
     result = await db.execute(
-        text(f"SELECT {_SELECT} FROM public.date_windows{where} ORDER BY start_date DESC"),
+        text(
+            f"SELECT {_SELECT} FROM public.date_windows{where} ORDER BY start_date DESC"
+        ),
         params,
     )
     return [DateWindowResponse(**row) for row in result.mappings()]
@@ -94,7 +98,8 @@ async def update_date_window(
     row = existing.mappings().first()
     if row is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Ventana de fechas no encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ventana de fechas no encontrada",
         )
     if row["start_date"] <= date.today():
         raise HTTPException(
@@ -145,7 +150,8 @@ async def delete_date_window(
     )
     if exists.mappings().first() is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Ventana de fechas no encontrada"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Ventana de fechas no encontrada",
         )
 
     # No eliminar si hay radicaciones asociadas
@@ -156,7 +162,7 @@ async def delete_date_window(
     if submissions.mappings().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="No se puede eliminar: existen radicaciones asociadas a esta ventana",
+            detail="No se puede eliminar: existen radicaciones asociadas a esta ventana",  # noqa: E501
         )
 
     await db.execute(

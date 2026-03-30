@@ -2,15 +2,17 @@
 Router de radicaciones (submissions) y sus adjuntos.
 
 Rutas implementadas (T-F05-01):
-  POST   /projects/{id}/submissions                              — crear radicación (Estudiante)
-  POST   /projects/{id}/submissions/{subId}/attachments         — subir adjunto (Estudiante)
-  GET    /projects/{id}/submissions/{subId}/attachments/{attId} — URL firmada (todos con pertenencia)
-  DELETE /projects/{id}/submissions/{subId}/attachments/{attId} — eliminar adjunto (Estudiante, solo pendiente)
-  PATCH  /projects/{id}/submissions/{subId}/confirm             — confirmar radicación (Estudiante)
+  POST   /projects/{id}/submissions               — crear radicación (Estudiante)
+  POST   /projects/{id}/submissions/{subId}/attachments — subir adjunto (Estudiante)
+  GET    /projects/{id}/submissions/{subId}/attachments/{attId}
+         — URL firmada (todos con pertenencia)
+  DELETE /projects/{id}/submissions/{subId}/attachments/{attId}
+         — eliminar adjunto (Estudiante, solo pendiente)
+  PATCH  /projects/{id}/submissions/{subId}/confirm — confirmar radicación (Estudiante)
 
 Rutas de consulta (T-F05-09):
-  GET    /projects/{id}/submissions                             — historial de radicaciones
-  GET    /projects/{id}/submissions/{subId}                     — detalle con adjuntos
+  GET    /projects/{id}/submissions               — historial de radicaciones
+  GET    /projects/{id}/submissions/{subId}       — detalle con adjuntos
 """
 
 import os
@@ -115,7 +117,7 @@ def _extract_storage_path(file_url: str) -> str:
         f"{settings.supabase_url}/storage/v1/object/{settings.supabase_storage_bucket}/"
     )
     if file_url.startswith(prefix):
-        return file_url[len(prefix):]
+        return file_url[len(prefix) :]
     return file_url
 
 
@@ -199,7 +201,8 @@ async def create_submission(
             ),
         )
 
-    # Verificar que no exista ya una radicación activa (pendiente o en_revision) para esta etapa
+    # Verificar que no exista ya una radicación activa (pendiente/en_revision)
+    # para esta etapa
     existing = await db.execute(
         text(
             "SELECT id FROM public.submissions"
@@ -254,7 +257,7 @@ async def create_submission(
     if global_row is None and ext_row is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="No hay una ventana de fechas activa para radicación de anteproyecto",
+            detail="No hay una ventana de fechas activa para radicación de anteproyecto",  # noqa: E501
         )
 
     is_extemporaneous = global_row is None and ext_row is not None
@@ -305,7 +308,8 @@ async def get_submission(
 
     att_result = await db.execute(
         text(
-            "SELECT id, submission_id, attachment_type, file_name, uploaded_at, uploaded_by"
+            "SELECT id, submission_id, attachment_type,"
+            " file_name, uploaded_at, uploaded_by"
             " FROM public.attachments WHERE submission_id = :sid ORDER BY uploaded_at"
         ),
         {"sid": sub_id},
@@ -315,7 +319,8 @@ async def get_submission(
 
 
 # ---------------------------------------------------------------------------
-# POST /projects/{id}/submissions/{sub_id}/attachments — Subir adjunto (T-F05-01, Paso 2)
+# POST /projects/{id}/submissions/{sub_id}/attachments
+# Subir adjunto (T-F05-01, Paso 2)
 # ---------------------------------------------------------------------------
 
 
@@ -351,7 +356,10 @@ async def upload_attachment(
     if sub["status"] != "pendiente":
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Solo se pueden agregar adjuntos a una radicación en estado 'pendiente'",
+            detail=(
+                "Solo se pueden agregar adjuntos"
+                " a una radicación en estado 'pendiente'"
+            ),
         )
 
     # Validar tipo MIME (solo PDF)
@@ -451,7 +459,9 @@ async def get_attachment_signed_url(
             settings.supabase_storage_bucket
         ).create_signed_url(storage_path, 3600)
         # supabase-py v2 returns an object with signed_url attribute
-        signed_url: str = getattr(signed_response, "signed_url", None) or signed_response.get("signedURL", "")
+        signed_url: str = getattr(
+            signed_response, "signed_url", None
+        ) or signed_response.get("signedURL", "")
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -470,7 +480,8 @@ async def get_attachment_signed_url(
 
 
 # ---------------------------------------------------------------------------
-# DELETE /projects/{id}/submissions/{sub_id}/attachments/{att_id} — Eliminar adjunto (T-F05-01)
+# DELETE /projects/{id}/submissions/{sub_id}/attachments/{att_id}
+# Eliminar adjunto (T-F05-01)
 # ---------------------------------------------------------------------------
 
 
@@ -524,7 +535,9 @@ async def delete_attachment(
     # Eliminar del Storage
     storage_path = _extract_storage_path(att["file_url"])
     try:
-        supabase_admin.storage.from_(settings.supabase_storage_bucket).remove([storage_path])
+        supabase_admin.storage.from_(settings.supabase_storage_bucket).remove(
+            [storage_path]
+        )
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
@@ -539,7 +552,8 @@ async def delete_attachment(
 
 
 # ---------------------------------------------------------------------------
-# PATCH /projects/{id}/submissions/{sub_id}/confirm — Confirmar radicación (T-F05-01, Paso 3)
+# PATCH /projects/{id}/submissions/{sub_id}/confirm
+# Confirmar radicación (T-F05-01, Paso 3)
 # ---------------------------------------------------------------------------
 
 

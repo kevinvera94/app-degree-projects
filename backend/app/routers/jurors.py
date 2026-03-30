@@ -2,9 +2,9 @@
 Router de jurados de proyectos.
 
 Rutas implementadas (T-F05-02):
-  POST   /projects/{id}/jurors               — asignar jurado (Administrador)
-  GET    /projects/{id}/jurors               — listar jurados (anonimizados para Estudiante)
-  DELETE /projects/{id}/jurors/{jurorId}     — remover jurado (Administrador, solo sin calificación)
+  POST   /projects/{id}/jurors           — asignar jurado (Administrador)
+  GET    /projects/{id}/jurors           — listar jurados (anonimizados para Estudiante)
+  DELETE /projects/{id}/jurors/{jurorId} — remover jurado (Admin, solo sin calificación)
 """
 
 from datetime import datetime, timezone
@@ -130,7 +130,10 @@ async def assign_juror(
     """
     # Obtener proyecto
     proj_result = await db.execute(
-        text("SELECT id, status, period, title FROM public.thesis_projects WHERE id = :id"),
+        text(
+            "SELECT id, status, period, title"
+            " FROM public.thesis_projects WHERE id = :id"
+        ),
         {"id": project_id},
     )
     project = proj_result.mappings().first()
@@ -145,7 +148,8 @@ async def assign_juror(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=(
-                f"Solo se pueden asignar jurados cuando el anteproyecto está pendiente de evaluación. "
+                "Solo se pueden asignar jurados cuando el anteproyecto"
+                " está pendiente de evaluación. "
                 f"Estado actual: {project['status']}"
             ),
         )
@@ -191,7 +195,10 @@ async def assign_juror(
     if num_check.mappings().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Ya existe un Jurado {body.juror_number} activo asignado para esta etapa",
+            detail=(
+                f"Ya existe un Jurado {body.juror_number} activo"
+                " asignado para esta etapa"
+            ),
         )
 
     # Insertar en project_jurors
@@ -266,8 +273,9 @@ async def assign_juror(
             "sid": current_user.id,
             "rid": body.user_id,
             "content": (
-                f"Has sido asignado como Jurado {body.juror_number} del trabajo "
-                f"'{project['title']}'. Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
+                f"Has sido asignado como Jurado {body.juror_number}"
+                f" del trabajo '{project['title']}'."
+                f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
             ),
         },
     )
@@ -341,9 +349,7 @@ async def remove_juror(
 
     # Marcar como inactivo en project_jurors
     await db.execute(
-        text(
-            "UPDATE public.project_jurors SET is_active = false WHERE id = :jid"
-        ),
+        text("UPDATE public.project_jurors SET is_active = false WHERE id = :jid"),
         {"jid": juror_id},
     )
 

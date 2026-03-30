@@ -9,12 +9,14 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 VALID_RESEARCH_GROUPS = {"GIEIAM", "COMBA_ID"}
 
 # Estados que dan por cerrado un trabajo — el estudiante puede inscribir uno nuevo
-TERMINAL_STATUSES = frozenset({
-    "idea_rechazada",
-    "cancelado",
-    "reprobado_en_sustentacion",
-    "acta_generada",
-})
+TERMINAL_STATUSES = frozenset(
+    {
+        "idea_rechazada",
+        "cancelado",
+        "reprobado_en_sustentacion",
+        "acta_generada",
+    }
+)
 
 
 class ProjectCreate(BaseModel):
@@ -105,6 +107,7 @@ class ProjectJurorInfo(BaseModel):
     Información de jurado. Los campos de identidad son None cuando
     el receptor es un estudiante (anonimato garantizado por el router).
     """
+
     juror_number: int
     stage: str
     is_active: bool

@@ -8,7 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
+from app.core.dependencies import (
+    CurrentUser,
+    get_current_user,
+    require_admin,
+    require_estudiante,
+)
 from app.core.supabase_client import supabase_admin
 from app.schemas.date_window import WindowType
 from app.schemas.extemporaneous_window import (
@@ -198,14 +203,18 @@ async def get_project(
     )
     row = result.mappings().first()
     if row is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trabajo de grado no encontrado",
+        )
 
     await _check_membership(project_id, current_user, db)
 
     # Integrantes
     members_result = await db.execute(
         text(
-            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            "SELECT pm.id, pm.student_id, u.full_name,"
+            " u.email, pm.is_active, pm.joined_at"
             " FROM public.project_members pm"
             " JOIN public.users u ON u.id = pm.student_id"
             " WHERE pm.project_id = :pid ORDER BY pm.joined_at"
@@ -217,7 +226,8 @@ async def get_project(
     # Directores
     directors_result = await db.execute(
         text(
-            'SELECT pd.id, pd.docente_id, u.full_name, pd."order", pd.is_active, pd.assigned_at'
+            "SELECT pd.id, pd.docente_id, u.full_name,"
+            ' pd."order", pd.is_active, pd.assigned_at'
             " FROM public.project_directors pd"
             " JOIN public.users u ON u.id = pd.docente_id"
             " WHERE pd.project_id = :pid ORDER BY pd.order"
@@ -253,8 +263,10 @@ async def get_project(
     # Radicaciones (básico)
     subs_result = await db.execute(
         text(
-            "SELECT id, stage, submitted_at, status, revision_number, is_extemporaneous"
-            " FROM public.submissions WHERE project_id = :pid ORDER BY submitted_at DESC"
+            "SELECT id, stage, submitted_at, status,"
+            " revision_number, is_extemporaneous"
+            " FROM public.submissions WHERE project_id = :pid"
+            " ORDER BY submitted_at DESC"
         ),
         {"pid": project_id},
     )
@@ -308,7 +320,7 @@ async def create_project(
     if current_user.id not in body.member_ids:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El estudiante solicitante debe incluirse en la lista de integrantes",
+            detail="El estudiante solicitante debe incluirse en la lista de integrantes",  # noqa: E501
         )
 
     # 3. Todos los member_ids deben ser estudiantes activos pre-registrados
@@ -319,7 +331,8 @@ async def create_project(
     members_result = await db.execute(
         text(
             f"SELECT id FROM public.users"
-            f" WHERE id IN ({placeholders}) AND role = 'estudiante' AND is_active = true"
+            f" WHERE id IN ({placeholders})"
+            f" AND role = 'estudiante' AND is_active = true"
         ),
         params,
     )
@@ -328,7 +341,10 @@ async def create_project(
     if invalid:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Integrantes no válidos (deben ser estudiantes activos): {', '.join(invalid)}",
+            detail=(
+                "Integrantes no válidos (deben ser estudiantes activos):"
+                f" {', '.join(invalid)}"
+            ),
         )
 
     # 4. Obtener nivel del programa para calcular límite de integrantes
@@ -385,7 +401,10 @@ async def create_project(
     if active_project.mappings().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Ya tienes un trabajo de grado activo. No puedes inscribir una nueva idea",
+            detail=(
+                "Ya tienes un trabajo de grado activo."
+                " No puedes inscribir una nueva idea"
+            ),
         )
 
     # 6. Crear el proyecto
@@ -397,7 +416,8 @@ async def create_project(
                  research_line, suggested_director, period, status)
             VALUES
                 (:title, :modality_id, :academic_program_id, :research_group,
-                 :research_line, :suggested_director, :period, 'pendiente_evaluacion_idea')
+                 :research_line, :suggested_director, :period,
+                 'pendiente_evaluacion_idea')
             RETURNING {_SELECT_PROJECT}
             """
         ),
@@ -431,7 +451,8 @@ async def create_project(
             INSERT INTO public.project_status_history
                 (project_id, previous_status, new_status, changed_by, notes)
             VALUES
-                (:project_id, NULL, 'pendiente_evaluacion_idea', :changed_by, 'Idea inscrita')
+                (:project_id, NULL, 'pendiente_evaluacion_idea',
+                 :changed_by, 'Idea inscrita')
             """
         ),
         {"project_id": project_id, "changed_by": current_user.id},
@@ -474,7 +495,10 @@ async def update_project_status(
     )
     project = proj_result.mappings().first()
     if project is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trabajo de grado no encontrado",
+        )
 
     action = body.action.lower()
 
@@ -482,7 +506,11 @@ async def update_project_status(
         if project["status"] != "pendiente_evaluacion_idea":
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"Solo se puede aprobar una idea en estado 'pendiente_evaluacion_idea'. Estado actual: {project['status']}",
+                detail=(
+                    "Solo se puede aprobar una idea en estado"
+                    " 'pendiente_evaluacion_idea'."
+                    f" Estado actual: {project['status']}"
+                ),
             )
 
         # Verificar que existe al menos un director activo asignado
@@ -509,7 +537,8 @@ async def update_project_status(
         # Actualizar estado
         updated = await db.execute(
             text(
-                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f"UPDATE public.thesis_projects"
+                f" SET status = :new_status, updated_at = now()"
                 f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
             ),
             {"new_status": new_status, "id": project_id},
@@ -542,7 +571,10 @@ async def update_project_status(
             {
                 "pid": project_id,
                 "sid": current_user.id,
-                "content": f"Tu idea ha sido aprobada. Director asignado: {director['full_name']}",
+                "content": (
+                    f"Tu idea ha sido aprobada."
+                    f" Director asignado: {director['full_name']}"
+                ),
             },
         )
 
@@ -557,7 +589,10 @@ async def update_project_status(
                 "pid": project_id,
                 "sid": current_user.id,
                 "rid": director["docente_id"],
-                "content": f"Has sido asignado como director del trabajo '{project['title']}'",
+                "content": (
+                    f"Has sido asignado como director"
+                    f" del trabajo '{project['title']}'"
+                ),
             },
         )
 
@@ -568,7 +603,11 @@ async def update_project_status(
         if project["status"] != "pendiente_evaluacion_idea":
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"Solo se puede rechazar una idea en estado 'pendiente_evaluacion_idea'. Estado actual: {project['status']}",
+                detail=(
+                    "Solo se puede rechazar una idea en estado"
+                    " 'pendiente_evaluacion_idea'."
+                    f" Estado actual: {project['status']}"
+                ),
             )
         if not body.reason or not body.reason.strip():
             raise HTTPException(
@@ -580,7 +619,8 @@ async def update_project_status(
 
         updated = await db.execute(
             text(
-                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f"UPDATE public.thesis_projects"
+                f" SET status = :new_status, updated_at = now()"
                 f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
             ),
             {"new_status": new_status, "id": project_id},
@@ -634,7 +674,8 @@ async def update_project_status(
 
         updated = await db.execute(
             text(
-                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f"UPDATE public.thesis_projects"
+                f" SET status = :new_status, updated_at = now()"
                 f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
             ),
             {"new_status": new_status, "id": project_id},
@@ -665,7 +706,7 @@ async def update_project_status(
             {
                 "pid": project_id,
                 "sid": current_user.id,
-                "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",
+                "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",  # noqa: E501
             },
         )
 
@@ -743,7 +784,8 @@ async def assign_director(
             "INSERT INTO public.project_directors"
             ' (project_id, docente_id, "order", assigned_by)'
             " VALUES (:pid, :did, :order, :by)"
-            " RETURNING id, project_id, docente_id, \"order\" AS order, assigned_by, assigned_at, is_active"
+            " RETURNING id, project_id, docente_id,"
+            ' "order" AS order, assigned_by, assigned_at, is_active'
         ),
         {
             "pid": project_id,
@@ -794,21 +836,23 @@ async def remove_director(
 # ---------------------------------------------------------------------------
 
 # Estados a partir de los cuales ya no se pueden agregar integrantes
-_BLOCKED_FOR_MEMBERS = frozenset({
-    "en_desarrollo",
-    "producto_final_entregado",
-    "en_revision_jurados_producto_final",
-    "correcciones_producto_final_solicitadas",
-    "producto_final_corregido_entregado",
-    "producto_final_reprobado",
-    "aprobado_para_sustentacion",
-    "sustentacion_programada",
-    "trabajo_aprobado",
-    "reprobado_en_sustentacion",
-    "acta_generada",
-    "suspendido_por_plagio",
-    "cancelado",
-})
+_BLOCKED_FOR_MEMBERS = frozenset(
+    {
+        "en_desarrollo",
+        "producto_final_entregado",
+        "en_revision_jurados_producto_final",
+        "correcciones_producto_final_solicitadas",
+        "producto_final_corregido_entregado",
+        "producto_final_reprobado",
+        "aprobado_para_sustentacion",
+        "sustentacion_programada",
+        "trabajo_aprobado",
+        "reprobado_en_sustentacion",
+        "acta_generada",
+        "suspendido_por_plagio",
+        "cancelado",
+    }
+)
 
 
 @router.get("/{project_id}/members", response_model=list[ProjectMemberInfo])
@@ -822,7 +866,8 @@ async def list_members(
 
     result = await db.execute(
         text(
-            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            "SELECT pm.id, pm.student_id, u.full_name,"
+            " u.email, pm.is_active, pm.joined_at"
             " FROM public.project_members pm"
             " JOIN public.users u ON u.id = pm.student_id"
             " WHERE pm.project_id = :pid ORDER BY pm.joined_at"
@@ -850,7 +895,10 @@ async def add_member(
     )
     project = proj_result.mappings().first()
     if project is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trabajo de grado no encontrado",
+        )
 
     # Solo antes de que el anteproyecto sea aprobado (estado < en_desarrollo)
     if project["status"] in _BLOCKED_FOR_MEMBERS:
@@ -910,7 +958,9 @@ async def add_member(
     try:
         max_m = await get_max_members(db, project["modality_id"], program_row["level"])
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Modalidad no encontrada")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Modalidad no encontrada"
+        )
 
     if current_count >= max_m:
         raise HTTPException(
@@ -948,7 +998,9 @@ async def add_member(
 _MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024  # 20 MB
 
 
-@router.patch("/{project_id}/members/{member_id}/remove", response_model=ProjectMemberInfo)
+@router.patch(
+    "/{project_id}/members/{member_id}/remove", response_model=ProjectMemberInfo
+)
 async def remove_member(
     project_id: UUID,
     member_id: UUID,
@@ -980,7 +1032,8 @@ async def remove_member(
     # Verificar que el integrante existe en este proyecto y está activo
     member_result = await db.execute(
         text(
-            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            "SELECT pm.id, pm.student_id, u.full_name,"
+            " u.email, pm.is_active, pm.joined_at"
             " FROM public.project_members pm"
             " JOIN public.users u ON u.id = pm.student_id"
             " WHERE pm.id = :mid AND pm.project_id = :pid AND pm.is_active = true"
@@ -1036,7 +1089,10 @@ async def remove_member(
         {
             "pid": project_id,
             "by": current_user.id,
-            "notes": f"Retiro de integrante: {member['full_name']}, motivo: {reason.strip()}",
+            "notes": (
+                f"Retiro de integrante: {member['full_name']},"
+                f" motivo: {reason.strip()}"
+            ),
         },
     )
 
@@ -1080,7 +1136,10 @@ async def create_extemporaneous_window(
     if existing.mappings().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Ya existe una ventana extemporánea activa para este proyecto y etapa",
+            detail=(
+                "Ya existe una ventana extemporánea activa"
+                " para este proyecto y etapa"
+            ),
         )
 
     result = await db.execute(

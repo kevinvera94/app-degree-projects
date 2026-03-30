@@ -18,8 +18,10 @@ async def is_window_active(
     Verifica si hay una ventana activa para un tipo de radicación dado.
 
     Orden de verificación:
-    1. Si se proporciona project_id, busca ventana extemporánea activa para ese proyecto.
-    2. En ambos casos, también busca ventana global activa (is_active=True y fecha vigente).
+    1. Si se proporciona project_id, busca ventana extemporánea activa
+       para ese proyecto.
+    2. En ambos casos, también busca ventana global activa
+       (is_active=True y fecha vigente).
 
     Retorna True si al menos una de las dos aplica.
     """

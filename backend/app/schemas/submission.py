@@ -28,11 +28,13 @@ class AttachmentType(str, Enum):
 
 
 # Adjuntos obligatorios por todas las modalidades
-REQUIRED_ATTACHMENTS_BASE = frozenset({
-    AttachmentType.plantilla,
-    AttachmentType.carta_aval,
-    AttachmentType.reporte_similitud,
-})
+REQUIRED_ATTACHMENTS_BASE = frozenset(
+    {
+        AttachmentType.plantilla,
+        AttachmentType.carta_aval,
+        AttachmentType.reporte_similitud,
+    }
+)
 
 # Adjunto extra para modalidad Investigación (requires_ethics_approval = true)
 REQUIRED_ATTACHMENT_ETHICS = AttachmentType.aval_etica

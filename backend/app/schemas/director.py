@@ -15,7 +15,9 @@ class DirectorCreate(BaseModel):
     @classmethod
     def validate_order(cls, v: int) -> int:
         if v not in (1, 2):
-            raise ValueError("El orden del director debe ser 1 (principal) o 2 (co-director)")
+            raise ValueError(
+                "El orden del director debe ser 1 (principal) o 2 (co-director)"
+            )
         return v
 
 

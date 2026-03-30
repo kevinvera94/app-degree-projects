@@ -15,6 +15,7 @@ from app.schemas.extemporaneous_window import (
 )
 from app.schemas.director import DirectorCreate, DirectorResponse, ProjectStatusUpdate
 from app.schemas.project import (
+    MemberAdd,
     PaginatedProjectsResponse,
     ProjectCreate,
     ProjectDetailResponse,
@@ -730,6 +731,158 @@ async def remove_director(
             detail="Director no encontrado en este proyecto",
         )
     await db.commit()
+
+
+# ---------------------------------------------------------------------------
+# GET/POST /projects/{id}/members
+# ---------------------------------------------------------------------------
+
+# Estados a partir de los cuales ya no se pueden agregar integrantes
+_BLOCKED_FOR_MEMBERS = frozenset({
+    "en_desarrollo",
+    "producto_final_entregado",
+    "en_revision_jurados_producto_final",
+    "correcciones_producto_final_solicitadas",
+    "producto_final_corregido_entregado",
+    "producto_final_reprobado",
+    "aprobado_para_sustentacion",
+    "sustentacion_programada",
+    "trabajo_aprobado",
+    "reprobado_en_sustentacion",
+    "acta_generada",
+    "suspendido_por_plagio",
+    "cancelado",
+})
+
+
+@router.get("/{project_id}/members", response_model=list[ProjectMemberInfo])
+async def list_members(
+    project_id: UUID,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[ProjectMemberInfo]:
+    await _get_project_or_404(project_id, db)
+    await _check_membership(project_id, current_user, db)
+
+    result = await db.execute(
+        text(
+            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            " FROM public.project_members pm"
+            " JOIN public.users u ON u.id = pm.student_id"
+            " WHERE pm.project_id = :pid ORDER BY pm.joined_at"
+        ),
+        {"pid": project_id},
+    )
+    return [ProjectMemberInfo(**row) for row in result.mappings()]
+
+
+@router.post(
+    "/{project_id}/members",
+    response_model=ProjectMemberInfo,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_member(
+    project_id: UUID,
+    body: MemberAdd,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> ProjectMemberInfo:
+    # Obtener proyecto
+    proj_result = await db.execute(
+        text(f"SELECT {_SELECT_PROJECT} FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    project = proj_result.mappings().first()
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+
+    # Solo antes de que el anteproyecto sea aprobado (estado < en_desarrollo)
+    if project["status"] in _BLOCKED_FOR_MEMBERS:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="No se pueden agregar integrantes una vez aprobado el anteproyecto",
+        )
+
+    # El usuario debe ser estudiante activo
+    student_result = await db.execute(
+        text(
+            "SELECT id FROM public.users"
+            " WHERE id = :uid AND role = 'estudiante' AND is_active = true"
+        ),
+        {"uid": body.user_id},
+    )
+    if student_result.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El usuario no existe, no es estudiante o está inactivo",
+        )
+
+    # No duplicar integrante activo
+    dup_result = await db.execute(
+        text(
+            "SELECT id FROM public.project_members"
+            " WHERE project_id = :pid AND student_id = :uid AND is_active = true"
+        ),
+        {"pid": project_id, "uid": body.user_id},
+    )
+    if dup_result.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El estudiante ya es integrante activo de este proyecto",
+        )
+
+    # Verificar límite de integrantes
+    program_result = await db.execute(
+        text(
+            "SELECT ap.level FROM public.academic_programs ap"
+            " JOIN public.thesis_projects p ON p.academic_program_id = ap.id"
+            " WHERE p.id = :pid"
+        ),
+        {"pid": project_id},
+    )
+    program_row = program_result.mappings().first()
+
+    count_result = await db.execute(
+        text(
+            "SELECT COUNT(*) FROM public.project_members"
+            " WHERE project_id = :pid AND is_active = true"
+        ),
+        {"pid": project_id},
+    )
+    current_count = count_result.scalar_one()
+
+    try:
+        max_m = await get_max_members(db, project["modality_id"], program_row["level"])
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Modalidad no encontrada")
+
+    if current_count >= max_m:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"El proyecto ya alcanzó el límite de {max_m} integrantes",
+        )
+
+    # Insertar integrante
+    insert_result = await db.execute(
+        text(
+            "INSERT INTO public.project_members (project_id, student_id)"
+            " VALUES (:pid, :uid)"
+            " RETURNING id, project_id, student_id, is_active, joined_at"
+        ),
+        {"pid": project_id, "uid": body.user_id},
+    )
+    row = dict(insert_result.mappings().first())
+    await db.commit()
+
+    # Enriquecer con datos del usuario
+    user_result = await db.execute(
+        text("SELECT full_name, email FROM public.users WHERE id = :id"),
+        {"id": row["student_id"]},
+    )
+    user_row = user_result.mappings().first()
+    row["full_name"] = user_row["full_name"]
+    row["email"] = user_row["email"]
+    return ProjectMemberInfo(**row)
 
 
 # ---------------------------------------------------------------------------

@@ -123,6 +123,10 @@ class SubmissionBasicInfo(BaseModel):
     is_extemporaneous: bool
 
 
+class MemberAdd(BaseModel):
+    user_id: UUID
+
+
 class ProjectDetailResponse(ProjectResponse):
     members: list[ProjectMemberInfo] = []
     directors: list[ProjectDirectorInfo] = []

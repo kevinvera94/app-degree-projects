@@ -80,14 +80,14 @@
 - **Referencias:** `specs/arch/API.md` §Integrantes, RF-08-01
 - **Descripción:** Listado y adición de integrantes mientras el anteproyecto no ha sido aprobado.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/projects/{id}/members` → `200` lista de integrantes activos (todos con pertenencia)
-  - [ ] `POST /api/v1/projects/{id}/members` body: `{ user_id }` → `201` (solo Administrador)
-  - [ ] Valida: proyecto no ha pasado de `idea_aprobada` (i.e., anteproyecto no aprobado aún) → `409` si estado ≥ `en_desarrollo`
-  - [ ] Valida: `user_id` es estudiante activo → `400`
-  - [ ] Valida: no supera el límite de integrantes → `400`
-  - [ ] Crea registro en `project_members` y en `project_status_history`
+  - [x] `GET /api/v1/projects/{id}/members` → `200` lista de integrantes activos (todos con pertenencia)
+  - [x] `POST /api/v1/projects/{id}/members` body: `{ user_id }` → `201` (solo Administrador)
+  - [x] Valida: proyecto no ha pasado de `idea_aprobada` (i.e., anteproyecto no aprobado aún) → `409` si estado ≥ `en_desarrollo`
+  - [x] Valida: `user_id` es estudiante activo → `400`
+  - [x] Valida: no supera el límite de integrantes → `400`
+  - [x] Crea registro en `project_members` y en `project_status_history`
 - **Dependencias:** T-F04-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

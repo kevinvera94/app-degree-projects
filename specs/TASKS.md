@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-03
-**Próxima tarea:** `T-F03-09` — Tests de integración: endpoints de users y configuración
+**Próxima tarea:** `T-F04-01` — Primera tarea de FASE-04: Backend inscripción y evaluación de idea
 
 ---
 
@@ -19,7 +19,7 @@
 |---|---|---|:---:|:---:|
 | FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ✅ |
 | FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
-| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | 🔄 |
+| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ⬜ |
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ⬜ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
@@ -63,6 +63,7 @@
 - `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`) — 2026-03-29
 - `T-F03-07` — Implementar ventanas extemporáneas (`/projects/{id}/extemporaneous-window`) — 2026-03-29
 - `T-F03-08` — Implementar recuperación de contraseña (Supabase Auth) — 2026-03-29
+- `T-F03-09` — Tests de integración: endpoints de users y configuración — 2026-03-29
 
 ---
 

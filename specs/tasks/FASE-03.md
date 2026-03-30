@@ -132,12 +132,12 @@
 - **Referencias:** `specs/arch/API.md`, `specs/arch/AUTH.md`
 - **Descripción:** Tests de integración que cubren los endpoints de la FASE-03: auth, users, academic-programs, modalities y date-windows.
 - **Criterios de aceptación:**
-  - [ ] Test: crear usuario con rol incorrecto → `400`
-  - [ ] Test: desactivar docente con trabajos activos → mensajes de alerta generados
-  - [ ] Test: crear ventana de fechas con `start_date >= end_date` → `400`
-  - [ ] Test: eliminar ventana con radicaciones → `409`
-  - [ ] Test: `GET /users?role=docente&is_active=true` → solo docentes activos en respuesta
-  - [ ] Test: `get_max_members` para modalidad con límite específico vs sin límite específico
-  - [ ] Tests en `backend/tests/test_config.py`
+  - [x] Test: crear usuario con rol incorrecto → `400`
+  - [x] Test: desactivar docente con trabajos activos → mensajes de alerta generados
+  - [x] Test: crear ventana de fechas con `start_date >= end_date` → `400`
+  - [x] Test: eliminar ventana con radicaciones → `409`
+  - [x] Test: `GET /users?role=docente&is_active=true` → solo docentes activos en respuesta
+  - [x] Test: `get_max_members` para modalidad con límite específico vs sin límite específico
+  - [x] Tests en `backend/tests/test_config.py`
 - **Dependencias:** T-F03-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

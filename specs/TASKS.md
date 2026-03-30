@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F06-09` — Tests de integración: producto final y correcciones
+**Próxima tarea:** `T-F06-10` — Implementar señales de estado para el Administrador
 
 ---
 
@@ -90,6 +90,7 @@
 - `T-F06-06` — Implementar correcciones del producto final — 2026-03-30
 - `T-F06-07` — Implementar segunda revisión del producto final — 2026-03-30
 - `T-F06-08` — Implementar suspensión por plagio — 2026-03-30
+- `T-F06-09` — Tests de integración: producto final y correcciones — 2026-03-30
 
 ---
 

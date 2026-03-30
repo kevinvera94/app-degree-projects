@@ -150,19 +150,19 @@
 - **Referencias:** RF-09-01..RF-09-06, RF-10-01..RF-10-05, RF-11-01..RF-11-04, RF-14-01..RF-14-04
 - **Descripción:** Tests de integración para los flujos del producto final.
 - **Criterios de aceptación:**
-  - [ ] Test: radicar producto final sin ventana activa → `409`
-  - [ ] Test: Innovación sin `certificacion_plan_negocio` → `400`
-  - [ ] Test: producto final aprobado (ambas ≥ 4.0) → `aprobado_para_sustentacion`
-  - [ ] Test: Diplomado tecnológico aprobado → `trabajo_aprobado` (sin sustentación)
-  - [ ] Test: producto final reprobado → `en_desarrollo` (no `idea_aprobada`)
-  - [ ] Test: divergencia → J3 → aprueba → `aprobado_para_sustentacion`
-  - [ ] Test: correcciones → segunda revisión → aprobado → `aprobado_para_sustentacion`
-  - [ ] Test: correcciones → segunda revisión → reprobado → `en_desarrollo`
-  - [ ] Test: suspensión por plagio en estado `en_desarrollo` → `suspendido_por_plagio`
-  - [ ] Test: intentar avanzar proyecto suspendido → `409`
-  - [ ] Tests en `backend/tests/test_producto_final.py`
+  - [x] Test: radicar producto final sin ventana activa → `409`
+  - [x] Test: Innovación sin `certificacion_plan_negocio` → `400`
+  - [x] Test: producto final aprobado (ambas ≥ 4.0) → `aprobado_para_sustentacion`
+  - [x] Test: Diplomado tecnológico aprobado → `trabajo_aprobado` (sin sustentación)
+  - [x] Test: producto final reprobado → `en_desarrollo` (no `idea_aprobada`)
+  - [x] Test: divergencia → J3 → aprueba → `aprobado_para_sustentacion`
+  - [x] Test: correcciones → segunda revisión → aprobado → `aprobado_para_sustentacion`
+  - [x] Test: correcciones → segunda revisión → reprobado → `en_desarrollo`
+  - [x] Test: suspensión por plagio en estado `en_desarrollo` → `suspendido_por_plagio`
+  - [x] Test: intentar avanzar proyecto suspendido → `409`
+  - [x] Tests en `backend/tests/test_producto_final.py`
 - **Dependencias:** T-F06-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

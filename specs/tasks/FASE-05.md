@@ -43,15 +43,15 @@
 - **Referencias:** `specs/arch/API.md` §Jurados, RF-06-01..RF-06-03, RF-06-10
 - **Descripción:** El Administrador asigna Jurado 1 y Jurado 2 al anteproyecto. El sistema inicia el conteo del plazo de 15 días hábiles.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "anteproyecto" }` → `201` (solo Administrador)
-  - [ ] Valida estado `anteproyecto_pendiente_evaluacion` → `409` si estado distinto
-  - [ ] Solo muestra docentes con `is_active = true` en el selector (filtro en `GET /users?role=docente&is_active=true`)
-  - [ ] Al asignar, registra `project_jurors.assigned_at = now()`. Crea registro en `evaluations` con `start_date = assigned_at` y `due_date = add_business_days(assigned_at, 15, project.period)`, `revision_number = 1`
-  - [ ] No permite asignar el mismo docente como Jurado 1 y Jurado 2 → `400`
-  - [ ] `GET /projects/{id}/jurors` → `200`. Para Estudiante: oculta `user_id` y `full_name`, muestra solo `juror_number`. Para Admin/Director: visibilidad completa
-  - [ ] `DELETE /projects/{id}/jurors/{jurorId}` → `204` (solo Administrador, solo si no hay calificación registrada aún)
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "anteproyecto" }` → `201` (solo Administrador)
+  - [x] Valida estado `anteproyecto_pendiente_evaluacion` → `409` si estado distinto
+  - [x] Solo muestra docentes con `is_active = true` en el selector (filtro en `GET /users?role=docente&is_active=true`)
+  - [x] Al asignar, registra `project_jurors.assigned_at = now()`. Crea registro en `evaluations` con `start_date = assigned_at` y `due_date = add_business_days(assigned_at, 15, project.period)`, `revision_number = 1`
+  - [x] No permite asignar el mismo docente como Jurado 1 y Jurado 2 → `400`
+  - [x] `GET /projects/{id}/jurors` → `200`. Para Estudiante: oculta `user_id` y `full_name`, muestra solo `juror_number`. Para Admin/Director: visibilidad completa
+  - [x] `DELETE /projects/{id}/jurors/{jurorId}` → `204` (solo Administrador, solo si no hay calificación registrada aún)
 - **Dependencias:** T-F05-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

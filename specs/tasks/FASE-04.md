@@ -127,15 +127,15 @@
 - **Referencias:** RF-03-01..RF-03-08, RF-04-01..RF-04-09
 - **Descripción:** Tests que cubren todos los flujos y casos borde de MOD-03 y MOD-04.
 - **Criterios de aceptación:**
-  - [ ] Test: inscribir idea sin ventana activa → `409`
-  - [ ] Test: inscribir idea con integrante no pre-registrado → `400`
-  - [ ] Test: inscribir idea con más integrantes que el límite → `400`
-  - [ ] Test: inscribir idea con `prerequisite_declaration = false` → `400`
-  - [ ] Test: estudiante con trabajo activo intenta inscribir otra idea → `409`
-  - [ ] Test: aprobar idea sin director asignado → `400`
-  - [ ] Test: rechazar idea sin motivo → `400`
-  - [ ] Test: agregar integrante después de aprobación de anteproyecto → `409`
-  - [ ] Test: retirar integrante sin adjunto → `400`
-  - [ ] Tests en `backend/tests/test_ideas.py`
+  - [x] Test: inscribir idea sin ventana activa → `409`
+  - [x] Test: inscribir idea con integrante no pre-registrado → `400`
+  - [x] Test: inscribir idea con más integrantes que el límite → `400`
+  - [x] Test: inscribir idea con `prerequisite_declaration = false` → `400`
+  - [x] Test: estudiante con trabajo activo intenta inscribir otra idea → `409`
+  - [x] Test: aprobar idea sin director asignado → `400`
+  - [x] Test: rechazar idea sin motivo → `400`
+  - [x] Test: agregar integrante después de aprobación de anteproyecto → `409`
+  - [x] Test: retirar integrante sin adjunto → `400`
+  - [x] Tests en `backend/tests/test_ideas.py`
 - **Dependencias:** T-F04-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

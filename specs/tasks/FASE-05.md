@@ -60,17 +60,17 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/evaluations, RF-06-04..RF-06-09
 - **Descripción:** Cada jurado registra su calificación individual. El sistema marca extemporáneas automáticamente y evalúa el resultado cuando ambos han calificado.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/evaluations` body: `{ stage: "anteproyecto", score: 0.0–5.0, observations: texto }` → `201` (solo Docente con rol jurado asignado en esta etapa)
-  - [ ] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403` si no
-  - [ ] Si `submitted_at > evaluations.due_date` → `is_extemporaneous = true` (no bloquea, solo marca)
-  - [ ] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver esquemas en `specs/arch/API.md` línea 139-154):
+  - [x] `POST /projects/{id}/evaluations` body: `{ stage: "anteproyecto", score: 0.0–5.0, observations: texto }` → `201` (solo Docente con rol jurado asignado en esta etapa)
+  - [x] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403` si no
+  - [x] Si `submitted_at > evaluations.due_date` → `is_extemporaneous = true` (no bloquea, solo marca)
+  - [x] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver esquemas en `specs/arch/API.md` línea 139-154):
     - **Estudiante:** `juror_id` y `full_name` **nunca** incluidos — solo `juror_number`, `score`, `observations`, `submitted_at`
     - **Administrador:** visibilidad completa incluyendo `juror_id`, `juror_name`, `is_extemporaneous`
     - **Docente (Director):** incluye `juror_id` y `juror_name`
-  - [ ] El serializer aplica el filtro de identidad en la **capa de servicio**, no solo en el frontend (AUTH.md línea 79)
-  - [ ] `GET /projects/{id}/evaluations/{evalId}` → `200` (Administrador, Docente)
+  - [x] El serializer aplica el filtro de identidad en la **capa de servicio**, no solo en el frontend (AUTH.md línea 79)
+  - [x] `GET /projects/{id}/evaluations/{evalId}` → `200` (Administrador, Docente)
 - **Dependencias:** T-F05-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

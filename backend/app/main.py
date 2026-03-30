@@ -6,6 +6,7 @@ from app.routers import (
     academic_programs,
     auth,
     date_windows,
+    evaluations,
     jurors,
     modalities,
     projects,
@@ -38,6 +39,7 @@ app.include_router(date_windows.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(submissions.router, prefix="/api/v1")
 app.include_router(jurors.router, prefix="/api/v1")
+app.include_router(evaluations.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

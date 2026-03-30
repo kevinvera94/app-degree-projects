@@ -48,15 +48,15 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/directors, RF-04-02, RF-04-03, RF-04-06
 - **Descripción:** El Administrador aprueba una idea y debe asignar al menos un director. La aprobación y asignación ocurren en el mismo flujo.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /api/v1/projects/{id}/status` body: `{ action: "aprobar" }` (solo Administrador)
-  - [ ] Requiere que ya exista al menos un director asignado vía `POST /projects/{id}/directors` previo, O el body puede incluir `director_ids[]` directamente → `400` si no hay director
-  - [ ] `POST /api/v1/projects/{id}/directors` body: `{ user_id, order: 1|2 }` → `201`. Valida: docente activo (`is_active = true`), `order` en (1,2), máx. 2 directores activos por proyecto
-  - [ ] `DELETE /api/v1/projects/{id}/directors/{directorId}` → `204` (solo Administrador)
-  - [ ] Al aprobar: `status → idea_aprobada`, registra en `project_status_history`
-  - [ ] Envía mensaje automático al estudiante: "Tu idea ha sido aprobada. Director asignado: [nombre]"
-  - [ ] Envía mensaje automático al docente asignado: "Has sido asignado como director del trabajo [título]"
+  - [x] `PATCH /api/v1/projects/{id}/status` body: `{ action: "aprobar" }` (solo Administrador)
+  - [x] Requiere que ya exista al menos un director asignado vía `POST /projects/{id}/directors` previo, O el body puede incluir `director_ids[]` directamente → `400` si no hay director
+  - [x] `POST /api/v1/projects/{id}/directors` body: `{ user_id, order: 1|2 }` → `201`. Valida: docente activo (`is_active = true`), `order` en (1,2), máx. 2 directores activos por proyecto
+  - [x] `DELETE /api/v1/projects/{id}/directors/{directorId}` → `204` (solo Administrador)
+  - [x] Al aprobar: `status → idea_aprobada`, registra en `project_status_history`
+  - [x] Envía mensaje automático al estudiante: "Tu idea ha sido aprobada. Director asignado: [nombre]"
+  - [x] Envía mensaje automático al docente asignado: "Has sido asignado como director del trabajo [título]"
 - **Dependencias:** T-F04-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

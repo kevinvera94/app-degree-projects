@@ -13,6 +13,7 @@ from app.schemas.extemporaneous_window import (
     ExtemporaneousWindowCreate,
     ExtemporaneousWindowResponse,
 )
+from app.schemas.director import DirectorCreate, DirectorResponse, ProjectStatusUpdate
 from app.schemas.project import (
     PaginatedProjectsResponse,
     ProjectCreate,
@@ -449,6 +450,232 @@ async def create_project(
 
     await db.commit()
     return ProjectResponse(**project_row)
+
+
+# ---------------------------------------------------------------------------
+# PATCH /projects/{id}/status — Cambio de estado (aprobar, rechazar, cancelar…)
+# ---------------------------------------------------------------------------
+
+
+@router.patch("/{project_id}/status", response_model=ProjectResponse)
+async def update_project_status(
+    project_id: UUID,
+    body: ProjectStatusUpdate,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> ProjectResponse:
+    # Cargar proyecto
+    proj_result = await db.execute(
+        text(f"SELECT {_SELECT_PROJECT} FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    project = proj_result.mappings().first()
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+
+    action = body.action.lower()
+
+    if action == "aprobar":
+        if project["status"] != "pendiente_evaluacion_idea":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Solo se puede aprobar una idea en estado 'pendiente_evaluacion_idea'. Estado actual: {project['status']}",
+            )
+
+        # Verificar que existe al menos un director activo asignado
+        dir_result = await db.execute(
+            text(
+                "SELECT pd.id, pd.docente_id, u.full_name"
+                " FROM public.project_directors pd"
+                " JOIN public.users u ON u.id = pd.docente_id"
+                " WHERE pd.project_id = :pid AND pd.is_active = true"
+                " ORDER BY pd.order LIMIT 1"
+            ),
+            {"pid": project_id},
+        )
+        director = dir_result.mappings().first()
+        if director is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Debe asignar al menos un director antes de aprobar la idea",
+            )
+
+        new_status = "idea_aprobada"
+        notes = "Idea aprobada por el CTG"
+
+        # Actualizar estado
+        updated = await db.execute(
+            text(
+                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
+            ),
+            {"new_status": new_status, "id": project_id},
+        )
+        updated_row = updated.mappings().first()
+
+        # Registrar en historial
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, :new, :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": project["status"],
+                "new": new_status,
+                "by": current_user.id,
+                "notes": notes,
+            },
+        )
+
+        # Mensaje a todos los integrantes
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Tu idea ha sido aprobada. Director asignado: {director['full_name']}",
+            },
+        )
+
+        # Mensaje al docente director
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "rid": director["docente_id"],
+                "content": f"Has sido asignado como director del trabajo '{project['title']}'",
+            },
+        )
+
+        await db.commit()
+        return ProjectResponse(**updated_row)
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=f"Acción '{body.action}' no reconocida o no aplicable en este estado",
+    )
+
+
+# ---------------------------------------------------------------------------
+# POST/DELETE /projects/{id}/directors
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/{project_id}/directors",
+    response_model=DirectorResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def assign_director(
+    project_id: UUID,
+    body: DirectorCreate,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> DirectorResponse:
+    await _get_project_or_404(project_id, db)
+
+    # Docente debe ser activo
+    docente_result = await db.execute(
+        text(
+            "SELECT id FROM public.users"
+            " WHERE id = :uid AND role = 'docente' AND is_active = true"
+        ),
+        {"uid": body.user_id},
+    )
+    if docente_result.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El usuario no existe, no es docente o está inactivo",
+        )
+
+    # Máx. 2 directores activos
+    count_result = await db.execute(
+        text(
+            "SELECT COUNT(*) FROM public.project_directors"
+            " WHERE project_id = :pid AND is_active = true"
+        ),
+        {"pid": project_id},
+    )
+    if count_result.scalar_one() >= 2:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El proyecto ya tiene 2 directores activos asignados",
+        )
+
+    # No asignar el mismo docente dos veces
+    dup_result = await db.execute(
+        text(
+            "SELECT id FROM public.project_directors"
+            " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+        ),
+        {"pid": project_id, "uid": body.user_id},
+    )
+    if dup_result.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El docente ya está asignado como director de este proyecto",
+        )
+
+    result = await db.execute(
+        text(
+            "INSERT INTO public.project_directors"
+            ' (project_id, docente_id, "order", assigned_by)'
+            " VALUES (:pid, :did, :order, :by)"
+            " RETURNING id, project_id, docente_id, \"order\" AS order, assigned_by, assigned_at, is_active"
+        ),
+        {
+            "pid": project_id,
+            "did": body.user_id,
+            "order": body.order,
+            "by": current_user.id,
+        },
+    )
+    row = dict(result.mappings().first())
+    await db.commit()
+
+    # Enriquecer con full_name del docente
+    name_result = await db.execute(
+        text("SELECT full_name FROM public.users WHERE id = :id"),
+        {"id": row["docente_id"]},
+    )
+    row["full_name"] = name_result.scalar_one()
+    return DirectorResponse(**row)
+
+
+@router.delete(
+    "/{project_id}/directors/{director_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_director(
+    project_id: UUID,
+    director_id: UUID,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    result = await db.execute(
+        text(
+            "DELETE FROM public.project_directors"
+            " WHERE id = :did AND project_id = :pid"
+        ),
+        {"did": director_id, "pid": project_id},
+    )
+    if result.rowcount == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Director no encontrado en este proyecto",
+        )
+    await db.commit()
 
 
 # ---------------------------------------------------------------------------

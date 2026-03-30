@@ -10,7 +10,7 @@
 **Tarea activa:** —
 **Fase activa:** FASE-03
 **Fase activa:** FASE-04
-**Próxima tarea:** `T-F04-03` — Aprobación de idea con asignación de director
+**Próxima tarea:** `T-F04-04` — Implementar rechazo de idea
 
 ---
 
@@ -67,6 +67,7 @@
 - `T-F03-09` — Tests de integración: endpoints de users y configuración — 2026-03-29
 - `T-F04-01` — Implementar inscripción de idea (`POST /projects`) — 2026-03-29
 - `T-F04-02` — Listado y detalle de proyectos (`GET /projects`, `/my`, `/{id}`) — 2026-03-29
+- `T-F04-03` — Aprobación de idea con asignación de director — 2026-03-29
 
 ---
 

@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-05
-**Próxima tarea:** `T-F05-01` — Implementar radicación de anteproyecto (`POST /submissions`)
+**Próxima tarea:** `T-F05-02` — Implementar asignación de jurados al anteproyecto (`POST /projects/{id}/jurors`)
 
 ---
 
@@ -21,7 +21,7 @@
 | FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
 | FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
-| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ⬜ |
+| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | 🔄 |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ⬜ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
@@ -72,6 +72,7 @@
 - `T-F04-06` — Retiro de integrante (`PATCH /members/{id}/remove`, multipart+Storage) — 2026-03-29
 - `T-F04-07` — Cancelación de proyecto (action=cancelar) — 2026-03-29
 - `T-F04-08` — Tests de integración: inscripción y evaluación de idea — 2026-03-29
+- `T-F05-01` — Implementar radicación de anteproyecto y adjuntos (`POST /submissions`, `PATCH /confirm`) — 2026-03-29
 
 ---
 

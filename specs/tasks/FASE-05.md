@@ -21,20 +21,20 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/submissions, RF-05-01..RF-05-06
 - **Descripción:** El estudiante radica el anteproyecto subiendo los documentos obligatorios. La radicación se confirma solo cuando todos los adjuntos requeridos están presentes.
 - **Criterios de aceptación:**
-  - [ ] **Paso 1 — Crear radicación:** `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto" }` → `201` crea `submission` con `status = "pendiente"` y `revision_number = 1` (solo Estudiante con pertenencia activa). No incluir `academic_period` en el body — se hereda de `thesis_projects.period`
-  - [ ] Valida estado `idea_aprobada` → `409` si estado distinto
-  - [ ] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay. Si es extemporánea: `is_extemporaneous = true`. Si es global: guarda `date_window_id`
-  - [ ] **Paso 2 — Subir adjuntos:** `POST /projects/{id}/submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage, guarda `file_url`
-  - [ ] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
-  - [ ] `DELETE /projects/{id}/submissions/{subId}/attachments/{attId}` solo cuando `submission.status = "pendiente"` → `204`; si ya confirmada → `409`
-  - [ ] **Paso 3 — Confirmar radicación:** `PATCH /projects/{id}/submissions/{subId}/confirm` → `200` (solo Estudiante). Valida adjuntos obligatorios según modalidad:
+  - [x] **Paso 1 — Crear radicación:** `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto" }` → `201` crea `submission` con `status = "pendiente"` y `revision_number = 1` (solo Estudiante con pertenencia activa). No incluir `academic_period` en el body — se hereda de `thesis_projects.period`
+  - [x] Valida estado `idea_aprobada` → `409` si estado distinto
+  - [x] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay. Si es extemporánea: `is_extemporaneous = true`. Si es global: guarda `date_window_id`
+  - [x] **Paso 2 — Subir adjuntos:** `POST /projects/{id}/submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage, guarda `file_url`
+  - [x] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
+  - [x] `DELETE /projects/{id}/submissions/{subId}/attachments/{attId}` solo cuando `submission.status = "pendiente"` → `204`; si ya confirmada → `409`
+  - [x] **Paso 3 — Confirmar radicación:** `PATCH /projects/{id}/submissions/{subId}/confirm` → `200` (solo Estudiante). Valida adjuntos obligatorios según modalidad:
     - Todas las modalidades: `plantilla`, `carta_aval`, `reporte_similitud`
     - Modalidad `Investigación` (detectada por `modalities.requires_ethics_approval = true`): además `aval_etica`
-  - [ ] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
-  - [ ] Al confirmar: `submission.status → "en_revision"`, `project.status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
-  - [ ] Envía mensaje automático al Administrador: "Nuevo anteproyecto radicado: [título]"
+  - [x] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
+  - [x] Al confirmar: `submission.status → "en_revision"`, `project.status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
+  - [x] Envía mensaje automático al Administrador: "Nuevo anteproyecto radicado: [título]"
 - **Dependencias:** T-F04-08, T-F01-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

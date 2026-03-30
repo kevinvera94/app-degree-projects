@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import academic_programs, auth, date_windows, modalities, projects, users
+from app.routers import academic_programs, auth, date_windows, modalities, projects, submissions, users
 
 app = FastAPI(
     title="USC App Degree Projects API",
@@ -27,6 +27,7 @@ app.include_router(academic_programs.router, prefix="/api/v1")
 app.include_router(modalities.router, prefix="/api/v1")
 app.include_router(date_windows.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
+app.include_router(submissions.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

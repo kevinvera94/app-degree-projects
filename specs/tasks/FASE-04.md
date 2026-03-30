@@ -33,13 +33,13 @@
 - **Referencias:** `specs/arch/API.md` §/projects, RF-04-01, RF-03-08
 - **Descripción:** Endpoints de consulta de proyectos, con visibilidad diferenciada por rol.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/projects` (solo Administrador) con filtros: `status`, `modality_id`, `academic_period`, `academic_program_id` → `200` lista paginada
-  - [ ] `GET /api/v1/projects/my` (Docente, Estudiante) → `200` lista de proyectos propios (miembro, director o jurado activo)
-  - [ ] `GET /api/v1/projects/{id}` → `200` detalle completo. Administrador ve todo; Docente y Estudiante solo si tienen pertenencia activa
-  - [ ] El detalle incluye: `status`, `modality`, `members`, `directors`, `jurors` (con anonimato para Estudiante), `submissions`, `evaluations`
-  - [ ] Sin pertenencia y no admin → `403`
+  - [x] `GET /api/v1/projects` (solo Administrador) con filtros: `status`, `modality_id`, `academic_period`, `academic_program_id` → `200` lista paginada
+  - [x] `GET /api/v1/projects/my` (Docente, Estudiante) → `200` lista de proyectos propios (miembro, director o jurado activo)
+  - [x] `GET /api/v1/projects/{id}` → `200` detalle completo. Administrador ve todo; Docente y Estudiante solo si tienen pertenencia activa
+  - [x] El detalle incluye: `status`, `modality`, `members`, `directors`, `jurors` (con anonimato para Estudiante), `submissions`, `evaluations`
+  - [x] Sin pertenencia y no admin → `403`
 - **Dependencias:** T-F04-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

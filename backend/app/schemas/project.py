@@ -68,3 +68,63 @@ class ProjectResponse(BaseModel):
     plagiarism_suspended: bool
     created_at: datetime
     updated_at: datetime
+
+
+class PaginatedProjectsResponse(BaseModel):
+    items: list[ProjectResponse]
+    total: int
+    page: int
+    size: int
+
+
+# ---------------------------------------------------------------------------
+# Sub-schemas para el detalle de proyecto
+# ---------------------------------------------------------------------------
+
+
+class ProjectMemberInfo(BaseModel):
+    id: UUID
+    student_id: UUID
+    full_name: str
+    email: str
+    is_active: bool
+    joined_at: datetime
+
+
+class ProjectDirectorInfo(BaseModel):
+    id: UUID
+    docente_id: UUID
+    full_name: str
+    order: int
+    is_active: bool
+    assigned_at: datetime
+
+
+class ProjectJurorInfo(BaseModel):
+    """
+    Información de jurado. Los campos de identidad son None cuando
+    el receptor es un estudiante (anonimato garantizado por el router).
+    """
+    juror_number: int
+    stage: str
+    is_active: bool
+    id: Optional[UUID] = None
+    docente_id: Optional[UUID] = None
+    full_name: Optional[str] = None
+    assigned_at: Optional[datetime] = None
+
+
+class SubmissionBasicInfo(BaseModel):
+    id: UUID
+    stage: str
+    submitted_at: datetime
+    status: str
+    revision_number: int
+    is_extemporaneous: bool
+
+
+class ProjectDetailResponse(ProjectResponse):
+    members: list[ProjectMemberInfo] = []
+    directors: list[ProjectDirectorInfo] = []
+    jurors: list[ProjectJurorInfo] = []
+    submissions: list[SubmissionBasicInfo] = []

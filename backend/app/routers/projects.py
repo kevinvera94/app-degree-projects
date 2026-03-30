@@ -7,13 +7,23 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import CurrentUser, require_admin, require_estudiante
+from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
 from app.schemas.date_window import WindowType
 from app.schemas.extemporaneous_window import (
     ExtemporaneousWindowCreate,
     ExtemporaneousWindowResponse,
 )
-from app.schemas.project import ProjectCreate, ProjectResponse, TERMINAL_STATUSES
+from app.schemas.project import (
+    PaginatedProjectsResponse,
+    ProjectCreate,
+    ProjectDetailResponse,
+    ProjectDirectorInfo,
+    ProjectJurorInfo,
+    ProjectMemberInfo,
+    ProjectResponse,
+    SubmissionBasicInfo,
+    TERMINAL_STATUSES,
+)
 from app.services.modality_service import get_max_members
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -36,6 +46,223 @@ async def _get_project_or_404(project_id: UUID, db: AsyncSession) -> None:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Trabajo de grado no encontrado",
         )
+
+
+# ---------------------------------------------------------------------------
+# GET /projects — Listado (solo Administrador, paginado con filtros)
+# ---------------------------------------------------------------------------
+
+
+@router.get("", response_model=PaginatedProjectsResponse)
+async def list_projects(
+    project_status: Optional[str] = None,
+    modality_id: Optional[UUID] = None,
+    academic_period: Optional[str] = None,
+    academic_program_id: Optional[UUID] = None,
+    page: int = 1,
+    size: int = 20,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> PaginatedProjectsResponse:
+    conditions = []
+    params: dict = {"limit": size, "offset": (page - 1) * size}
+
+    if project_status is not None:
+        conditions.append("status = :project_status")
+        params["project_status"] = project_status
+    if modality_id is not None:
+        conditions.append("modality_id = :modality_id")
+        params["modality_id"] = modality_id
+    if academic_period is not None:
+        conditions.append("period = :academic_period")
+        params["academic_period"] = academic_period
+    if academic_program_id is not None:
+        conditions.append("academic_program_id = :academic_program_id")
+        params["academic_program_id"] = academic_program_id
+
+    where = f" WHERE {' AND '.join(conditions)}" if conditions else ""
+
+    count_result = await db.execute(
+        text(f"SELECT COUNT(*) FROM public.thesis_projects{where}"), params
+    )
+    total: int = count_result.scalar_one()
+
+    rows_result = await db.execute(
+        text(
+            f"SELECT {_SELECT_PROJECT} FROM public.thesis_projects{where}"
+            " ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+        ),
+        params,
+    )
+    items = [ProjectResponse(**row) for row in rows_result.mappings()]
+    return PaginatedProjectsResponse(items=items, total=total, page=page, size=size)
+
+
+# ---------------------------------------------------------------------------
+# GET /projects/my — Proyectos del usuario autenticado (Docente / Estudiante)
+# ---------------------------------------------------------------------------
+
+
+@router.get("/my", response_model=list[ProjectResponse])
+async def list_my_projects(
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[ProjectResponse]:
+    if current_user.role == "estudiante":
+        result = await db.execute(
+            text(
+                f"SELECT DISTINCT p.{_SELECT_PROJECT.replace(', ', ', p.')}"
+                " FROM public.thesis_projects p"
+                " JOIN public.project_members pm ON pm.project_id = p.id"
+                " WHERE pm.student_id = :uid AND pm.is_active = true"
+                " ORDER BY p.created_at DESC"
+            ),
+            {"uid": current_user.id},
+        )
+    elif current_user.role == "docente":
+        result = await db.execute(
+            text(
+                f"SELECT DISTINCT p.{_SELECT_PROJECT.replace(', ', ', p.')}"
+                " FROM public.thesis_projects p"
+                " LEFT JOIN public.project_directors pd"
+                "   ON pd.project_id = p.id AND pd.is_active = true"
+                " LEFT JOIN public.project_jurors pj"
+                "   ON pj.project_id = p.id AND pj.is_active = true"
+                " WHERE pd.docente_id = :uid OR pj.docente_id = :uid"
+                " ORDER BY p.created_at DESC"
+            ),
+            {"uid": current_user.id},
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Este endpoint es solo para docentes y estudiantes",
+        )
+
+    return [ProjectResponse(**row) for row in result.mappings()]
+
+
+# ---------------------------------------------------------------------------
+# GET /projects/{id} — Detalle completo (con validación de pertenencia)
+# ---------------------------------------------------------------------------
+
+
+async def _check_membership(
+    project_id: UUID, user: CurrentUser, db: AsyncSession
+) -> None:
+    """Lanza 403 si el usuario no es admin ni tiene pertenencia activa al proyecto."""
+    if user.role == "administrador":
+        return
+
+    if user.role == "estudiante":
+        result = await db.execute(
+            text(
+                "SELECT id FROM public.project_members"
+                " WHERE project_id = :pid AND student_id = :uid AND is_active = true"
+            ),
+            {"pid": project_id, "uid": user.id},
+        )
+    else:  # docente
+        result = await db.execute(
+            text(
+                "SELECT id FROM public.project_directors"
+                " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+                " UNION"
+                " SELECT id FROM public.project_jurors"
+                " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+            ),
+            {"pid": project_id, "uid": user.id},
+        )
+
+    if result.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes acceso a este trabajo de grado",
+        )
+
+
+@router.get("/{project_id}", response_model=ProjectDetailResponse)
+async def get_project(
+    project_id: UUID,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> ProjectDetailResponse:
+    # Obtener proyecto
+    result = await db.execute(
+        text(f"SELECT {_SELECT_PROJECT} FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    row = result.mappings().first()
+    if row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+
+    await _check_membership(project_id, current_user, db)
+
+    # Integrantes
+    members_result = await db.execute(
+        text(
+            "SELECT pm.id, pm.student_id, u.full_name, u.email, pm.is_active, pm.joined_at"
+            " FROM public.project_members pm"
+            " JOIN public.users u ON u.id = pm.student_id"
+            " WHERE pm.project_id = :pid ORDER BY pm.joined_at"
+        ),
+        {"pid": project_id},
+    )
+    members = [ProjectMemberInfo(**r) for r in members_result.mappings()]
+
+    # Directores
+    directors_result = await db.execute(
+        text(
+            'SELECT pd.id, pd.docente_id, u.full_name, pd."order", pd.is_active, pd.assigned_at'
+            " FROM public.project_directors pd"
+            " JOIN public.users u ON u.id = pd.docente_id"
+            " WHERE pd.project_id = :pid ORDER BY pd.order"
+        ),
+        {"pid": project_id},
+    )
+    directors = [ProjectDirectorInfo(**r) for r in directors_result.mappings()]
+
+    # Jurados — anonimato para estudiantes
+    is_student = current_user.role == "estudiante"
+    if is_student:
+        jurors_result = await db.execute(
+            text(
+                "SELECT pj.juror_number, pj.stage, pj.is_active"
+                " FROM public.project_jurors pj"
+                " WHERE pj.project_id = :pid ORDER BY pj.stage, pj.juror_number"
+            ),
+            {"pid": project_id},
+        )
+    else:
+        jurors_result = await db.execute(
+            text(
+                "SELECT pj.id, pj.docente_id, u.full_name, pj.juror_number,"
+                " pj.stage, pj.is_active, pj.assigned_at"
+                " FROM public.project_jurors pj"
+                " JOIN public.users u ON u.id = pj.docente_id"
+                " WHERE pj.project_id = :pid ORDER BY pj.stage, pj.juror_number"
+            ),
+            {"pid": project_id},
+        )
+    jurors = [ProjectJurorInfo(**r) for r in jurors_result.mappings()]
+
+    # Radicaciones (básico)
+    subs_result = await db.execute(
+        text(
+            "SELECT id, stage, submitted_at, status, revision_number, is_extemporaneous"
+            " FROM public.submissions WHERE project_id = :pid ORDER BY submitted_at DESC"
+        ),
+        {"pid": project_id},
+    )
+    submissions = [SubmissionBasicInfo(**r) for r in subs_result.mappings()]
+
+    return ProjectDetailResponse(
+        **row,
+        members=members,
+        directors=directors,
+        jurors=jurors,
+        submissions=submissions,
+    )
 
 
 # ---------------------------------------------------------------------------

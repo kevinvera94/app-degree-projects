@@ -144,10 +144,18 @@ async def assign_juror(
             detail="Trabajo de grado no encontrado",
         )
 
+    # T-F07-03: Jurado 3 no existe en sustentación
+    if body.stage == "sustentacion" and body.juror_number == 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No existe Jurado 3 en sustentación",
+        )
+
     # Validar estado del proyecto según etapa del jurado
     _valid_states = {
         "anteproyecto": {"anteproyecto_pendiente_evaluacion"},
         "producto_final": {"producto_final_entregado", "en_revision_jurados_producto_final"},
+        "sustentacion": {"aprobado_para_sustentacion", "sustentacion_programada"},
     }
     if project["status"] not in _valid_states.get(body.stage, set()):
         raise HTTPException(
@@ -290,46 +298,53 @@ async def assign_juror(
     due_date = add_business_days(assigned_date, 15, project["period"])
 
     # Determinar revision_number: J3 hereda el de J1/J2; J1/J2 usan 1 por defecto
-    revision_number = 1
-    if body.juror_number == 3:
-        rev_result = await db.execute(
-            text(
-                "SELECT revision_number FROM public.evaluations"
-                " WHERE project_id = :pid AND stage = :stage"
-                " AND juror_number IN (1, 2) AND score IS NOT NULL"
-                " ORDER BY revision_number DESC LIMIT 1"
-            ),
-            {"pid": project_id, "stage": body.stage},
-        )
-        rev_row = rev_result.mappings().first()
-        if rev_row:
-            revision_number = rev_row["revision_number"]
+    # Para sustentacion: no se usan evaluations (tabla sustentation_evaluations aparte, T-F07-02)
+    if body.stage != "sustentacion":
+        revision_number = 1
+        if body.juror_number == 3:
+            rev_result = await db.execute(
+                text(
+                    "SELECT revision_number FROM public.evaluations"
+                    " WHERE project_id = :pid AND stage = :stage"
+                    " AND juror_number IN (1, 2) AND score IS NOT NULL"
+                    " ORDER BY revision_number DESC LIMIT 1"
+                ),
+                {"pid": project_id, "stage": body.stage},
+            )
+            rev_row = rev_result.mappings().first()
+            if rev_row:
+                revision_number = rev_row["revision_number"]
 
-    # Crear registro en evaluations (sin calificación aún)
-    await db.execute(
-        text(
-            """
-            INSERT INTO public.evaluations
-                (project_id, submission_id, juror_id, juror_number, stage,
-                 start_date, due_date, revision_number)
-            VALUES
-                (:project_id, :submission_id, :juror_id, :juror_number, :stage,
-                 :start_date, :due_date, :revision_number)
-            """
-        ),
-        {
-            "project_id": project_id,
-            "submission_id": submission_id,
-            "juror_id": body.user_id,
-            "juror_number": body.juror_number,
-            "stage": body.stage,
-            "start_date": now,
-            "due_date": due_date,
-            "revision_number": revision_number,
-        },
-    )
+        # Crear registro en evaluations (sin calificación aún)
+        await db.execute(
+            text(
+                """
+                INSERT INTO public.evaluations
+                    (project_id, submission_id, juror_id, juror_number, stage,
+                     start_date, due_date, revision_number)
+                VALUES
+                    (:project_id, :submission_id, :juror_id, :juror_number, :stage,
+                     :start_date, :due_date, :revision_number)
+                """
+            ),
+            {
+                "project_id": project_id,
+                "submission_id": submission_id,
+                "juror_id": body.user_id,
+                "juror_number": body.juror_number,
+                "stage": body.stage,
+                "start_date": now,
+                "due_date": due_date,
+                "revision_number": revision_number,
+            },
+        )
 
     # Mensaje automático al docente asignado
+    msg_content = (
+        f"Has sido asignado como Jurado {body.juror_number} del trabajo '{project['title']}'."
+    )
+    if body.stage != "sustentacion":
+        msg_content += f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
     await db.execute(
         text(
             "INSERT INTO public.messages"
@@ -340,11 +355,7 @@ async def assign_juror(
             "pid": project_id,
             "sid": current_user.id,
             "rid": body.user_id,
-            "content": (
-                f"Has sido asignado como Jurado {body.juror_number}"
-                f" del trabajo '{project['title']}'."
-                f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
-            ),
+            "content": msg_content,
         },
     )
 

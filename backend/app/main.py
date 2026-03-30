@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.routers import (
     academic_programs,
+    act,
     auth,
     date_windows,
     evaluations,
@@ -12,6 +13,7 @@ from app.routers import (
     projects,
     reports,
     submissions,
+    sustentation,
     users,
 )
 
@@ -42,6 +44,8 @@ app.include_router(submissions.router, prefix="/api/v1")
 app.include_router(jurors.router, prefix="/api/v1")
 app.include_router(evaluations.router, prefix="/api/v1")
 app.include_router(reports.router, prefix="/api/v1")
+app.include_router(sustentation.router, prefix="/api/v1")
+app.include_router(act.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

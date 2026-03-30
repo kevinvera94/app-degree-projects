@@ -13,6 +13,9 @@ Rutas implementadas (T-F05-01):
 Extensión (T-F05-06):
   El mismo POST y PATCH/confirm manejan correcciones cuando body.is_correction=true.
 
+Extensión (T-F06-01):
+  El mismo POST y PATCH/confirm manejan producto_final cuando body.stage="producto_final".
+
 Rutas de consulta (T-F05-09):
   GET    /projects/{id}/submissions               — historial de radicaciones
   GET    /projects/{id}/submissions/{subId}       — detalle con adjuntos
@@ -34,6 +37,7 @@ from app.core.supabase_client import supabase_admin
 from app.schemas.submission import (
     REQUIRED_ATTACHMENTS_BASE,
     REQUIRED_ATTACHMENTS_CORRECTION,
+    REQUIRED_ATTACHMENT_BUSINESS_PLAN,
     REQUIRED_ATTACHMENT_ETHICS,
     AttachmentResponse,
     AttachmentSignedURLResponse,
@@ -168,8 +172,10 @@ async def create_submission(
 ) -> SubmissionResponse:
     """
     Paso 1 de la radicación: crea el registro con status='pendiente'.
-    - Sin is_correction: primera radicación de anteproyecto (estado idea_aprobada).
-    - Con is_correction=true: entrega de correcciones (estado correcciones_anteproyecto_solicitadas).
+    Ramas según body.stage:
+    - 'anteproyecto': primera radicación (estado idea_aprobada).
+    - 'anteproyecto' + is_correction=true: correcciones (estado correcciones_anteproyecto_solicitadas).
+    - 'producto_final': radicación de producto final (estado en_desarrollo). (T-F06-01)
     """
     from datetime import date as date_type
 
@@ -263,6 +269,14 @@ async def create_submission(
         return SubmissionResponse(**sub_row)
 
     # ------------------------------------------------------------------
+    # Rama C: Producto final (T-F06-01)
+    # ------------------------------------------------------------------
+    if body.stage.value == "producto_final":
+        return await _create_producto_final_submission(
+            project_id, current_user, dict(project), today, db
+        )
+
+    # ------------------------------------------------------------------
     # Rama B: Primera radicación de anteproyecto (T-F05-01)
     # ------------------------------------------------------------------
     if project["status"] != "idea_aprobada":
@@ -329,6 +343,99 @@ async def create_submission(
                  is_extemporaneous, revision_number, status)
             VALUES
                 (:project_id, 'anteproyecto', :submitted_by, :date_window_id,
+                 :is_extemporaneous, 1, 'pendiente')
+            RETURNING {_SELECT_SUB}
+            """
+        ),
+        {
+            "project_id": project_id,
+            "submitted_by": current_user.id,
+            "date_window_id": date_window_id,
+            "is_extemporaneous": is_extemporaneous,
+        },
+    )
+    sub_row = sub_result.mappings().first()
+    await db.commit()
+    return SubmissionResponse(**sub_row)
+
+
+# ---------------------------------------------------------------------------
+# Rama C: Radicación de producto final (T-F06-01)
+# Se maneja en create_submission cuando body.stage == "producto_final"
+# ---------------------------------------------------------------------------
+
+
+async def _create_producto_final_submission(
+    project_id: UUID,
+    current_user: CurrentUser,
+    project: dict,
+    today,
+    db: AsyncSession,
+) -> SubmissionResponse:
+    """Crea la radicación de producto final (status=pendiente, revision_number=1)."""
+    if project["status"] != "en_desarrollo":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Solo se puede radicar el producto final cuando el proyecto está en desarrollo. "
+                f"Estado actual: {project['status']}"
+            ),
+        )
+
+    # Verificar que no exista ya una radicación activa para esta etapa
+    existing = await db.execute(
+        text(
+            "SELECT id FROM public.submissions"
+            " WHERE project_id = :pid AND stage = 'producto_final'"
+            " AND status IN ('pendiente', 'en_revision') LIMIT 1"
+        ),
+        {"pid": project_id},
+    )
+    if existing.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ya existe una radicación de producto final activa para este proyecto",
+        )
+
+    # Ventana global para radicacion_producto_final
+    global_window = await db.execute(
+        text(
+            "SELECT id FROM public.date_windows"
+            " WHERE window_type = 'radicacion_producto_final' AND is_active = true"
+            " AND start_date <= :today AND end_date >= :today LIMIT 1"
+        ),
+        {"today": today},
+    )
+    global_row = global_window.mappings().first()
+
+    # Ventana extemporánea individual
+    ext_window = await db.execute(
+        text(
+            "SELECT id FROM public.extemporaneous_windows"
+            " WHERE project_id = :pid AND stage = 'radicacion_producto_final'"
+            " AND valid_until >= :today LIMIT 1"
+        ),
+        {"pid": project_id, "today": today},
+    )
+    ext_row = ext_window.mappings().first()
+
+    if global_row is None and ext_row is None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="No hay una ventana de fechas activa para radicación de producto final",
+        )
+
+    is_extemporaneous = global_row is None and ext_row is not None
+    date_window_id: Optional[UUID] = None if is_extemporaneous else global_row["id"]
+
+    sub_result = await db.execute(
+        text(
+            f"""
+            INSERT INTO public.submissions
+                (project_id, stage, submitted_by, date_window_id,
+                 is_extemporaneous, revision_number, status)
+            VALUES
+                (:project_id, 'producto_final', :submitted_by, :date_window_id,
                  :is_extemporaneous, 1, 'pendiente')
             RETURNING {_SELECT_SUB}
             """
@@ -625,10 +732,11 @@ async def confirm_submission(
     db: AsyncSession = Depends(get_db),
 ) -> SubmissionResponse:
     """
-    Confirma la radicación. Maneja dos flujos según la etapa:
+    Confirma la radicación. Maneja flujos según la etapa:
     - 'anteproyecto': primera radicación → anteproyecto_pendiente_evaluacion
     - 'correcciones_anteproyecto': correcciones → anteproyecto_corregido_entregado
                                    + nuevos registros evaluations revision_number=2
+    - 'producto_final': radicación de producto final → producto_final_entregado (T-F06-01)
     """
     # Validar pertenencia activa
     membership = await db.execute(
@@ -651,10 +759,11 @@ async def confirm_submission(
             detail="Solo se puede confirmar una radicación en estado 'pendiente'",
         )
 
-    # Obtener proyecto y modalidad
+    # Obtener proyecto y modalidad (todos los campos necesarios para validar adjuntos)
     proj_result = await db.execute(
         text(
-            "SELECT p.id, p.status, p.title, p.period, m.requires_ethics_approval"
+            "SELECT p.id, p.status, p.title, p.period,"
+            " m.requires_ethics_approval, m.requires_business_plan_cert"
             " FROM public.thesis_projects p"
             " JOIN public.modalities m ON m.id = p.modality_id"
             " WHERE p.id = :id"
@@ -676,11 +785,18 @@ async def confirm_submission(
     present_types = {row["attachment_type"] for row in att_result.mappings()}
 
     is_correction = sub["stage"] == "correcciones_anteproyecto"
+    is_producto_final = sub["stage"] == "producto_final"
 
-    # Validar adjuntos obligatorios según el tipo de radicación
+    # Validar adjuntos obligatorios según la etapa y modalidad
     if is_correction:
         required = set(REQUIRED_ATTACHMENTS_CORRECTION)
+    elif is_producto_final:
+        required = set(REQUIRED_ATTACHMENTS_BASE)
+        if project["requires_business_plan_cert"]:
+            required.add(REQUIRED_ATTACHMENT_BUSINESS_PLAN)
+        # carta_impacto (has_company_link) es condicional: no bloquea aquí (Admin valida)
     else:
+        # Anteproyecto primera radicación
         required = set(REQUIRED_ATTACHMENTS_BASE)
         if project["requires_ethics_approval"]:
             required.add(REQUIRED_ATTACHMENT_ETHICS)
@@ -791,9 +907,47 @@ async def confirm_submission(
                 },
             )
 
+    elif is_producto_final:
+        # ------------------------------------------------------------------
+        # Flujo producto final (T-F06-01)
+        # ------------------------------------------------------------------
+        await db.execute(
+            text(
+                "UPDATE public.thesis_projects"
+                " SET status = 'producto_final_entregado', updated_at = now()"
+                " WHERE id = :pid"
+            ),
+            {"pid": project_id},
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'producto_final_entregado', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": prev_status,
+                "by": current_user.id,
+                "notes": "Producto final radicado y confirmado por el estudiante",
+            },
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Producto final radicado: {project['title']}",
+            },
+        )
+
     else:
         # ------------------------------------------------------------------
-        # Flujo primera radicación (T-F05-01)
+        # Flujo primera radicación anteproyecto (T-F05-01)
         # ------------------------------------------------------------------
         await db.execute(
             text(

@@ -50,6 +50,9 @@ REQUIRED_ATTACHMENTS_CORRECTION = frozenset({
     AttachmentType.carta_aval,
 })
 
+# Adjunto extra para modalidad Innovación y Emprendimiento (requires_business_plan_cert = true)
+REQUIRED_ATTACHMENT_BUSINESS_PLAN = AttachmentType.certificacion_plan_negocio
+
 
 class SubmissionCreate(BaseModel):
     stage: SubmissionStage

@@ -22,19 +22,19 @@
 - **Referencias:** RF-09-01..RF-09-06
 - **Descripción:** El estudiante radica el producto final con los adjuntos requeridos. La lógica es análoga a la del anteproyecto con adjuntos adicionales según modalidad.
 - **Criterios de aceptación:**
-  - [ ] **Paso 1:** `POST /projects/{id}/submissions` body: `{ stage: "producto_final" }` → `201`. No incluir `academic_period` — se hereda de `thesis_projects.period`
-  - [ ] Valida estado `en_desarrollo` → `409` si estado distinto
-  - [ ] Valida ventana activa para `radicacion_producto_final` (global o extemporánea) → `409`
-  - [ ] **Paso 2:** Subida de adjuntos (mismo mecanismo que anteproyecto)
-  - [ ] **Paso 3 — Confirmar:** `PATCH /projects/{id}/submissions/{subId}/confirm`. Valida adjuntos obligatorios:
+  - [x] **Paso 1:** `POST /projects/{id}/submissions` body: `{ stage: "producto_final" }` → `201`. No incluir `academic_period` — se hereda de `thesis_projects.period`
+  - [x] Valida estado `en_desarrollo` → `409` si estado distinto
+  - [x] Valida ventana activa para `radicacion_producto_final` (global o extemporánea) → `409`
+  - [x] **Paso 2:** Subida de adjuntos (mismo mecanismo que anteproyecto)
+  - [x] **Paso 3 — Confirmar:** `PATCH /projects/{id}/submissions/{subId}/confirm`. Valida adjuntos obligatorios:
     - Todas las modalidades: `plantilla`, `carta_aval`, `reporte_similitud`
     - Modalidad `Innovación y Emprendimiento` (`modalities.requires_business_plan_cert = true`): además `certificacion_plan_negocio`
     - Trabajo con `thesis_projects.has_company_link = true`: `carta_impacto` es condicional (no bloquea si falta; Admin valida después)
-  - [ ] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
-  - [ ] Al confirmar: `project.status → producto_final_entregado`, registra en `project_status_history`
-  - [ ] Mensaje automático al Administrador: "Producto final radicado: [título]"
+  - [x] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
+  - [x] Al confirmar: `project.status → producto_final_entregado`, registra en `project_status_history`
+  - [x] Mensaje automático al Administrador: "Producto final radicado: [título]"
 - **Dependencias:** T-F05-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

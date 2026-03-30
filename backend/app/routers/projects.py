@@ -522,6 +522,13 @@ async def update_project_status(
 
     action = body.action.lower()
 
+    # Guard global: proyecto suspendido por plagio bloquea cualquier avance (T-F06-08)
+    if project["status"] == "suspendido_por_plagio" and action != "suspender_plagio":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El trabajo está suspendido por plagio y no puede avanzar",
+        )
+
     if action == "aprobar":
         if project["status"] != "pendiente_evaluacion_idea":
             raise HTTPException(
@@ -727,6 +734,63 @@ async def update_project_status(
                 "pid": project_id,
                 "sid": current_user.id,
                 "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",  # noqa: E501
+            },
+        )
+
+        await db.commit()
+        return ProjectResponse(**updated_row)
+
+    # ------------------------------------------------------------------
+    # Acción: suspender_plagio (T-F06-08)
+    # ------------------------------------------------------------------
+    if action == "suspender_plagio":
+        if not body.reason or not body.reason.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El motivo de suspensión es obligatorio",
+            )
+        # Estados terminales: no se puede suspender un trabajo ya finalizado
+        _no_suspend = {"acta_generada", "cancelado", "suspendido_por_plagio"}
+        if project["status"] in _no_suspend:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    f"No se puede suspender un trabajo en estado '{project['status']}'"
+                ),
+            )
+
+        updated = await db.execute(
+            text(
+                f"UPDATE public.thesis_projects SET status = 'suspendido_por_plagio',"
+                f" updated_at = now() WHERE id = :id RETURNING {_SELECT_PROJECT}"
+            ),
+            {"id": project_id},
+        )
+        updated_row = updated.mappings().first()
+
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'suspendido_por_plagio', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": project["status"],
+                "by": current_user.id,
+                "notes": body.reason.strip(),
+            },
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Tu trabajo ha sido suspendido por plagio. Motivo: {body.reason.strip()}",
             },
         )
 

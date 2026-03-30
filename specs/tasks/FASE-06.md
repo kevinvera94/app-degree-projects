@@ -90,12 +90,12 @@
 - **Referencias:** RF-10-02 (Jurado 3 flujo separado), RF-10-03
 - **Descripción:** Asignación y registro de calificación del Jurado 3 para el producto final (primera revisión). Solo acepta Aprobado o Reprobado.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "producto_final" }` → `201` (solo Administrador, solo con divergencia activa)
-  - [ ] La calificación del J3 solo acepta `score >= 4.0` o `score < 3.0` → `400` si `3.0 <= score < 4.0`
-  - [ ] J3 aprueba → `aprobado_para_sustentacion` (o `trabajo_aprobado` para Diplomado)
-  - [ ] J3 reprueba → `producto_final_reprobado` → `en_desarrollo`
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "producto_final" }` → `201` (solo Administrador, solo con divergencia activa)
+  - [x] La calificación del J3 solo acepta `score >= 4.0` o `score < 3.0` → `400` si `3.0 <= score < 4.0`
+  - [x] J3 aprueba → `aprobado_para_sustentacion` (o `trabajo_aprobado` para Diplomado)
+  - [x] J3 reprueba → `producto_final_reprobado` → `en_desarrollo`
 - **Dependencias:** T-F06-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -104,13 +104,13 @@
 - **Referencias:** RF-11-01..RF-11-04
 - **Descripción:** Flujo de correcciones del producto final. Análogo a MOD-07 pero con retorno a `en_desarrollo` en lugar de `idea_aprobada`.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "correcciones_producto_final" }` → `201` (solo Estudiante)
-  - [ ] Valida estado `correcciones_producto_final_solicitadas` → `409` si distinto
-  - [ ] Valida ventana activa para `radicacion_producto_final` O plazo vigente → `409` si ambos vencidos
-  - [ ] Al confirmar: `status → producto_final_corregido_entregado`. Registra `start_date = submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, period)`
-  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones del producto final. Plazo: [due_date]"
+  - [x] `POST /projects/{id}/submissions` body: `{ stage: "correcciones_producto_final" }` → `201` (solo Estudiante)
+  - [x] Valida estado `correcciones_producto_final_solicitadas` → `409` si distinto
+  - [x] Valida ventana activa para `radicacion_producto_final` O plazo vigente → `409` si ambos vencidos
+  - [x] Al confirmar: `status → producto_final_corregido_entregado`. Registra `start_date = submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, period)`
+  - [x] Mensaje automático a los jurados: "El estudiante entregó correcciones del producto final. Plazo: [due_date]"
 - **Dependencias:** T-F06-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -119,13 +119,13 @@
 - **Referencias:** RF-11-02, RF-11-03, RF-11-04
 - **Descripción:** Segunda revisión del producto final. Solo aprobado/reprobado. Divergencia genera Jurado 3. Reprobación retorna a `en_desarrollo`.
 - **Criterios de aceptación:**
-  - [ ] Segunda revisión: solo acepta `score >= 4.0` o `score < 3.0` → `400` si `3.0 <= score < 4.0`
-  - [ ] Ambas aprobadas → `aprobado_para_sustentacion` (o `trabajo_aprobado` para Diplomado)
-  - [ ] Ambas reprobadas (o J3 reprueba) → `producto_final_reprobado` → `en_desarrollo`
-  - [ ] Divergencia → Jurado 3 (mismo flujo de T-F06-05 pero con `stage: "correcciones_producto_final"`)
-  - [ ] Bloqueo de entrega de correcciones por incumplimiento de plazo: mismo comportamiento que MOD-07 (T-F05-07)
+  - [x] Segunda revisión: solo acepta `score >= 4.0` o `score < 3.0` → `400` si `3.0 <= score < 4.0`
+  - [x] Ambas aprobadas → `aprobado_para_sustentacion` (o `trabajo_aprobado` para Diplomado)
+  - [x] Ambas reprobadas (o J3 reprueba) → `producto_final_reprobado` → `en_desarrollo`
+  - [x] Divergencia → Jurado 3 (`stage="producto_final"`, mismo flujo de T-F06-05)
+  - [x] Bloqueo de entrega de correcciones por incumplimiento de plazo: cubierto por `check_producto_final_correction_window`
 - **Dependencias:** T-F06-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -134,14 +134,14 @@
 - **Referencias:** RF-14-01..RF-14-04
 - **Descripción:** El Administrador puede suspender cualquier trabajo de grado en cualquier etapa por plagio comprobado.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /projects/{id}/status` body: `{ action: "suspender_plagio", reason: "..." }` → `200` (solo Administrador)
-  - [ ] `reason` obligatorio → `400` si vacío
-  - [ ] `status → suspendido_por_plagio` desde cualquier estado (excepto `acta_generada` y `cancelado`) → `409` si ya está en estado terminal
-  - [ ] Un trabajo suspendido bloquea cualquier otra acción de avance → `409`
-  - [ ] Registra en `project_status_history` con fecha, actor y motivo
-  - [ ] Mensaje automático al estudiante: "Tu trabajo ha sido suspendido. Motivo: [reason]"
+  - [x] `PATCH /projects/{id}/status` body: `{ action: "suspender_plagio", reason: "..." }` → `200` (solo Administrador)
+  - [x] `reason` obligatorio → `400` si vacío
+  - [x] `status → suspendido_por_plagio` desde cualquier estado (excepto `acta_generada` y `cancelado`) → `409` si ya está en estado terminal
+  - [x] Un trabajo suspendido bloquea cualquier otra acción de avance → `409`
+  - [x] Registra en `project_status_history` con fecha, actor y motivo
+  - [x] Mensaje automático al estudiante: "Tu trabajo ha sido suspendido. Motivo: [reason]"
 - **Dependencias:** T-F06-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

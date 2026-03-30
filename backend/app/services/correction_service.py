@@ -85,6 +85,61 @@ async def check_correction_window(
     )
 
 
+async def check_producto_final_correction_window(
+    project_id: UUID,
+    project_period: str,
+    db: AsyncSession,
+) -> None:
+    """
+    Valida si el estudiante puede entregar correcciones del producto final.
+    Misma lógica que check_correction_window pero con window_type y estado distintos.
+    Lanza ValueError con mensaje explicativo si no puede.
+    """
+    today = date.today()
+
+    # 1. Ventana global activa para radicacion_producto_final
+    window_result = await db.execute(
+        text(
+            "SELECT id FROM public.date_windows"
+            " WHERE window_type = 'radicacion_producto_final'"
+            " AND is_active = true"
+            " AND start_date <= :today AND end_date >= :today"
+            " LIMIT 1"
+        ),
+        {"today": today},
+    )
+    if window_result.mappings().first() is not None:
+        return  # Ventana activa → permitido
+
+    # 2. Verificar si el plazo de corrección no ha vencido
+    hist_result = await db.execute(
+        text(
+            "SELECT changed_at FROM public.project_status_history"
+            " WHERE project_id = :pid"
+            " AND new_status = 'correcciones_producto_final_solicitadas'"
+            " ORDER BY changed_at DESC LIMIT 1"
+        ),
+        {"pid": project_id},
+    )
+    hist_row = hist_result.mappings().first()
+
+    if hist_row is not None:
+        correction_deadline = add_business_days(
+            hist_row["changed_at"].date(),
+            _CORRECTION_DEADLINE_DAYS,
+            project_period,
+        )
+        if today <= correction_deadline:
+            return  # Plazo vigente → permitido
+
+    # 3. Plazo vencido y sin ventana activa → bloqueado
+    raise ValueError(
+        "El plazo para entregar correcciones del producto final ha vencido "
+        "y no hay ventana de fechas activa. "
+        "Podrás radicar cuando abra la siguiente ventana de radicación de producto final."
+    )
+
+
 async def correction_deadline_date(
     project_id: UUID,
     project_period: str,

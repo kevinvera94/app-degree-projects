@@ -46,7 +46,10 @@ from app.schemas.submission import (
     SubmissionDetailResponse,
     SubmissionResponse,
 )
-from app.services.correction_service import check_correction_window
+from app.services.correction_service import (
+    check_correction_window,
+    check_producto_final_correction_window,
+)
 from app.utils.business_days import add_business_days
 
 router = APIRouter(prefix="/projects", tags=["submissions"])
@@ -263,6 +266,58 @@ async def create_submission(
                 "project_id": project_id,
                 "submitted_by": current_user.id,
             },
+        )
+        sub_row = sub_result.mappings().first()
+        await db.commit()
+        return SubmissionResponse(**sub_row)
+
+    # ------------------------------------------------------------------
+    # Rama D: Correcciones del producto final (T-F06-06)
+    # ------------------------------------------------------------------
+    if body.stage.value == "correcciones_producto_final":
+        if project["status"] != "correcciones_producto_final_solicitadas":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Solo se pueden entregar correcciones del producto final cuando el estado es "
+                    f"'correcciones_producto_final_solicitadas'. Estado actual: {project['status']}"
+                ),
+            )
+
+        # Verificar que no exista ya una corrección activa
+        existing_corr = await db.execute(
+            text(
+                "SELECT id FROM public.submissions"
+                " WHERE project_id = :pid AND stage = 'correcciones_producto_final'"
+                " AND status IN ('pendiente', 'en_revision') LIMIT 1"
+            ),
+            {"pid": project_id},
+        )
+        if existing_corr.mappings().first() is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Ya existe una entrega de correcciones de producto final activa para este proyecto",
+            )
+
+        # Ventana activa O plazo vigente
+        try:
+            await check_producto_final_correction_window(project_id, project["period"], db)
+        except ValueError as exc:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
+
+        sub_result = await db.execute(
+            text(
+                f"""
+                INSERT INTO public.submissions
+                    (project_id, stage, submitted_by, date_window_id,
+                     is_extemporaneous, revision_number, status)
+                VALUES
+                    (:project_id, 'correcciones_producto_final', :submitted_by, NULL,
+                     false, 2, 'pendiente')
+                RETURNING {_SELECT_SUB}
+                """
+            ),
+            {"project_id": project_id, "submitted_by": current_user.id},
         )
         sub_row = sub_result.mappings().first()
         await db.commit()
@@ -785,10 +840,12 @@ async def confirm_submission(
     present_types = {row["attachment_type"] for row in att_result.mappings()}
 
     is_correction = sub["stage"] == "correcciones_anteproyecto"
+    is_correcciones_pf = sub["stage"] == "correcciones_producto_final"
     is_producto_final = sub["stage"] == "producto_final"
 
     # Validar adjuntos obligatorios según la etapa y modalidad
-    if is_correction:
+    if is_correction or is_correcciones_pf:
+        # Correcciones (anteproyecto o producto final): plantilla + carta_aval
         required = set(REQUIRED_ATTACHMENTS_CORRECTION)
     elif is_producto_final:
         required = set(REQUIRED_ATTACHMENTS_BASE)
@@ -902,6 +959,88 @@ async def confirm_submission(
                     "rid": j["docente_id"],
                     "content": (
                         f"El estudiante entregó correcciones del anteproyecto "
+                        f"'{project['title']}'. Plazo de evaluación: {due_str}"
+                    ),
+                },
+            )
+
+    elif is_correcciones_pf:
+        # ------------------------------------------------------------------
+        # Flujo correcciones del producto final (T-F06-06)
+        # ------------------------------------------------------------------
+        from datetime import datetime as _dt, timezone as _tz
+
+        now = _dt.now(_tz.utc)
+        new_due = add_business_days(now.date(), 10, project["period"])
+        due_str = new_due.strftime("%d/%m/%Y")
+
+        await db.execute(
+            text(
+                "UPDATE public.thesis_projects"
+                " SET status = 'producto_final_corregido_entregado', updated_at = now()"
+                " WHERE id = :pid"
+            ),
+            {"pid": project_id},
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'producto_final_corregido_entregado', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": prev_status,
+                "by": current_user.id,
+                "notes": f"Correcciones de producto final entregadas. Nuevo plazo de evaluación: {due_str}",
+            },
+        )
+
+        # Obtener jurados activos J1 y J2 para crear evaluations revision_number=2
+        jurors_result = await db.execute(
+            text(
+                "SELECT pj.docente_id, pj.juror_number"
+                " FROM public.project_jurors pj"
+                " WHERE pj.project_id = :pid AND pj.stage = 'producto_final'"
+                " AND pj.juror_number IN (1, 2) AND pj.is_active = true"
+            ),
+            {"pid": project_id},
+        )
+        jurors = list(jurors_result.mappings())
+
+        for j in jurors:
+            await db.execute(
+                text(
+                    """
+                    INSERT INTO public.evaluations
+                        (project_id, submission_id, juror_id, juror_number, stage,
+                         start_date, due_date, revision_number)
+                    VALUES
+                        (:project_id, :submission_id, :juror_id, :juror_number,
+                         'producto_final', :start_date, :due_date, 2)
+                    """
+                ),
+                {
+                    "project_id": project_id,
+                    "submission_id": sub_id,
+                    "juror_id": j["docente_id"],
+                    "juror_number": j["juror_number"],
+                    "start_date": now,
+                    "due_date": new_due,
+                },
+            )
+            await db.execute(
+                text(
+                    "INSERT INTO public.messages"
+                    " (project_id, sender_id, recipient_id, content, sender_display)"
+                    " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+                ),
+                {
+                    "pid": project_id,
+                    "sid": current_user.id,
+                    "rid": j["docente_id"],
+                    "content": (
+                        f"El estudiante entregó correcciones del producto final "
                         f"'{project['title']}'. Plazo de evaluación: {due_str}"
                     ),
                 },

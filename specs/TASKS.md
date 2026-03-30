@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F06-05` — Implementar Jurado 3 para producto final
+**Próxima tarea:** `T-F06-09` — Tests de integración: producto final y correcciones
 
 ---
 
@@ -86,6 +86,10 @@
 - `T-F06-02` — Implementar asignación de jurados al producto final — 2026-03-30
 - `T-F06-03` — Implementar registro de calificación del producto final — 2026-03-30
 - `T-F06-04` — Implementar lógica de resultado del producto final — 2026-03-30
+- `T-F06-05` — Implementar Jurado 3 para producto final — 2026-03-30
+- `T-F06-06` — Implementar correcciones del producto final — 2026-03-30
+- `T-F06-07` — Implementar segunda revisión del producto final — 2026-03-30
+- `T-F06-08` — Implementar suspensión por plagio — 2026-03-30
 
 ---
 

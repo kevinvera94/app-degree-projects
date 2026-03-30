@@ -169,6 +169,20 @@ async def submit_evaluation(
             detail="No estás asignado como jurado para esta etapa del proyecto",
         )
 
+    # Verificar que el proyecto no está suspendido por plagio (T-F06-08)
+    proj_result = await db.execute(
+        text("SELECT status FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    proj_row = proj_result.mappings().first()
+    if proj_row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trabajo de grado no encontrado")
+    if proj_row["status"] == "suspendido_por_plagio":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El trabajo está suspendido por plagio y no puede avanzar",
+        )
+
     # Buscar el registro de evaluations pendiente (score IS NULL) para este jurado/etapa
     eval_result = await db.execute(
         text(

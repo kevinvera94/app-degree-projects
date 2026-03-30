@@ -561,6 +561,60 @@ async def update_project_status(
         await db.commit()
         return ProjectResponse(**updated_row)
 
+    if action == "rechazar":
+        if project["status"] != "pendiente_evaluacion_idea":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Solo se puede rechazar una idea en estado 'pendiente_evaluacion_idea'. Estado actual: {project['status']}",
+            )
+        if not body.reason or not body.reason.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El motivo del rechazo es obligatorio",
+            )
+
+        new_status = "idea_rechazada"
+
+        updated = await db.execute(
+            text(
+                f"UPDATE public.thesis_projects SET status = :new_status, updated_at = now()"
+                f" WHERE id = :id RETURNING {_SELECT_PROJECT}"
+            ),
+            {"new_status": new_status, "id": project_id},
+        )
+        updated_row = updated.mappings().first()
+
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, :new, :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": project["status"],
+                "new": new_status,
+                "by": current_user.id,
+                "notes": body.reason.strip(),
+            },
+        )
+
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Tu idea ha sido rechazada. Motivo: {body.reason.strip()}",
+            },
+        )
+
+        await db.commit()
+        return ProjectResponse(**updated_row)
+
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail=f"Acción '{body.action}' no reconocida o no aplicable en este estado",

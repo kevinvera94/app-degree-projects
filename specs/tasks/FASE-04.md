@@ -65,13 +65,13 @@
 - **Referencias:** RF-04-04, RF-04-05
 - **Descripción:** El Administrador rechaza una idea con motivo obligatorio.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /api/v1/projects/{id}/status` body: `{ action: "rechazar", reason: "..." }` (solo Administrador)
-  - [ ] `reason` obligatorio → `400` si vacío o ausente
-  - [ ] `status → idea_rechazada`, registra en `project_status_history` con el motivo
-  - [ ] El proyecto solo puede rechazarse desde `pendiente_evaluacion_idea` → `409` si estado distinto
-  - [ ] Envía mensaje automático al estudiante con el motivo del rechazo
+  - [x] `PATCH /api/v1/projects/{id}/status` body: `{ action: "rechazar", reason: "..." }` (solo Administrador)
+  - [x] `reason` obligatorio → `400` si vacío o ausente
+  - [x] `status → idea_rechazada`, registra en `project_status_history` con el motivo
+  - [x] El proyecto solo puede rechazarse desde `pendiente_evaluacion_idea` → `409` si estado distinto
+  - [x] Envía mensaje automático al estudiante con el motivo del rechazo
 - **Dependencias:** T-F04-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

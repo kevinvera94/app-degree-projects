@@ -1,0 +1,370 @@
+"""
+Router de jurados de proyectos.
+
+Rutas implementadas (T-F05-02):
+  POST   /projects/{id}/jurors           — asignar jurado (Administrador)
+  GET    /projects/{id}/jurors           — listar jurados (anonimizados para Estudiante)
+  DELETE /projects/{id}/jurors/{jurorId} — remover jurado (Admin, solo sin calificación)
+"""
+
+from datetime import datetime, timezone
+from typing import Union
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_db
+from app.core.dependencies import CurrentUser, get_current_user, require_admin
+from app.schemas.juror import JurorCreate, JurorResponse, JurorStudentResponse
+from app.utils.business_days import add_business_days
+
+router = APIRouter(prefix="/projects", tags=["jurors"])
+
+_SELECT_JUROR = (
+    "pj.id, pj.project_id, pj.docente_id, pj.juror_number, pj.stage,"
+    " pj.is_active, pj.assigned_at, pj.assigned_by,"
+    " u.full_name"
+)
+
+
+async def _check_membership(
+    project_id: UUID, user: CurrentUser, db: AsyncSession
+) -> None:
+    """Lanza 403 si el usuario no es admin ni tiene pertenencia activa al proyecto."""
+    if user.role == "administrador":
+        return
+    if user.role == "estudiante":
+        result = await db.execute(
+            text(
+                "SELECT id FROM public.project_members"
+                " WHERE project_id = :pid AND student_id = :uid AND is_active = true"
+            ),
+            {"pid": project_id, "uid": user.id},
+        )
+    else:  # docente
+        result = await db.execute(
+            text(
+                "SELECT id FROM public.project_directors"
+                " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+                " UNION"
+                " SELECT id FROM public.project_jurors"
+                " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+            ),
+            {"pid": project_id, "uid": user.id},
+        )
+    if result.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="No tienes acceso a este trabajo de grado",
+        )
+
+
+# ---------------------------------------------------------------------------
+# GET /projects/{id}/jurors — Listar jurados (T-F05-02)
+# ---------------------------------------------------------------------------
+
+
+@router.get(
+    "/{project_id}/jurors",
+    response_model=list[Union[JurorResponse, JurorStudentResponse]],
+)
+async def list_jurors(
+    project_id: UUID,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list:
+    """
+    Lista jurados del proyecto.
+    Estudiantes ven solo juror_number y stage (sin identidad).
+    Admin y Docente ven visibilidad completa.
+    """
+    await _check_membership(project_id, current_user, db)
+
+    is_student = current_user.role == "estudiante"
+
+    if is_student:
+        result = await db.execute(
+            text(
+                "SELECT pj.juror_number, pj.stage, pj.is_active"
+                " FROM public.project_jurors pj"
+                " WHERE pj.project_id = :pid ORDER BY pj.stage, pj.juror_number"
+            ),
+            {"pid": project_id},
+        )
+        return [JurorStudentResponse(**r) for r in result.mappings()]
+
+    result = await db.execute(
+        text(
+            f"SELECT {_SELECT_JUROR}"
+            " FROM public.project_jurors pj"
+            " JOIN public.users u ON u.id = pj.docente_id"
+            " WHERE pj.project_id = :pid ORDER BY pj.stage, pj.juror_number"
+        ),
+        {"pid": project_id},
+    )
+    return [JurorResponse(**r) for r in result.mappings()]
+
+
+# ---------------------------------------------------------------------------
+# POST /projects/{id}/jurors — Asignar jurado (T-F05-02)
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/{project_id}/jurors",
+    response_model=JurorResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def assign_juror(
+    project_id: UUID,
+    body: JurorCreate,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> JurorResponse:
+    """
+    Asigna un jurado al proyecto.
+    - Solo en estado anteproyecto_pendiente_evaluacion.
+    - Crea el registro en project_jurors y en evaluations con plazo de 15 días hábiles.
+    """
+    # Obtener proyecto
+    proj_result = await db.execute(
+        text(
+            "SELECT id, status, period, title"
+            " FROM public.thesis_projects WHERE id = :id"
+        ),
+        {"id": project_id},
+    )
+    project = proj_result.mappings().first()
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trabajo de grado no encontrado",
+        )
+
+    # Validar estado del proyecto
+    if project["status"] != "anteproyecto_pendiente_evaluacion":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "Solo se pueden asignar jurados cuando el anteproyecto"
+                " está pendiente de evaluación. "
+                f"Estado actual: {project['status']}"
+            ),
+        )
+
+    # Validar que el docente existe, está activo y tiene rol docente
+    docente_result = await db.execute(
+        text(
+            "SELECT id FROM public.users"
+            " WHERE id = :uid AND role = 'docente' AND is_active = true"
+        ),
+        {"uid": body.user_id},
+    )
+    if docente_result.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El usuario no existe, no es docente o está inactivo",
+        )
+
+    # No permitir asignar el mismo docente como J1 y J2 (ambos activos)
+    cross_check = await db.execute(
+        text(
+            "SELECT id FROM public.project_jurors"
+            " WHERE project_id = :pid AND docente_id = :uid"
+            " AND stage = :stage AND is_active = true"
+        ),
+        {"pid": project_id, "uid": body.user_id, "stage": body.stage},
+    )
+    if cross_check.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este docente ya está asignado como jurado en esta etapa",
+        )
+
+    # No permitir duplicar el número de jurado para esta etapa
+    num_check = await db.execute(
+        text(
+            "SELECT id FROM public.project_jurors"
+            " WHERE project_id = :pid AND juror_number = :num"
+            " AND stage = :stage AND is_active = true"
+        ),
+        {"pid": project_id, "num": body.juror_number, "stage": body.stage},
+    )
+    if num_check.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"Ya existe un Jurado {body.juror_number} activo"
+                " asignado para esta etapa"
+            ),
+        )
+
+    # Insertar en project_jurors
+    now = datetime.now(timezone.utc)
+    juror_result = await db.execute(
+        text(
+            "INSERT INTO public.project_jurors"
+            " (project_id, docente_id, juror_number, stage, assigned_by, assigned_at)"
+            " VALUES (:pid, :did, :num, :stage, :by, :now)"
+            " RETURNING id, project_id, docente_id, juror_number, stage,"
+            "           is_active, assigned_at, assigned_by"
+        ),
+        {
+            "pid": project_id,
+            "did": body.user_id,
+            "num": body.juror_number,
+            "stage": body.stage,
+            "by": current_user.id,
+            "now": now,
+        },
+    )
+    juror_row = dict(juror_result.mappings().first())
+
+    # Obtener la submission activa (en_revision) para esta etapa
+    sub_result = await db.execute(
+        text(
+            "SELECT id FROM public.submissions"
+            " WHERE project_id = :pid AND stage = :stage AND status = 'en_revision'"
+            " ORDER BY submitted_at DESC LIMIT 1"
+        ),
+        {"pid": project_id, "stage": body.stage},
+    )
+    sub_row = sub_result.mappings().first()
+    submission_id = sub_row["id"] if sub_row else None
+
+    # Calcular due_date: 15 días hábiles desde assigned_at
+    assigned_date = now.date()
+    due_date = add_business_days(assigned_date, 15, project["period"])
+
+    # Crear registro en evaluations (sin calificación aún)
+    await db.execute(
+        text(
+            """
+            INSERT INTO public.evaluations
+                (project_id, submission_id, juror_id, juror_number, stage,
+                 start_date, due_date, revision_number)
+            VALUES
+                (:project_id, :submission_id, :juror_id, :juror_number, :stage,
+                 :start_date, :due_date, 1)
+            """
+        ),
+        {
+            "project_id": project_id,
+            "submission_id": submission_id,
+            "juror_id": body.user_id,
+            "juror_number": body.juror_number,
+            "stage": body.stage,
+            "start_date": now,
+            "due_date": due_date,
+        },
+    )
+
+    # Mensaje automático al docente asignado
+    await db.execute(
+        text(
+            "INSERT INTO public.messages"
+            " (project_id, sender_id, recipient_id, content, sender_display)"
+            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+        ),
+        {
+            "pid": project_id,
+            "sid": current_user.id,
+            "rid": body.user_id,
+            "content": (
+                f"Has sido asignado como Jurado {body.juror_number}"
+                f" del trabajo '{project['title']}'."
+                f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
+            ),
+        },
+    )
+
+    await db.commit()
+
+    # Enriquecer con full_name
+    name_result = await db.execute(
+        text("SELECT full_name FROM public.users WHERE id = :id"),
+        {"id": body.user_id},
+    )
+    juror_row["full_name"] = name_result.scalar_one()
+    juror_row["project_id"] = project_id
+    return JurorResponse(**juror_row)
+
+
+# ---------------------------------------------------------------------------
+# DELETE /projects/{id}/jurors/{juror_id} — Remover jurado (T-F05-02)
+# ---------------------------------------------------------------------------
+
+
+@router.delete(
+    "/{project_id}/jurors/{juror_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def remove_juror(
+    project_id: UUID,
+    juror_id: UUID,
+    current_user: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    """
+    Remueve un jurado solo si aún no ha registrado ninguna calificación.
+    También elimina el registro de evaluations pendiente asociado.
+    """
+    # Verificar que el jurado existe en este proyecto
+    juror_result = await db.execute(
+        text(
+            "SELECT id, docente_id, juror_number, stage"
+            " FROM public.project_jurors"
+            " WHERE id = :jid AND project_id = :pid AND is_active = true"
+        ),
+        {"jid": juror_id, "pid": project_id},
+    )
+    juror = juror_result.mappings().first()
+    if juror is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Jurado no encontrado en este proyecto",
+        )
+
+    # Verificar que no haya calificación registrada para este jurado en esta etapa
+    eval_result = await db.execute(
+        text(
+            "SELECT id FROM public.evaluations"
+            " WHERE project_id = :pid AND juror_id = :did"
+            " AND stage = :stage AND score IS NOT NULL"
+            " LIMIT 1"
+        ),
+        {
+            "pid": project_id,
+            "did": juror["docente_id"],
+            "stage": juror["stage"],
+        },
+    )
+    if eval_result.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="No se puede remover un jurado que ya registró una calificación",
+        )
+
+    # Marcar como inactivo en project_jurors
+    await db.execute(
+        text("UPDATE public.project_jurors SET is_active = false WHERE id = :jid"),
+        {"jid": juror_id},
+    )
+
+    # Eliminar el registro de evaluations pendiente (sin calificación) para este jurado
+    await db.execute(
+        text(
+            "DELETE FROM public.evaluations"
+            " WHERE project_id = :pid AND juror_id = :did"
+            " AND stage = :stage AND score IS NULL"
+        ),
+        {
+            "pid": project_id,
+            "did": juror["docente_id"],
+            "stage": juror["stage"],
+        },
+    )
+
+    await db.commit()

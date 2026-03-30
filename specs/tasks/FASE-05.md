@@ -21,20 +21,20 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/submissions, RF-05-01..RF-05-06
 - **Descripción:** El estudiante radica el anteproyecto subiendo los documentos obligatorios. La radicación se confirma solo cuando todos los adjuntos requeridos están presentes.
 - **Criterios de aceptación:**
-  - [ ] **Paso 1 — Crear radicación:** `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto" }` → `201` crea `submission` con `status = "pendiente"` y `revision_number = 1` (solo Estudiante con pertenencia activa). No incluir `academic_period` en el body — se hereda de `thesis_projects.period`
-  - [ ] Valida estado `idea_aprobada` → `409` si estado distinto
-  - [ ] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay. Si es extemporánea: `is_extemporaneous = true`. Si es global: guarda `date_window_id`
-  - [ ] **Paso 2 — Subir adjuntos:** `POST /projects/{id}/submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage, guarda `file_url`
-  - [ ] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
-  - [ ] `DELETE /projects/{id}/submissions/{subId}/attachments/{attId}` solo cuando `submission.status = "pendiente"` → `204`; si ya confirmada → `409`
-  - [ ] **Paso 3 — Confirmar radicación:** `PATCH /projects/{id}/submissions/{subId}/confirm` → `200` (solo Estudiante). Valida adjuntos obligatorios según modalidad:
+  - [x] **Paso 1 — Crear radicación:** `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto" }` → `201` crea `submission` con `status = "pendiente"` y `revision_number = 1` (solo Estudiante con pertenencia activa). No incluir `academic_period` en el body — se hereda de `thesis_projects.period`
+  - [x] Valida estado `idea_aprobada` → `409` si estado distinto
+  - [x] Valida ventana activa para `radicacion_anteproyecto` (global o extemporánea) → `409` si no hay. Si es extemporánea: `is_extemporaneous = true`. Si es global: guarda `date_window_id`
+  - [x] **Paso 2 — Subir adjuntos:** `POST /projects/{id}/submissions/{subId}/attachments` body: `multipart/form-data` con `attachment_type` y `file` → `201` sube a Supabase Storage, guarda `file_url`
+  - [x] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada (TTL 1h) → `200`
+  - [x] `DELETE /projects/{id}/submissions/{subId}/attachments/{attId}` solo cuando `submission.status = "pendiente"` → `204`; si ya confirmada → `409`
+  - [x] **Paso 3 — Confirmar radicación:** `PATCH /projects/{id}/submissions/{subId}/confirm` → `200` (solo Estudiante). Valida adjuntos obligatorios según modalidad:
     - Todas las modalidades: `plantilla`, `carta_aval`, `reporte_similitud`
     - Modalidad `Investigación` (detectada por `modalities.requires_ethics_approval = true`): además `aval_etica`
-  - [ ] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
-  - [ ] Al confirmar: `submission.status → "en_revision"`, `project.status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
-  - [ ] Envía mensaje automático al Administrador: "Nuevo anteproyecto radicado: [título]"
+  - [x] Si falta adjunto obligatorio → `400` con lista de tipos faltantes
+  - [x] Al confirmar: `submission.status → "en_revision"`, `project.status → anteproyecto_pendiente_evaluacion`, registra en `project_status_history`
+  - [x] Envía mensaje automático al Administrador: "Nuevo anteproyecto radicado: [título]"
 - **Dependencias:** T-F04-08, T-F01-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -43,15 +43,15 @@
 - **Referencias:** `specs/arch/API.md` §Jurados, RF-06-01..RF-06-03, RF-06-10
 - **Descripción:** El Administrador asigna Jurado 1 y Jurado 2 al anteproyecto. El sistema inicia el conteo del plazo de 15 días hábiles.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "anteproyecto" }` → `201` (solo Administrador)
-  - [ ] Valida estado `anteproyecto_pendiente_evaluacion` → `409` si estado distinto
-  - [ ] Solo muestra docentes con `is_active = true` en el selector (filtro en `GET /users?role=docente&is_active=true`)
-  - [ ] Al asignar, registra `project_jurors.assigned_at = now()`. Crea registro en `evaluations` con `start_date = assigned_at` y `due_date = add_business_days(assigned_at, 15, project.period)`, `revision_number = 1`
-  - [ ] No permite asignar el mismo docente como Jurado 1 y Jurado 2 → `400`
-  - [ ] `GET /projects/{id}/jurors` → `200`. Para Estudiante: oculta `user_id` y `full_name`, muestra solo `juror_number`. Para Admin/Director: visibilidad completa
-  - [ ] `DELETE /projects/{id}/jurors/{jurorId}` → `204` (solo Administrador, solo si no hay calificación registrada aún)
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 1|2, stage: "anteproyecto" }` → `201` (solo Administrador)
+  - [x] Valida estado `anteproyecto_pendiente_evaluacion` → `409` si estado distinto
+  - [x] Solo muestra docentes con `is_active = true` en el selector (filtro en `GET /users?role=docente&is_active=true`)
+  - [x] Al asignar, registra `project_jurors.assigned_at = now()`. Crea registro en `evaluations` con `start_date = assigned_at` y `due_date = add_business_days(assigned_at, 15, project.period)`, `revision_number = 1`
+  - [x] No permite asignar el mismo docente como Jurado 1 y Jurado 2 → `400`
+  - [x] `GET /projects/{id}/jurors` → `200`. Para Estudiante: oculta `user_id` y `full_name`, muestra solo `juror_number`. Para Admin/Director: visibilidad completa
+  - [x] `DELETE /projects/{id}/jurors/{jurorId}` → `204` (solo Administrador, solo si no hay calificación registrada aún)
 - **Dependencias:** T-F05-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

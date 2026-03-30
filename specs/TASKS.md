@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-03
-**Próxima tarea:** `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`)
+**Fase activa:** FASE-05
+**Próxima tarea:** `T-F05-03` — Implementar registro de calificación de jurado (anteproyecto)
 
 ---
 
@@ -19,9 +19,9 @@
 |---|---|---|:---:|:---:|
 | FASE-01 | [FASE-01.md](tasks/FASE-01.md) | Infraestructura y setup del proyecto | 8 | ✅ |
 | FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
-| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | 🔄 |
-| FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ⬜ |
-| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ⬜ |
+| FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
+| FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
+| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | 🔄 |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ⬜ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
@@ -60,6 +60,20 @@
 - `T-F03-03` — Implementar desactivación de docentes (`PATCH /users/{id}/deactivate`) — 2026-03-29
 - `T-F03-04` — Implementar CRUD de programas académicos (`/academic-programs`) — 2026-03-29
 - `T-F03-05` — Implementar CRUD de modalidades y límites (`/modalities`) — 2026-03-29
+- `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`) — 2026-03-29
+- `T-F03-07` — Implementar ventanas extemporáneas (`/projects/{id}/extemporaneous-window`) — 2026-03-29
+- `T-F03-08` — Implementar recuperación de contraseña (Supabase Auth) — 2026-03-29
+- `T-F03-09` — Tests de integración: endpoints de users y configuración — 2026-03-29
+- `T-F04-01` — Implementar inscripción de idea (`POST /projects`) — 2026-03-29
+- `T-F04-02` — Listado y detalle de proyectos (`GET /projects`, `/my`, `/{id}`) — 2026-03-29
+- `T-F04-03` — Aprobación de idea con asignación de director — 2026-03-29
+- `T-F04-04` — Implementar rechazo de idea — 2026-03-29
+- `T-F04-05` — Gestión de integrantes (`GET/POST /projects/{id}/members`) — 2026-03-29
+- `T-F04-06` — Retiro de integrante (`PATCH /members/{id}/remove`, multipart+Storage) — 2026-03-29
+- `T-F04-07` — Cancelación de proyecto (action=cancelar) — 2026-03-29
+- `T-F04-08` — Tests de integración: inscripción y evaluación de idea — 2026-03-29
+- `T-F05-01` — Implementar radicación de anteproyecto y adjuntos (`POST /submissions`, `PATCH /confirm`) — 2026-03-29
+- `T-F05-02` — Implementar asignación de jurados al anteproyecto (`POST/GET/DELETE /projects/{id}/jurors`) — 2026-03-29
 
 ---
 

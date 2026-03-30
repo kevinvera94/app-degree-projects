@@ -8,6 +8,7 @@ académico ("2025-1", "2025-2", "2026-1", …).
 Si el archivo no existe o el periodo no está definido, solo se excluyen
 fines de semana (comportamiento seguro por defecto).
 """
+
 import json
 import logging
 from datetime import date, datetime, timedelta
@@ -33,7 +34,10 @@ def _resolve_holidays_path() -> Path:
 def _load_all_holidays() -> dict:
     path = _resolve_holidays_path()
     if not path.exists():
-        logger.warning("USC_HOLIDAYS_FILE no encontrado: %s. Solo se excluirán fines de semana.", path)
+        logger.warning(
+            "USC_HOLIDAYS_FILE no encontrado: %s. Solo se excluirán fines de semana.",
+            path,
+        )
         return {}
     with path.open(encoding="utf-8") as f:
         return json.load(f)

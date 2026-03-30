@@ -100,6 +100,81 @@ Además del rol, el backend valida que el usuario **pertenezca al proyecto** ant
 
 ---
 
+## Recuperación de contraseña
+
+La recuperación de contraseña se delega íntegramente a **Supabase Auth**. No existe endpoint en el backend para este flujo.
+
+### Flujo end-to-end
+
+```
+Cliente (React)            Supabase Auth             Frontend (página reset)
+  │                             │                          │
+  │── resetPasswordForEmail() ─►│                          │
+  │◄── 200 OK ──────────────────│                          │
+  │   (email enviado)           │                          │
+  │                             │── email con enlace ─────►│ usuario
+  │                             │                          │
+  │                             │     usuario hace clic    │
+  │                             │◄── visita enlace ────────│
+  │                             │─── redirige a ──────────►│ /auth/reset-password?...
+  │                             │                          │
+  │                       (token en URL)                   │
+  │◄──────────────────────── updateUser({ password }) ─────│
+  │                             │◄── valida token ─────────│
+  │                             │─── nuevo JWT ───────────►│
+  │◄── sesión renovada ─────────────────────────────────────│
+```
+
+### Llamada desde el frontend
+
+```typescript
+// 1. Solicitar email de recuperación (página /auth/forgot-password)
+const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  redirectTo: `${window.location.origin}/auth/reset-password`,
+});
+
+// 2. Establecer nueva contraseña (página /auth/reset-password)
+//    Supabase inyecta automáticamente la sesión desde el token en la URL
+const { error } = await supabase.auth.updateUser({
+  password: newPassword,
+});
+```
+
+> **Nota:** Supabase detecta el token en la URL (`#access_token=...&type=recovery`) automáticamente al cargar la página `/auth/reset-password`. No se necesita parsearlo manualmente.
+
+### Configuración en el dashboard de Supabase
+
+Ir a: **Authentication → Email Templates → Reset Password**
+
+**Asunto:**
+```
+Recuperación de contraseña — Sistema de Trabajos de Grado USC
+```
+
+**Cuerpo (HTML):**
+```html
+<h2>Recuperación de contraseña</h2>
+<p>Hola,</p>
+<p>Recibimos una solicitud para restablecer la contraseña de tu cuenta en el
+<strong>Sistema de Gestión de Trabajos de Grado de la Universidad Santiago de Cali</strong>.</p>
+<p>Haz clic en el siguiente enlace para establecer una nueva contraseña.
+Este enlace es válido por <strong>1 hora</strong>:</p>
+<p><a href="{{ .ConfirmationURL }}">Restablecer mi contraseña</a></p>
+<p>Si no solicitaste este cambio, ignora este mensaje. Tu contraseña actual
+no será modificada.</p>
+<hr>
+<p style="font-size:12px;color:#888;">
+  Universidad Santiago de Cali · Sistema de Trabajos de Grado
+</p>
+```
+
+Ir también a: **Authentication → URL Configuration**
+
+- **Site URL:** `http://localhost:5173` (desarrollo) / `https://tu-app.vercel.app` (producción)
+- **Redirect URLs:** agregar `http://localhost:5173/auth/reset-password` y la URL de producción equivalente
+
+---
+
 ## Dependencias de seguridad (FastAPI)
 
 ```python

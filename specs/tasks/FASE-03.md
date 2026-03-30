@@ -90,13 +90,13 @@
 - **Referencias:** `specs/arch/API.md` §/date-windows, RF-02-01..RF-02-06
 - **Descripción:** Gestión de ventanas de fechas para radicación. Incluye validación de que no haya ventanas activas superpuestas del mismo tipo.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/date-windows` con filtros `window_type`, `academic_period`, `is_active` → `200` (todos los roles)
-  - [ ] `POST /api/v1/date-windows` → `201` (solo Administrador). Valida que `start_date < end_date`
-  - [ ] `PATCH /api/v1/date-windows/{id}` edita fechas, tipo y `is_active`. Solo si `start_date` no ha llegado aún → `200` (solo Administrador)
-  - [ ] `DELETE /api/v1/date-windows/{id}` → `204`. Solo si no hay radicaciones asociadas a esa ventana; si hay → `409` (solo Administrador)
-  - [ ] Función de servicio `is_window_active(window_type, project_id)` usada en radicaciones: verifica ventana global activa o ventana extemporánea del proyecto
+  - [x] `GET /api/v1/date-windows` con filtros `window_type`, `academic_period`, `is_active` → `200` (todos los roles)
+  - [x] `POST /api/v1/date-windows` → `201` (solo Administrador). Valida que `start_date < end_date`
+  - [x] `PATCH /api/v1/date-windows/{id}` edita fechas, tipo y `is_active`. Solo si `start_date` no ha llegado aún → `200` (solo Administrador)
+  - [x] `DELETE /api/v1/date-windows/{id}` → `204`. Solo si no hay radicaciones asociadas a esa ventana; si hay → `409` (solo Administrador)
+  - [x] Función de servicio `is_window_active(window_type, project_id)` usada en radicaciones: verifica ventana global activa o ventana extemporánea del proyecto
 - **Dependencias:** T-F03-01, T-F02-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -105,12 +105,12 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/extemporaneous-window, RF-02-04
 - **Descripción:** Habilitar o revocar ventanas extemporáneas individuales para un trabajo de grado específico.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/extemporaneous-window` body: `{ window_type, valid_until, notes? }` → `201` (solo Administrador)
-  - [ ] `DELETE /projects/{id}/extemporaneous-window` → `204` (solo Administrador). Si no existe → `404`
-  - [ ] La ventana extemporánea queda en `extemporaneous_windows` asociada al proyecto
-  - [ ] `is_window_active()` del T-F03-06 la considera al verificar si una radicación está permitida
+  - [x] `POST /projects/{id}/extemporaneous-window` body: `{ window_type, valid_until, notes? }` → `201` (solo Administrador)
+  - [x] `DELETE /projects/{id}/extemporaneous-window` → `204` (solo Administrador). Si no existe → `404`
+  - [x] La ventana extemporánea queda en `extemporaneous_windows` asociada al proyecto
+  - [x] `is_window_active()` del T-F03-06 la considera al verificar si una radicación está permitida
 - **Dependencias:** T-F03-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -119,11 +119,11 @@
 - **Referencias:** RF-01-06, `specs/arch/AUTH.md`
 - **Descripción:** La recuperación de contraseña se delega a Supabase Auth. Configurar email template en Supabase y documentar el flujo en el frontend.
 - **Criterios de aceptación:**
-  - [ ] Email template de recuperación configurado en Supabase (asunto y cuerpo en español)
-  - [ ] El flujo de recuperación funciona end-to-end: el usuario recibe el email y puede establecer nueva contraseña
-  - [ ] Documentado en `specs/arch/AUTH.md` cómo el frontend llama a `supabase.auth.resetPasswordForEmail()`
+  - [x] Email template de recuperación configurado en Supabase (asunto y cuerpo en español)
+  - [x] El flujo de recuperación funciona end-to-end: el usuario recibe el email y puede establecer nueva contraseña
+  - [x] Documentado en `specs/arch/AUTH.md` cómo el frontend llama a `supabase.auth.resetPasswordForEmail()`
 - **Dependencias:** T-F01-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -132,12 +132,12 @@
 - **Referencias:** `specs/arch/API.md`, `specs/arch/AUTH.md`
 - **Descripción:** Tests de integración que cubren los endpoints de la FASE-03: auth, users, academic-programs, modalities y date-windows.
 - **Criterios de aceptación:**
-  - [ ] Test: crear usuario con rol incorrecto → `400`
-  - [ ] Test: desactivar docente con trabajos activos → mensajes de alerta generados
-  - [ ] Test: crear ventana de fechas con `start_date >= end_date` → `400`
-  - [ ] Test: eliminar ventana con radicaciones → `409`
-  - [ ] Test: `GET /users?role=docente&is_active=true` → solo docentes activos en respuesta
-  - [ ] Test: `get_max_members` para modalidad con límite específico vs sin límite específico
-  - [ ] Tests en `backend/tests/test_config.py`
+  - [x] Test: crear usuario con rol incorrecto → `400`
+  - [x] Test: desactivar docente con trabajos activos → mensajes de alerta generados
+  - [x] Test: crear ventana de fechas con `start_date >= end_date` → `400`
+  - [x] Test: eliminar ventana con radicaciones → `409`
+  - [x] Test: `GET /users?role=docente&is_active=true` → solo docentes activos en respuesta
+  - [x] Test: `get_max_members` para modalidad con límite específico vs sin límite específico
+  - [x] Tests en `backend/tests/test_config.py`
 - **Dependencias:** T-F03-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

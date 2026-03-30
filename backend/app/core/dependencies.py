@@ -64,6 +64,18 @@ async def require_docente(
     return user
 
 
+async def require_estudiante(
+    user: CurrentUser = Depends(get_current_user),
+) -> CurrentUser:
+    """Lanza 403 si el rol no es estudiante."""
+    if user.role != "estudiante":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Se requiere rol estudiante",
+        )
+    return user
+
+
 async def require_project_member(
     project_id: UUID,
     user: CurrentUser = Depends(get_current_user),

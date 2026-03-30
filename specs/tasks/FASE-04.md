@@ -12,19 +12,19 @@
 - **Referencias:** `specs/arch/API.md` §/projects, RF-03-01..RF-03-08
 - **Descripción:** El estudiante inscribe una nueva idea de trabajo de grado. Se validan integrantes, ventana activa, límites de integrantes y estado previo del estudiante.
 - **Criterios de aceptación:**
-  - [ ] `POST /api/v1/projects` (solo Estudiante) → `201` con el proyecto creado
-  - [ ] Body: `{ title, modality_id, academic_program_id, research_group, research_line, suggested_director?, member_ids[], prerequisite_declaration: true }` (`research_line` = línea de profundización, campo `research_line` en DATA-MODEL)
-  - [ ] Valida ventana activa para `inscripcion_idea` (global o extemporánea) → `409` si no hay ventana
-  - [ ] Todos los `member_ids` deben existir en la tabla `users` con `role = estudiante` e `is_active = true` (RF-03-02: pre-registrados antes de inscribir) → `400` si alguno no existe o no cumple el rol
-  - [ ] Valida que el número de integrantes ≤ límite de `get_max_members(modality_id, program.level)` → `400` si excede
-  - [ ] Valida que `prerequisite_declaration = true` → `400` si false
-  - [ ] Valida que el estudiante solicitante no tenga ya un trabajo activo (no en estado terminal) → `409`
-  - [ ] Crea registro en `thesis_projects` con `status = pendiente_evaluacion_idea`
-  - [ ] Crea registros en `project_members` para todos los integrantes
-  - [ ] Crea registro en `project_status_history`
-  - [ ] Envía mensaje automático al estudiante: "Tu idea ha sido inscrita. Estado: Pendiente de evaluación"
+  - [x] `POST /api/v1/projects` (solo Estudiante) → `201` con el proyecto creado
+  - [x] Body: `{ title, modality_id, academic_program_id, research_group, research_line, suggested_director?, member_ids[], prerequisite_declaration: true }` (`research_line` = línea de profundización, campo `research_line` en DATA-MODEL)
+  - [x] Valida ventana activa para `inscripcion_idea` (global o extemporánea) → `409` si no hay ventana
+  - [x] Todos los `member_ids` deben existir en la tabla `users` con `role = estudiante` e `is_active = true` (RF-03-02: pre-registrados antes de inscribir) → `400` si alguno no existe o no cumple el rol
+  - [x] Valida que el número de integrantes ≤ límite de `get_max_members(modality_id, program.level)` → `400` si excede
+  - [x] Valida que `prerequisite_declaration = true` → `400` si false
+  - [x] Valida que el estudiante solicitante no tenga ya un trabajo activo (no en estado terminal) → `409`
+  - [x] Crea registro en `thesis_projects` con `status = pendiente_evaluacion_idea`
+  - [x] Crea registros en `project_members` para todos los integrantes
+  - [x] Crea registro en `project_status_history`
+  - [x] Envía mensaje automático al estudiante: "Tu idea ha sido inscrita. Estado: Pendiente de evaluación"
 - **Dependencias:** T-F03-07, T-F02-05, T-F02-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

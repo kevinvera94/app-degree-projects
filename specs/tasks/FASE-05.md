@@ -162,12 +162,12 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/submissions
 - **Descripción:** Endpoints para consultar el historial de radicaciones y descargar adjuntos.
 - **Criterios de aceptación:**
-  - [ ] `GET /projects/{id}/submissions` → `200` lista de todas las radicaciones del proyecto con fechas y etapa (todos con pertenencia)
-  - [ ] `GET /projects/{id}/submissions/{subId}` → `200` detalle con lista de adjuntos (sin URL; URL se genera en endpoint separado)
-  - [ ] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada de Supabase Storage (TTL 1h) → `200` (todos con pertenencia)
-  - [ ] Estudiante sin pertenencia → `403`
+  - [x] `GET /projects/{id}/submissions` → `200` lista de todas las radicaciones del proyecto con fechas y etapa (todos con pertenencia)
+  - [x] `GET /projects/{id}/submissions/{subId}` → `200` detalle con lista de adjuntos (sin URL; URL se genera en endpoint separado)
+  - [x] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada de Supabase Storage (TTL 1h) → `200` (todos con pertenencia)
+  - [x] Estudiante sin pertenencia → `403`
 - **Dependencias:** T-F05-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -176,19 +176,19 @@
 - **Referencias:** RF-05-01..RF-05-06, RF-06-01..RF-06-13, RF-07-01..RF-07-07
 - **Descripción:** Tests de integración para todos los flujos del anteproyecto.
 - **Criterios de aceptación:**
-  - [ ] Test: radicar anteproyecto sin ventana activa → `409`
-  - [ ] Test: radicar anteproyecto sin adjunto obligatorio → `400`
-  - [ ] Test: modalidad Investigación sin `aval_etica` → `400`
-  - [ ] Test: flujo completo aprobación (ambas ≥ 4.0) → estado `en_desarrollo`
-  - [ ] Test: flujo correcciones (3.0–3.9) → estado `correcciones_anteproyecto_solicitadas`
-  - [ ] Test: flujo reprobación unánime → estado `idea_aprobada` (integrantes conservados)
-  - [ ] Test: divergencia → Jurado 3 asignado → aprueba → `en_desarrollo`
-  - [ ] Test: divergencia → Jurado 3 asignado → reprueba → `idea_aprobada`
-  - [ ] Test: entrega de correcciones vencida sin ventana → `409`
-  - [ ] Test: segunda revisión solo acepta aprobado/reprobado (no correcciones)
-  - [ ] Test: calificación extemporánea marcada correctamente
-  - [ ] Test: jurado no asignado intenta calificar → `403`
-  - [ ] Test: estudiante ve jurados como "Jurado 1" / "Jurado 2" (sin identidad real)
-  - [ ] Tests en `backend/tests/test_anteproyecto.py`
+  - [x] Test: radicar anteproyecto sin ventana activa → `409`
+  - [x] Test: radicar anteproyecto sin adjunto obligatorio → `400`
+  - [x] Test: modalidad Investigación sin `aval_etica` → `400`
+  - [x] Test: flujo completo aprobación (ambas ≥ 4.0) → estado `en_desarrollo`
+  - [x] Test: flujo correcciones (3.0–3.9) → estado `correcciones_anteproyecto_solicitadas`
+  - [x] Test: flujo reprobación unánime → estado `idea_aprobada` (integrantes conservados)
+  - [x] Test: divergencia → Jurado 3 asignado → aprueba → `en_desarrollo`
+  - [x] Test: divergencia → Jurado 3 asignado → reprueba → `idea_aprobada`
+  - [x] Test: entrega de correcciones vencida sin ventana → `409`
+  - [x] Test: segunda revisión solo acepta aprobado/reprobado (no correcciones)
+  - [x] Test: calificación extemporánea marcada correctamente
+  - [x] Test: jurado no asignado intenta calificar → `403`
+  - [x] Test: estudiante ve jurados como "Jurado 1" / "Jurado 2" (sin identidad real)
+  - [x] Tests en `backend/tests/test_anteproyecto.py`
 - **Dependencias:** T-F05-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-05
-**Próxima tarea:** `T-F05-09` — Implementar historial de radicaciones y adjuntos
+**Próxima tarea:** `T-F06-01` — (inicio FASE-06: Backend: Producto final y evaluación)
 
 ---
 
@@ -21,7 +21,7 @@
 | FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
 | FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
-| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | 🔄 |
+| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ✅ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ⬜ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
@@ -80,6 +80,8 @@
 - `T-F05-06` — Implementar entrega de correcciones del anteproyecto — 2026-03-30
 - `T-F05-07` — Implementar lógica de bloqueo por incumplimiento de correcciones — 2026-03-30
 - `T-F05-08` — Implementar segunda revisión del anteproyecto — 2026-03-30
+- `T-F05-09` — Implementar historial de radicaciones y adjuntos — 2026-03-30
+- `T-F05-10` — Tests de integración: flujo completo del anteproyecto — 2026-03-30
 
 ---
 

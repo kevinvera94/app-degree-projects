@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_docente
-from app.services.evaluation_service import evaluate_anteproyecto_result
+from app.services.evaluation_service import evaluate_anteproyecto_result, evaluate_j3_result
 from app.schemas.evaluation import (
     EvaluationAdminResponse,
     EvaluationCreate,
@@ -183,6 +183,16 @@ async def submit_evaluation(
             detail="Ya registraste tu calificación para esta etapa y revisión",
         )
 
+    # Jurado 3 solo puede aprobar (≥ 4.0) o reprobar (< 3.0)
+    if juror["juror_number"] == 3 and 3.0 <= body.score < 4.0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "El Jurado 3 solo puede aprobar (≥ 4.0) o reprobar (< 3.0). "
+                f"Calificación recibida: {body.score}"
+            ),
+        )
+
     now = datetime.now(timezone.utc)
     is_extemporaneous: bool = now > eval_row["due_date"].replace(tzinfo=timezone.utc) if eval_row["due_date"].tzinfo is None else now > eval_row["due_date"]
 
@@ -205,14 +215,24 @@ async def submit_evaluation(
     )
     updated_row = dict(updated.mappings().first())
 
-    # Disparar lógica de resultado (T-F05-04) — dentro de la misma transacción
+    # Disparar lógica de resultado — dentro de la misma transacción
     if body.stage == "anteproyecto":
-        await evaluate_anteproyecto_result(
-            project_id=project_id,
-            db=db,
-            triggered_by=current_user.id,
-            revision_number=updated_row["revision_number"],
-        )
+        if juror["juror_number"] == 3:
+            # T-F05-05: Jurado 3 es tiebreaker
+            await evaluate_j3_result(
+                project_id=project_id,
+                db=db,
+                triggered_by=current_user.id,
+                revision_number=updated_row["revision_number"],
+            )
+        else:
+            # T-F05-04: J1 o J2 — evaluar cuando ambos hayan calificado
+            await evaluate_anteproyecto_result(
+                project_id=project_id,
+                db=db,
+                triggered_by=current_user.id,
+                revision_number=updated_row["revision_number"],
+            )
 
     await db.commit()
 

@@ -125,7 +125,8 @@ async def assign_juror(
 ) -> JurorResponse:
     """
     Asigna un jurado al proyecto.
-    - Solo en estado anteproyecto_pendiente_evaluacion.
+    - J1/J2: solo en estado anteproyecto_pendiente_evaluacion.
+    - J3: además requiere divergencia comprobada entre J1 y J2.
     - Crea el registro en project_jurors y en evaluations con plazo de 15 días hábiles.
     """
     # Obtener proyecto
@@ -153,6 +154,31 @@ async def assign_juror(
                 f"Estado actual: {project['status']}"
             ),
         )
+
+    # Validación extra para Jurado 3: debe existir divergencia real
+    if body.juror_number == 3:
+        div_result = await db.execute(
+            text(
+                "SELECT juror_number, score FROM public.evaluations"
+                " WHERE project_id = :pid AND stage = :stage"
+                " AND juror_number IN (1, 2) AND score IS NOT NULL"
+            ),
+            {"pid": project_id, "stage": body.stage},
+        )
+        scored = {r["juror_number"]: r["score"] for r in div_result.mappings()}
+        s1, s2 = scored.get(1), scored.get(2)
+        has_divergence = (
+            s1 is not None and s2 is not None
+            and ((s1 >= 4.0 and s2 < 3.0) or (s1 < 3.0 and s2 >= 4.0))
+        )
+        if not has_divergence:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "No se puede asignar Jurado 3 sin divergencia comprobada "
+                    "(se requiere que un jurado apruebe ≥ 4.0 y el otro repruebe < 3.0)"
+                ),
+            )
 
     # Validar que el docente existe, está activo y tiene rol docente
     docente_result = await db.execute(
@@ -238,6 +264,22 @@ async def assign_juror(
     assigned_date = now.date()
     due_date = add_business_days(assigned_date, 15, project["period"])
 
+    # Determinar revision_number: J3 hereda el de J1/J2; J1/J2 usan 1 por defecto
+    revision_number = 1
+    if body.juror_number == 3:
+        rev_result = await db.execute(
+            text(
+                "SELECT revision_number FROM public.evaluations"
+                " WHERE project_id = :pid AND stage = :stage"
+                " AND juror_number IN (1, 2) AND score IS NOT NULL"
+                " ORDER BY revision_number DESC LIMIT 1"
+            ),
+            {"pid": project_id, "stage": body.stage},
+        )
+        rev_row = rev_result.mappings().first()
+        if rev_row:
+            revision_number = rev_row["revision_number"]
+
     # Crear registro en evaluations (sin calificación aún)
     await db.execute(
         text(
@@ -247,7 +289,7 @@ async def assign_juror(
                  start_date, due_date, revision_number)
             VALUES
                 (:project_id, :submission_id, :juror_id, :juror_number, :stage,
-                 :start_date, :due_date, 1)
+                 :start_date, :due_date, :revision_number)
             """
         ),
         {
@@ -258,6 +300,7 @@ async def assign_juror(
             "stage": body.stage,
             "start_date": now,
             "due_date": due_date,
+            "revision_number": revision_number,
         },
     )
 

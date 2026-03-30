@@ -98,14 +98,14 @@
 - **Referencias:** RF-06-08, RF-06-09
 - **Descripción:** Flujo separado para asignar Jurado 3 cuando hay divergencia entre Jurado 1 y Jurado 2. El Jurado 3 solo puede registrar Aprobado o Reprobado.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "anteproyecto" }` → `201` (solo Administrador, solo cuando el sistema haya notificado divergencia)
-  - [ ] Valida que exista divergencia (una ≥ 4.0, otra < 3.0) antes de permitir asignación de J3 → `409` si no hay divergencia
-  - [ ] La calificación del Jurado 3 solo acepta `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
-  - [ ] J3 aprueba → `anteproyecto_aprobado` → `en_desarrollo`
-  - [ ] J3 reprueba → `anteproyecto_reprobado` → `idea_aprobada` (conserva integrantes)
-  - [ ] Registra en `project_status_history`
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "anteproyecto" }` → `201` (solo Administrador, solo cuando el sistema haya notificado divergencia)
+  - [x] Valida que exista divergencia (una ≥ 4.0, otra < 3.0) antes de permitir asignación de J3 → `409` si no hay divergencia
+  - [x] La calificación del Jurado 3 solo acepta `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
+  - [x] J3 aprueba → `anteproyecto_aprobado` → `en_desarrollo`
+  - [x] J3 reprueba → `anteproyecto_reprobado` → `idea_aprobada` (conserva integrantes)
+  - [x] Registra en `project_status_history`
 - **Dependencias:** T-F05-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

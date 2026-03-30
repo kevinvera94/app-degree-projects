@@ -115,6 +115,89 @@ async def _update_submission_status(
     )
 
 
+async def evaluate_j3_result(
+    project_id: UUID,
+    db: AsyncSession,
+    triggered_by: UUID,
+    revision_number: int = 1,
+) -> None:
+    """
+    Evalúa el resultado del Jurado 3 (tiebreaker por divergencia).
+    J3 solo puede aprobar (≥ 4.0) o reprobar (< 3.0) — la validación de rango
+    la hace el endpoint antes de llamar a esta función.
+    """
+    proj_result = await db.execute(
+        text("SELECT id, status, period, title FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    project = proj_result.mappings().first()
+    if project is None:
+        return
+
+    prev_status = project["status"]
+
+    # Obtener calificación de J3
+    j3_result = await db.execute(
+        text(
+            "SELECT score FROM public.evaluations"
+            " WHERE project_id = :pid AND stage = 'anteproyecto'"
+            " AND juror_number = 3 AND revision_number = :rev AND score IS NOT NULL"
+            " ORDER BY submitted_at DESC LIMIT 1"
+        ),
+        {"pid": project_id, "rev": revision_number},
+    )
+    j3_row = j3_result.mappings().first()
+    if j3_row is None:
+        return
+
+    score = j3_row["score"]
+
+    if score >= 4.0:
+        # J3 aprueba → anteproyecto_aprobado → en_desarrollo
+        await _update_project_status(project_id, "anteproyecto_aprobado", db)
+        await _record_history(
+            project_id, prev_status, "anteproyecto_aprobado",
+            triggered_by,
+            f"Anteproyecto aprobado por Jurado 3. Calificación: {score}",
+            db,
+        )
+        await _update_project_status(project_id, "en_desarrollo", db)
+        await _record_history(
+            project_id, "anteproyecto_aprobado", "en_desarrollo",
+            triggered_by,
+            "Transición automática: anteproyecto aprobado → en desarrollo",
+            db,
+        )
+        await _update_submission_status(project_id, "anteproyecto", revision_number, "aprobado", db)
+        await _send_message(
+            project_id, triggered_by, None,
+            "Tu anteproyecto fue aprobado. Estado: En desarrollo.",
+            db,
+        )
+    else:
+        # J3 reprueba → anteproyecto_reprobado → idea_aprobada
+        await _update_project_status(project_id, "anteproyecto_reprobado", db)
+        await _record_history(
+            project_id, prev_status, "anteproyecto_reprobado",
+            triggered_by,
+            f"Anteproyecto reprobado por Jurado 3. Calificación: {score}",
+            db,
+        )
+        await _update_project_status(project_id, "idea_aprobada", db)
+        await _record_history(
+            project_id, "anteproyecto_reprobado", "idea_aprobada",
+            triggered_by,
+            "Retorno automático a idea aprobada. El estudiante puede radicar un nuevo anteproyecto.",
+            db,
+        )
+        await _update_submission_status(project_id, "anteproyecto", revision_number, "reprobado", db)
+        await _send_message(
+            project_id, triggered_by, None,
+            "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo.",
+            db,
+        )
+
+
 async def evaluate_anteproyecto_result(
     project_id: UUID,
     db: AsyncSession,

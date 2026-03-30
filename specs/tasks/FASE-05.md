@@ -130,13 +130,13 @@
 - **Referencias:** RF-07-04, RF-07-05
 - **Descripción:** Si el estudiante no entrega las correcciones dentro del plazo de 10 días hábiles, el sistema bloquea la entrega. El estado permanece en `correcciones_anteproyecto_solicitadas`; el estudiante podrá radicar cuando abra la siguiente ventana.
 - **Criterios de aceptación:**
-  - [ ] Función de servicio (o validación en endpoint) que detecta si el plazo venció
-  - [ ] Si el plazo venció Y no hay ventana activa → intentar radicar corrección devuelve `409` con mensaje explicativo
-  - [ ] Si abre una nueva ventana de `radicacion_anteproyecto` → la entrega vuelve a estar disponible (sin reinicio de proceso)
-  - [ ] El estado **no cambia** automáticamente al vencer el plazo (no hay cron job en MVP); la restricción se aplica en el endpoint de radicación
-  - [ ] El Administrador puede cancelar el trabajo via T-F04-07 si lo considera abandonado
+  - [x] Función de servicio (o validación en endpoint) que detecta si el plazo venció
+  - [x] Si el plazo venció Y no hay ventana activa → intentar radicar corrección devuelve `409` con mensaje explicativo
+  - [x] Si abre una nueva ventana de `radicacion_anteproyecto` → la entrega vuelve a estar disponible (sin reinicio de proceso)
+  - [x] El estado **no cambia** automáticamente al vencer el plazo (no hay cron job en MVP); la restricción se aplica en el endpoint de radicación
+  - [x] El Administrador puede cancelar el trabajo via T-F04-07 si lo considera abandonado
 - **Dependencias:** T-F05-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

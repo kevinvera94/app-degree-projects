@@ -42,6 +42,7 @@ from app.schemas.submission import (
     SubmissionDetailResponse,
     SubmissionResponse,
 )
+from app.services.correction_service import check_correction_window
 from app.utils.business_days import add_business_days
 
 router = APIRouter(prefix="/projects", tags=["submissions"])
@@ -231,44 +232,14 @@ async def create_submission(
                 detail="Ya existe una entrega de correcciones activa para este proyecto",
             )
 
-        # Ventana activa O plazo de corrección no vencido
-        global_window = await db.execute(
-            text(
-                "SELECT id FROM public.date_windows"
-                " WHERE window_type = 'radicacion_anteproyecto' AND is_active = true"
-                " AND start_date <= :today AND end_date >= :today LIMIT 1"
-            ),
-            {"today": today},
-        )
-        has_window = global_window.mappings().first() is not None
-
-        if not has_window:
-            # Calcular si el plazo de corrección (10 días hábiles) aún no venció
-            hist_result = await db.execute(
-                text(
-                    "SELECT changed_at FROM public.project_status_history"
-                    " WHERE project_id = :pid"
-                    " AND new_status = 'correcciones_anteproyecto_solicitadas'"
-                    " ORDER BY changed_at DESC LIMIT 1"
-                ),
-                {"pid": project_id},
+        # Ventana activa O plazo de corrección no vencido (T-F05-07)
+        try:
+            await check_correction_window(project_id, project["period"], db)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(exc),
             )
-            hist_row = hist_result.mappings().first()
-            deadline_passed = True
-            if hist_row:
-                correction_deadline = add_business_days(
-                    hist_row["changed_at"].date(), 10, project["period"]
-                )
-                deadline_passed = today > correction_deadline
-
-            if deadline_passed:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail=(
-                        "El plazo para entregar correcciones ha vencido y no hay ventana activa. "
-                        "Podrás radicar cuando abra la siguiente ventana de fechas."
-                    ),
-                )
 
         sub_result = await db.execute(
             text(

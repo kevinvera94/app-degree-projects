@@ -119,11 +119,11 @@
 - **Referencias:** RF-01-06, `specs/arch/AUTH.md`
 - **Descripción:** La recuperación de contraseña se delega a Supabase Auth. Configurar email template en Supabase y documentar el flujo en el frontend.
 - **Criterios de aceptación:**
-  - [ ] Email template de recuperación configurado en Supabase (asunto y cuerpo en español)
-  - [ ] El flujo de recuperación funciona end-to-end: el usuario recibe el email y puede establecer nueva contraseña
-  - [ ] Documentado en `specs/arch/AUTH.md` cómo el frontend llama a `supabase.auth.resetPasswordForEmail()`
+  - [x] Email template de recuperación configurado en Supabase (asunto y cuerpo en español)
+  - [x] El flujo de recuperación funciona end-to-end: el usuario recibe el email y puede establecer nueva contraseña
+  - [x] Documentado en `specs/arch/AUTH.md` cómo el frontend llama a `supabase.auth.resetPasswordForEmail()`
 - **Dependencias:** T-F01-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

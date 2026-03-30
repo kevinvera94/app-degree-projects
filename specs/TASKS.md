@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-03
-**Próxima tarea:** `T-F03-08` — Implementar recuperación de contraseña (Supabase Auth)
+**Próxima tarea:** `T-F03-09` — Tests de integración: endpoints de users y configuración
 
 ---
 
@@ -62,6 +62,7 @@
 - `T-F03-05` — Implementar CRUD de modalidades y límites (`/modalities`) — 2026-03-29
 - `T-F03-06` — Implementar CRUD de ventanas de fechas (`/date-windows`) — 2026-03-29
 - `T-F03-07` — Implementar ventanas extemporáneas (`/projects/{id}/extemporaneous-window`) — 2026-03-29
+- `T-F03-08` — Implementar recuperación de contraseña (Supabase Auth) — 2026-03-29
 
 ---
 

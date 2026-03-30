@@ -193,6 +193,16 @@ async def submit_evaluation(
             ),
         )
 
+    # Segunda revisión (T-F05-08): J1 y J2 solo pueden aprobar (≥ 4.0) o reprobar (< 3.0)
+    if juror["juror_number"] in (1, 2) and eval_row["revision_number"] == 2 and 3.0 <= body.score < 4.0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "En segunda revisión solo se permiten calificaciones ≥ 4.0 (Aprobado) "
+                f"o < 3.0 (Reprobado). Calificación recibida: {body.score}"
+            ),
+        )
+
     now = datetime.now(timezone.utc)
     is_extemporaneous: bool = now > eval_row["due_date"].replace(tzinfo=timezone.utc) if eval_row["due_date"].tzinfo is None else now > eval_row["due_date"]
 

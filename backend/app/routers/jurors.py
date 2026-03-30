@@ -162,6 +162,11 @@ async def assign_juror(
                 "SELECT juror_number, score FROM public.evaluations"
                 " WHERE project_id = :pid AND stage = :stage"
                 " AND juror_number IN (1, 2) AND score IS NOT NULL"
+                " AND revision_number = ("
+                "   SELECT MAX(revision_number) FROM public.evaluations"
+                "   WHERE project_id = :pid AND stage = :stage"
+                "   AND juror_number IN (1, 2) AND score IS NOT NULL"
+                " )"
             ),
             {"pid": project_id, "stage": body.stage},
         )

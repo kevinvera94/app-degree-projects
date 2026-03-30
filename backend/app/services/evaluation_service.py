@@ -320,7 +320,32 @@ async def evaluate_anteproyecto_result(
 
     # -----------------------------------------------------------------------
     # Caso 4: Cualquier otro caso (alguna entre 3.0 y 3.9) → Correcciones
+    # Guard (T-F05-08): en segunda revisión no hay correcciones — el endpoint
+    # ya rechaza [3.0, 4.0) con 400, pero si llegara aquí se trata como reprobado.
     # -----------------------------------------------------------------------
+    if revision_number == 2:
+        await _update_project_status(project_id, "anteproyecto_reprobado", db)
+        await _record_history(
+            project_id, prev_status, "anteproyecto_reprobado",
+            triggered_by,
+            f"Anteproyecto reprobado en segunda revisión. Calificaciones: J1={s1}, J2={s2}",
+            db,
+        )
+        await _update_project_status(project_id, "idea_aprobada", db)
+        await _record_history(
+            project_id, "anteproyecto_reprobado", "idea_aprobada",
+            triggered_by,
+            "Retorno automático a idea aprobada. El estudiante puede radicar un nuevo anteproyecto.",
+            db,
+        )
+        await _update_submission_status(project_id, "anteproyecto", revision_number, "reprobado", db)
+        await _send_message(
+            project_id, triggered_by, None,
+            "Tu anteproyecto fue reprobado en segunda revisión. Puedes radicar uno nuevo.",
+            db,
+        )
+        return
+
     now = datetime.now(timezone.utc)
     correction_due = add_business_days(now.date(), 10, project["period"])
     due_str = correction_due.strftime("%d/%m/%Y")

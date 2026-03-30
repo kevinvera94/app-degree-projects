@@ -145,15 +145,15 @@
 - **Referencias:** RF-07-06, RF-07-07
 - **Descripción:** En la segunda revisión, los jurados solo pueden aprobar o reprobar (no solicitar más correcciones). El sistema ejecuta las transiciones finales.
 - **Criterios de aceptación:**
-  - [ ] Los jurados registran calificaciones en la segunda revisión igual que en la primera, pero el sistema valida que solo se permitan `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
-  - [ ] La diferenciación de "primera" o "segunda" revisión se detecta por `evaluations.revision_number` (1 o 2)
-  - [ ] Al completarse la segunda revisión:
+  - [x] Los jurados registran calificaciones en la segunda revisión igual que en la primera, pero el sistema valida que solo se permitan `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
+  - [x] La diferenciación de "primera" o "segunda" revisión se detecta por `evaluations.revision_number` (1 o 2)
+  - [x] Al completarse la segunda revisión:
     - Ambas aprobadas → `en_desarrollo` (igual que primera revisión)
     - Una o ambas reprobadas → `idea_aprobada` (retorno, conserva integrantes)
-  - [ ] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, con `stage = "anteproyecto"` y `revision_number = 2`). Se asigna un nuevo Jurado 3 si no hay uno activo de la primera revisión para esta etapa
-  - [ ] Registra en `project_status_history`
+  - [x] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, con `stage = "anteproyecto"` y `revision_number = 2`). Se asigna un nuevo Jurado 3 si no hay uno activo de la primera revisión para esta etapa
+  - [x] Registra en `project_status_history`
 - **Dependencias:** T-F05-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

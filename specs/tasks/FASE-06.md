@@ -59,11 +59,11 @@
 - **Referencias:** RF-10-03
 - **Descripción:** Los jurados registran sus calificaciones del producto final. La lógica de plazos, extemporáneas y marcado es idéntica a la del anteproyecto.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/evaluations` body: `{ stage: "producto_final", score, observations }` → `201` (solo Docente jurado asignado en esta etapa)
-  - [ ] Mismas validaciones que el anteproyecto: jurado asignado, plazo, `is_extemporaneous`
-  - [ ] Respuesta diferenciada por rol (Estudiante: anónimo; Admin: completo; Director: con identidad)
+  - [x] `POST /projects/{id}/evaluations` body: `{ stage: "producto_final", score, observations }` → `201` (solo Docente jurado asignado en esta etapa)
+  - [x] Mismas validaciones que el anteproyecto: jurado asignado, plazo, `is_extemporaneous`
+  - [x] Respuesta diferenciada por rol (Estudiante: anónimo; Admin: completo; Director: con identidad)
 - **Dependencias:** T-F06-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -72,16 +72,16 @@
 - **Referencias:** RF-10-03, RF-10-04, RF-10-05
 - **Descripción:** Cuando ambos jurados califican, el sistema determina el resultado. Incluye la bifurcación especial para Diplomado tecnológico.
 - **Criterios de aceptación:**
-  - [ ] Función de servicio `evaluate_producto_final_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
-  - [ ] Ambas ≥ 4.0 → `aprobado_para_sustentacion`
-  - [ ] **Excepción Diplomado tecnológico:** si `modality.name == "Diplomado"` Y `program.level == "tecnologico"` → `trabajo_aprobado` directamente (sin pasar por sustentación)
-  - [ ] Ambas entre 3.0 y 3.9 → `correcciones_producto_final_solicitadas`. `deadline_date = add_business_days(now(), 10, period)`
-  - [ ] Ambas < 3.0 → `producto_final_reprobado` → `en_desarrollo` (retorno automático; el estudiante puede radicar nuevo producto final en la siguiente ventana)
-  - [ ] Divergencia (una ≥ 4.0, otra < 3.0) → notifica Administrador para Jurado 3. Estado: `en_revision_jurados_producto_final`
-  - [ ] Mensajes automáticos en todos los casos (al estudiante y/o admin según corresponda)
-  - [ ] Todos los cambios de estado en `project_status_history`
+  - [x] Función de servicio `evaluate_producto_final_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
+  - [x] Ambas ≥ 4.0 → `aprobado_para_sustentacion`
+  - [x] **Excepción Diplomado tecnológico:** si `modality.requires_sustentation == false` → `trabajo_aprobado` directamente (sin pasar por sustentación)
+  - [x] Ambas entre 3.0 y 3.9 → `correcciones_producto_final_solicitadas`. `deadline_date = add_business_days(now(), 10, period)`
+  - [x] Ambas < 3.0 → `producto_final_reprobado` → `en_desarrollo` (retorno automático; el estudiante puede radicar nuevo producto final en la siguiente ventana)
+  - [x] Divergencia (una ≥ 4.0, otra < 3.0) → notifica Administrador para Jurado 3. Estado: `en_revision_jurados_producto_final`
+  - [x] Mensajes automáticos en todos los casos (al estudiante y/o admin según corresponda)
+  - [x] Todos los cambios de estado en `project_status_history`
 - **Dependencias:** T-F06-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

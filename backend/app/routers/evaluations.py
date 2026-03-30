@@ -21,6 +21,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_docente
 from app.services.evaluation_service import evaluate_anteproyecto_result, evaluate_j3_result
+from app.services.producto_final_service import (
+    evaluate_j3_producto_final_result,
+    evaluate_producto_final_result,
+)
 from app.schemas.evaluation import (
     EvaluationAdminResponse,
     EvaluationCreate,
@@ -228,7 +232,6 @@ async def submit_evaluation(
     # Disparar lógica de resultado — dentro de la misma transacción
     if body.stage == "anteproyecto":
         if juror["juror_number"] == 3:
-            # T-F05-05: Jurado 3 es tiebreaker
             await evaluate_j3_result(
                 project_id=project_id,
                 db=db,
@@ -236,8 +239,24 @@ async def submit_evaluation(
                 revision_number=updated_row["revision_number"],
             )
         else:
-            # T-F05-04: J1 o J2 — evaluar cuando ambos hayan calificado
             await evaluate_anteproyecto_result(
+                project_id=project_id,
+                db=db,
+                triggered_by=current_user.id,
+                revision_number=updated_row["revision_number"],
+            )
+    elif body.stage in ("producto_final", "correcciones_producto_final"):
+        if juror["juror_number"] == 3:
+            # T-F06-05: Jurado 3 tiebreaker para producto final
+            await evaluate_j3_producto_final_result(
+                project_id=project_id,
+                db=db,
+                triggered_by=current_user.id,
+                revision_number=updated_row["revision_number"],
+            )
+        else:
+            # T-F06-04: J1 o J2 — evaluar cuando ambos hayan calificado
+            await evaluate_producto_final_result(
                 project_id=project_id,
                 db=db,
                 triggered_by=current_user.id,

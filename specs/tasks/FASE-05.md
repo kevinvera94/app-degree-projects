@@ -114,14 +114,14 @@
 - **Referencias:** RF-07-01..RF-07-07
 - **Descripción:** El estudiante entrega el documento corregido con Vo.Bo. del director. El sistema inicia la segunda revisión automáticamente.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", is_correction: true, academic_period }` → `201` (solo Estudiante)
-  - [ ] Valida estado `correcciones_anteproyecto_solicitadas` → `409` si estado distinto
-  - [ ] Valida que haya ventana activa para `radicacion_anteproyecto` O que el plazo original no haya vencido → `409` si la ventana está cerrada y el plazo venció
-  - [ ] Al confirmar radicación de corrección (`PATCH /submissions/{subId}/confirm`): `submission.status → "en_revision"`, `project.status → anteproyecto_corregido_entregado`. Registra `evaluations.start_date = submissions.submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, project.period)` con `revision_number = 2`
-  - [ ] Crea nuevos registros en `evaluations` para la segunda revisión (mismos jurados, `revision_number = 2`)
-  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [due_date]"
+  - [x] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", is_correction: true, academic_period }` → `201` (solo Estudiante)
+  - [x] Valida estado `correcciones_anteproyecto_solicitadas` → `409` si estado distinto
+  - [x] Valida que haya ventana activa para `radicacion_anteproyecto` O que el plazo original no haya vencido → `409` si la ventana está cerrada y el plazo venció
+  - [x] Al confirmar radicación de corrección (`PATCH /submissions/{subId}/confirm`): `submission.status → "en_revision"`, `project.status → anteproyecto_corregido_entregado`. Registra `evaluations.start_date = submissions.submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, project.period)` con `revision_number = 2`
+  - [x] Crea nuevos registros en `evaluations` para la segunda revisión (mismos jurados, `revision_number = 2`)
+  - [x] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [due_date]"
 - **Dependencias:** T-F05-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

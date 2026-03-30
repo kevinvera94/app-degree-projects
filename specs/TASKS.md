@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-05
-**Próxima tarea:** `T-F05-06` — Implementar entrega de correcciones del anteproyecto
+**Próxima tarea:** `T-F05-07` — Implementar lógica de bloqueo por incumplimiento de correcciones
 
 ---
 
@@ -77,6 +77,7 @@
 - `T-F05-03` — Implementar registro de calificación de jurado (anteproyecto) — 2026-03-30
 - `T-F05-04` — Implementar lógica de resultado del anteproyecto (evaluate_anteproyecto_result) — 2026-03-30
 - `T-F05-05` — Implementar asignación y registro de Jurado 3 (anteproyecto) — 2026-03-30
+- `T-F05-06` — Implementar entrega de correcciones del anteproyecto — 2026-03-30
 
 ---
 

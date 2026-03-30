@@ -35,13 +35,25 @@ REQUIRED_ATTACHMENTS_BASE = frozenset(
         AttachmentType.reporte_similitud,
     }
 )
+REQUIRED_ATTACHMENTS_BASE = frozenset({
+    AttachmentType.plantilla,
+    AttachmentType.carta_aval,
+    AttachmentType.reporte_similitud,
+})
 
 # Adjunto extra para modalidad Investigación (requires_ethics_approval = true)
 REQUIRED_ATTACHMENT_ETHICS = AttachmentType.aval_etica
 
+# Adjuntos obligatorios para entrega de correcciones (documento corregido + Vo.Bo. director)
+REQUIRED_ATTACHMENTS_CORRECTION = frozenset({
+    AttachmentType.plantilla,
+    AttachmentType.carta_aval,
+})
+
 
 class SubmissionCreate(BaseModel):
     stage: SubmissionStage
+    is_correction: bool = False
 
 
 class SubmissionResponse(BaseModel):

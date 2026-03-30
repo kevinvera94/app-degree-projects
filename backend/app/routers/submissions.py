@@ -10,6 +10,9 @@ Rutas implementadas (T-F05-01):
          — eliminar adjunto (Estudiante, solo pendiente)
   PATCH  /projects/{id}/submissions/{subId}/confirm — confirmar radicación (Estudiante)
 
+Extensión (T-F05-06):
+  El mismo POST y PATCH/confirm manejan correcciones cuando body.is_correction=true.
+
 Rutas de consulta (T-F05-09):
   GET    /projects/{id}/submissions               — historial de radicaciones
   GET    /projects/{id}/submissions/{subId}       — detalle con adjuntos
@@ -30,6 +33,7 @@ from app.core.dependencies import CurrentUser, get_current_user, require_estudia
 from app.core.supabase_client import supabase_admin
 from app.schemas.submission import (
     REQUIRED_ATTACHMENTS_BASE,
+    REQUIRED_ATTACHMENTS_CORRECTION,
     REQUIRED_ATTACHMENT_ETHICS,
     AttachmentResponse,
     AttachmentSignedURLResponse,
@@ -38,6 +42,7 @@ from app.schemas.submission import (
     SubmissionDetailResponse,
     SubmissionResponse,
 )
+from app.utils.business_days import add_business_days
 
 router = APIRouter(prefix="/projects", tags=["submissions"])
 
@@ -162,8 +167,11 @@ async def create_submission(
 ) -> SubmissionResponse:
     """
     Paso 1 de la radicación: crea el registro con status='pendiente'.
-    El estudiante adjunta documentos en el siguiente paso y confirma al final.
+    - Sin is_correction: primera radicación de anteproyecto (estado idea_aprobada).
+    - Con is_correction=true: entrega de correcciones (estado correcciones_anteproyecto_solicitadas).
     """
+    from datetime import date as date_type
+
     # Validar pertenencia activa del estudiante
     membership = await db.execute(
         text(
@@ -178,7 +186,7 @@ async def create_submission(
             detail="No eres integrante activo de este trabajo de grado",
         )
 
-    # Obtener proyecto y validar estado
+    # Obtener proyecto
     proj_result = await db.execute(
         text(
             "SELECT id, status, period, modality_id, title"
@@ -192,6 +200,100 @@ async def create_submission(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Trabajo de grado no encontrado",
         )
+
+    today = date_type.today()
+
+    # ------------------------------------------------------------------
+    # Rama A: Entrega de correcciones (T-F05-06)
+    # ------------------------------------------------------------------
+    if body.is_correction:
+        if project["status"] != "correcciones_anteproyecto_solicitadas":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "Solo se pueden entregar correcciones cuando el estado es "
+                    f"'correcciones_anteproyecto_solicitadas'. Estado actual: {project['status']}"
+                ),
+            )
+
+        # Verificar que no exista ya una corrección activa
+        existing_corr = await db.execute(
+            text(
+                "SELECT id FROM public.submissions"
+                " WHERE project_id = :pid AND stage = 'correcciones_anteproyecto'"
+                " AND status IN ('pendiente', 'en_revision') LIMIT 1"
+            ),
+            {"pid": project_id},
+        )
+        if existing_corr.mappings().first() is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Ya existe una entrega de correcciones activa para este proyecto",
+            )
+
+        # Ventana activa O plazo de corrección no vencido
+        global_window = await db.execute(
+            text(
+                "SELECT id FROM public.date_windows"
+                " WHERE window_type = 'radicacion_anteproyecto' AND is_active = true"
+                " AND start_date <= :today AND end_date >= :today LIMIT 1"
+            ),
+            {"today": today},
+        )
+        has_window = global_window.mappings().first() is not None
+
+        if not has_window:
+            # Calcular si el plazo de corrección (10 días hábiles) aún no venció
+            hist_result = await db.execute(
+                text(
+                    "SELECT changed_at FROM public.project_status_history"
+                    " WHERE project_id = :pid"
+                    " AND new_status = 'correcciones_anteproyecto_solicitadas'"
+                    " ORDER BY changed_at DESC LIMIT 1"
+                ),
+                {"pid": project_id},
+            )
+            hist_row = hist_result.mappings().first()
+            deadline_passed = True
+            if hist_row:
+                correction_deadline = add_business_days(
+                    hist_row["changed_at"].date(), 10, project["period"]
+                )
+                deadline_passed = today > correction_deadline
+
+            if deadline_passed:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=(
+                        "El plazo para entregar correcciones ha vencido y no hay ventana activa. "
+                        "Podrás radicar cuando abra la siguiente ventana de fechas."
+                    ),
+                )
+
+        sub_result = await db.execute(
+            text(
+                f"""
+                INSERT INTO public.submissions
+                    (project_id, stage, submitted_by, date_window_id,
+                     is_extemporaneous, revision_number, status)
+                VALUES
+                    (:project_id, 'correcciones_anteproyecto', :submitted_by, NULL,
+                     false, 2, 'pendiente')
+                RETURNING {_SELECT_SUB}
+                """
+            ),
+            {
+                "project_id": project_id,
+                "submitted_by": current_user.id,
+            },
+        )
+        sub_row = sub_result.mappings().first()
+        await db.commit()
+        return SubmissionResponse(**sub_row)
+
+    # ------------------------------------------------------------------
+    # Rama B: Primera radicación de anteproyecto (T-F05-01)
+    # ------------------------------------------------------------------
     if project["status"] != "idea_aprobada":
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -207,8 +309,7 @@ async def create_submission(
         text(
             "SELECT id FROM public.submissions"
             " WHERE project_id = :pid AND stage = 'anteproyecto'"
-            " AND status IN ('pendiente', 'en_revision')"
-            " LIMIT 1"
+            " AND status IN ('pendiente', 'en_revision') LIMIT 1"
         ),
         {"pid": project_id},
     )
@@ -218,37 +319,23 @@ async def create_submission(
             detail="Ya existe una radicación de anteproyecto activa para este proyecto",
         )
 
-    from datetime import date as date_type
-
-    today = date_type.today()
-
-    # Verificar ventana de fechas activa (global o extemporánea)
-    # 1. Ventana global
+    # Ventana global
     global_window = await db.execute(
         text(
-            """
-            SELECT id, period FROM public.date_windows
-            WHERE window_type = 'radicacion_anteproyecto'
-              AND is_active = true
-              AND start_date <= :today
-              AND end_date >= :today
-            LIMIT 1
-            """
+            "SELECT id, period FROM public.date_windows"
+            " WHERE window_type = 'radicacion_anteproyecto' AND is_active = true"
+            " AND start_date <= :today AND end_date >= :today LIMIT 1"
         ),
         {"today": today},
     )
     global_row = global_window.mappings().first()
 
-    # 2. Ventana extemporánea individual
+    # Ventana extemporánea individual
     ext_window = await db.execute(
         text(
-            """
-            SELECT id FROM public.extemporaneous_windows
-            WHERE project_id = :pid
-              AND stage = 'radicacion_anteproyecto'
-              AND valid_until >= :today
-            LIMIT 1
-            """
+            "SELECT id FROM public.extemporaneous_windows"
+            " WHERE project_id = :pid AND stage = 'radicacion_anteproyecto'"
+            " AND valid_until >= :today LIMIT 1"
         ),
         {"pid": project_id, "today": today},
     )
@@ -263,7 +350,6 @@ async def create_submission(
     is_extemporaneous = global_row is None and ext_row is not None
     date_window_id: Optional[UUID] = None if is_extemporaneous else global_row["id"]
 
-    # Crear la radicación
     sub_result = await db.execute(
         text(
             f"""
@@ -568,12 +654,10 @@ async def confirm_submission(
     db: AsyncSession = Depends(get_db),
 ) -> SubmissionResponse:
     """
-    Confirma la radicación del anteproyecto:
-    - Valida adjuntos obligatorios según modalidad.
-    - Cambia submission.status → 'en_revision'.
-    - Cambia project.status → 'anteproyecto_pendiente_evaluacion'.
-    - Registra en project_status_history.
-    - Envía mensaje automático al Administrador.
+    Confirma la radicación. Maneja dos flujos según la etapa:
+    - 'anteproyecto': primera radicación → anteproyecto_pendiente_evaluacion
+    - 'correcciones_anteproyecto': correcciones → anteproyecto_corregido_entregado
+                                   + nuevos registros evaluations revision_number=2
     """
     # Validar pertenencia activa
     membership = await db.execute(
@@ -599,7 +683,7 @@ async def confirm_submission(
     # Obtener proyecto y modalidad
     proj_result = await db.execute(
         text(
-            "SELECT p.id, p.status, p.title, m.requires_ethics_approval"
+            "SELECT p.id, p.status, p.title, p.period, m.requires_ethics_approval"
             " FROM public.thesis_projects p"
             " JOIN public.modalities m ON m.id = p.modality_id"
             " WHERE p.id = :id"
@@ -615,17 +699,20 @@ async def confirm_submission(
 
     # Obtener adjuntos presentes
     att_result = await db.execute(
-        text(
-            "SELECT attachment_type FROM public.attachments WHERE submission_id = :sid"
-        ),
+        text("SELECT attachment_type FROM public.attachments WHERE submission_id = :sid"),
         {"sid": sub_id},
     )
     present_types = {row["attachment_type"] for row in att_result.mappings()}
 
-    # Calcular adjuntos requeridos
-    required = set(REQUIRED_ATTACHMENTS_BASE)
-    if project["requires_ethics_approval"]:
-        required.add(REQUIRED_ATTACHMENT_ETHICS)
+    is_correction = sub["stage"] == "correcciones_anteproyecto"
+
+    # Validar adjuntos obligatorios según el tipo de radicación
+    if is_correction:
+        required = set(REQUIRED_ATTACHMENTS_CORRECTION)
+    else:
+        required = set(REQUIRED_ATTACHMENTS_BASE)
+        if project["requires_ethics_approval"]:
+            required.add(REQUIRED_ATTACHMENT_ETHICS)
 
     missing = [t.value for t in required if t.value not in present_types]
     if missing:
@@ -649,44 +736,127 @@ async def confirm_submission(
     )
     sub_row = updated_sub.mappings().first()
 
-    # Actualizar estado del proyecto
-    await db.execute(
-        text(
-            "UPDATE public.thesis_projects"
-            " SET status = 'anteproyecto_pendiente_evaluacion', updated_at = now()"
-            " WHERE id = :pid"
-        ),
-        {"pid": project_id},
-    )
+    if is_correction:
+        # ------------------------------------------------------------------
+        # Flujo correcciones (T-F05-06)
+        # ------------------------------------------------------------------
+        from datetime import datetime as _dt, timezone as _tz
 
-    # Registrar en historial de estados
-    await db.execute(
-        text(
-            "INSERT INTO public.project_status_history"
-            " (project_id, previous_status, new_status, changed_by, notes)"
-            " VALUES (:pid, :prev, 'anteproyecto_pendiente_evaluacion', :by, :notes)"
-        ),
-        {
-            "pid": project_id,
-            "prev": prev_status,
-            "by": current_user.id,
-            "notes": "Anteproyecto radicado y confirmado por el estudiante",
-        },
-    )
+        now = _dt.now(_tz.utc)
+        new_due = add_business_days(now.date(), 10, project["period"])
+        due_str = new_due.strftime("%d/%m/%Y")
 
-    # Mensaje automático al Administrador (recipient_id = NULL → todos los actores)
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-        ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "content": f"Nuevo anteproyecto radicado: {project['title']}",
-        },
-    )
+        # Cambiar estado del proyecto
+        await db.execute(
+            text(
+                "UPDATE public.thesis_projects"
+                " SET status = 'anteproyecto_corregido_entregado', updated_at = now()"
+                " WHERE id = :pid"
+            ),
+            {"pid": project_id},
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'anteproyecto_corregido_entregado', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": prev_status,
+                "by": current_user.id,
+                "notes": f"Correcciones entregadas por el estudiante. Nuevo plazo de evaluación: {due_str}",
+            },
+        )
+
+        # Obtener jurados activos J1 y J2 para crear evaluations revision_number=2
+        jurors_result = await db.execute(
+            text(
+                "SELECT pj.docente_id, pj.juror_number"
+                " FROM public.project_jurors pj"
+                " WHERE pj.project_id = :pid AND pj.stage = 'anteproyecto'"
+                " AND pj.juror_number IN (1, 2) AND pj.is_active = true"
+            ),
+            {"pid": project_id},
+        )
+        jurors = list(jurors_result.mappings())
+
+        for j in jurors:
+            await db.execute(
+                text(
+                    """
+                    INSERT INTO public.evaluations
+                        (project_id, submission_id, juror_id, juror_number, stage,
+                         start_date, due_date, revision_number)
+                    VALUES
+                        (:project_id, :submission_id, :juror_id, :juror_number,
+                         'anteproyecto', :start_date, :due_date, 2)
+                    """
+                ),
+                {
+                    "project_id": project_id,
+                    "submission_id": sub_id,
+                    "juror_id": j["docente_id"],
+                    "juror_number": j["juror_number"],
+                    "start_date": now,
+                    "due_date": new_due,
+                },
+            )
+            # Mensaje individual a cada jurado
+            await db.execute(
+                text(
+                    "INSERT INTO public.messages"
+                    " (project_id, sender_id, recipient_id, content, sender_display)"
+                    " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+                ),
+                {
+                    "pid": project_id,
+                    "sid": current_user.id,
+                    "rid": j["docente_id"],
+                    "content": (
+                        f"El estudiante entregó correcciones del anteproyecto "
+                        f"'{project['title']}'. Plazo de evaluación: {due_str}"
+                    ),
+                },
+            )
+
+    else:
+        # ------------------------------------------------------------------
+        # Flujo primera radicación (T-F05-01)
+        # ------------------------------------------------------------------
+        await db.execute(
+            text(
+                "UPDATE public.thesis_projects"
+                " SET status = 'anteproyecto_pendiente_evaluacion', updated_at = now()"
+                " WHERE id = :pid"
+            ),
+            {"pid": project_id},
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'anteproyecto_pendiente_evaluacion', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": prev_status,
+                "by": current_user.id,
+                "notes": "Anteproyecto radicado y confirmado por el estudiante",
+            },
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Nuevo anteproyecto radicado: {project['title']}",
+            },
+        )
 
     await db.commit()
     return SubmissionResponse(**sub_row)

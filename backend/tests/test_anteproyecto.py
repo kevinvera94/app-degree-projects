@@ -252,7 +252,9 @@ def test_evaluacion_ambas_aprobadas_transicion_en_desarrollo(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Buscar jurado asignado → J1
         mapping_result([{"id": uuid4(), "juror_number": 1, "stage": "anteproyecto"}]),
-        # 2. Buscar evaluación pendiente (score IS NULL) → rev=1, due en el futuro
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Buscar evaluación pendiente (score IS NULL) → rev=1, due en el futuro
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 1, "stage": "anteproyecto",
@@ -328,7 +330,9 @@ def test_evaluacion_correcciones_solicitadas(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Buscar jurado → J2
         mapping_result([{"id": uuid4(), "juror_number": 2, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente rev=1
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Eval pendiente rev=1
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 2, "stage": "anteproyecto",
@@ -397,7 +401,9 @@ def test_evaluacion_ambas_reprobadas_retorna_idea_aprobada(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Jurado → J1
         mapping_result([{"id": uuid4(), "juror_number": 1, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Eval pendiente
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 1, "stage": "anteproyecto",
@@ -405,7 +411,7 @@ def test_evaluacion_ambas_reprobadas_retorna_idea_aprobada(docente_user):
             "start_date": _past_dt(1), "due_date": due,
             "is_extemporaneous": False, "revision_number": 1,
         }]),
-        # 3. UPDATE evaluations → score 2.0
+        # 4. UPDATE evaluations → score 2.0
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 1, "stage": "anteproyecto",
@@ -470,7 +476,9 @@ def test_jurado3_aprueba_transicion_en_desarrollo(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Jurado → J3
         mapping_result([{"id": uuid4(), "juror_number": 3, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente rev=1
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Eval pendiente rev=1
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 3, "stage": "anteproyecto",
@@ -479,7 +487,7 @@ def test_jurado3_aprueba_transicion_en_desarrollo(docente_user):
             "is_extemporaneous": False, "revision_number": 1,
         }]),
         # J3 score validation: no está en [3.0, 4.0) → pasa
-        # 3. UPDATE evaluations → score 4.0
+        # 4. UPDATE evaluations → score 4.0
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 3, "stage": "anteproyecto",
@@ -541,7 +549,9 @@ def test_jurado3_reprueba_transicion_idea_aprobada(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Jurado → J3
         mapping_result([{"id": uuid4(), "juror_number": 3, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Eval pendiente
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 3, "stage": "anteproyecto",
@@ -549,7 +559,7 @@ def test_jurado3_reprueba_transicion_idea_aprobada(docente_user):
             "start_date": _past_dt(1), "due_date": due,
             "is_extemporaneous": False, "revision_number": 1,
         }]),
-        # 3. UPDATE evaluations → score 2.5
+        # 4. UPDATE evaluations → score 2.5
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 3, "stage": "anteproyecto",
@@ -649,7 +659,9 @@ def test_segunda_revision_no_acepta_correcciones(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Jurado → J1
         mapping_result([{"id": uuid4(), "juror_number": 1, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente → revision_number = 2
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "en_desarrollo"}]),
+        # 3. Eval pendiente → revision_number = 2
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 1, "stage": "anteproyecto",
@@ -690,7 +702,9 @@ def test_calificacion_extemporanea_marcada(docente_user):
     mock_db.execute = AsyncMock(side_effect=[
         # 1. Jurado → J2
         mapping_result([{"id": uuid4(), "juror_number": 2, "stage": "anteproyecto"}]),
-        # 2. Eval pendiente → due_date pasado
+        # 2. Verificar plagio → proyecto no suspendido
+        mapping_result([{"status": "anteproyecto_pendiente_evaluacion"}]),
+        # 3. Eval pendiente → due_date pasado
         mapping_result([{
             "id": eval_id, "project_id": proj_id, "submission_id": sub_id,
             "juror_id": docente_user.id, "juror_number": 2, "stage": "anteproyecto",

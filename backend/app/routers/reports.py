@@ -2,12 +2,15 @@
 Router de reportes para el Administrador.
 
 Rutas implementadas:
+  GET /reports/projects                     — listado paginado con filtros (T-F08-05)
   GET /reports/projects/pending-review      — proyectos pendientes de evaluación (T-F06-10)
   GET /reports/projects/pending-corrections — proyectos con correcciones sin respuesta (T-F06-11)
+  GET /reports/jurors/late                  — calificaciones extemporáneas (T-F07-08)
+  GET /reports/jurors/expiring              — plazo próximo a vencer (T-F07-09)
 """
 
 from datetime import date, datetime
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -17,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, require_admin
+from app.schemas.project import PaginatedProjectsResponse, ProjectResponse
 from app.utils.business_days import add_business_days, count_business_days_between
 
 router = APIRouter(prefix="/reports", tags=["reports"])
@@ -43,6 +47,85 @@ class PendingCorrectionItem(BaseModel):
     status: str
     deadline_date: date
     days_remaining: int
+
+
+# ---------------------------------------------------------------------------
+# GET /reports/projects — Listado paginado con filtros (T-F08-05)
+# ---------------------------------------------------------------------------
+
+_SELECT_PROJECT = (
+    "p.id, p.title, p.modality_id, p.academic_program_id, p.research_group, "
+    "p.research_line, p.suggested_director, p.period, p.status, p.has_company_link, "
+    "p.plagiarism_suspended, p.created_at, p.updated_at"
+)
+
+
+@router.get(
+    "/projects",
+    response_model=PaginatedProjectsResponse,
+)
+async def list_projects_report(
+    project_status: Optional[str] = None,
+    modality_id: Optional[UUID] = None,
+    academic_program_id: Optional[UUID] = None,
+    academic_period: Optional[str] = None,
+    docente_id: Optional[UUID] = None,
+    page: int = 1,
+    size: int = 20,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> PaginatedProjectsResponse:
+    """
+    Listado paginado de todos los proyectos con filtros opcionales.
+    El filtro docente_id incluye proyectos donde el docente es Director o Jurado activo.
+    """
+    conditions: list = []
+    params: dict = {"limit": size, "offset": (page - 1) * size}
+
+    if project_status is not None:
+        conditions.append("p.status = :project_status")
+        params["project_status"] = project_status
+    if modality_id is not None:
+        conditions.append("p.modality_id = :modality_id")
+        params["modality_id"] = modality_id
+    if academic_program_id is not None:
+        conditions.append("p.academic_program_id = :academic_program_id")
+        params["academic_program_id"] = academic_program_id
+    if academic_period is not None:
+        conditions.append("p.period = :academic_period")
+        params["academic_period"] = academic_period
+
+    # El filtro docente_id requiere JOIN con project_directors o project_jurors
+    join_clause = ""
+    if docente_id is not None:
+        join_clause = (
+            " JOIN ("
+            "  SELECT project_id FROM public.project_directors"
+            "  WHERE docente_id = :docente_id AND is_active = true"
+            "  UNION"
+            "  SELECT project_id FROM public.project_jurors"
+            "  WHERE docente_id = :docente_id AND is_active = true"
+            " ) doc_filter ON doc_filter.project_id = p.id"
+        )
+        params["docente_id"] = docente_id
+
+    where = f" WHERE {' AND '.join(conditions)}" if conditions else ""
+    base = f"FROM public.thesis_projects p{join_clause}{where}"
+
+    count_result = await db.execute(
+        text(f"SELECT COUNT(*) {base}"), params
+    )
+    total: int = count_result.scalar_one()
+
+    rows_result = await db.execute(
+        text(
+            f"SELECT {_SELECT_PROJECT} {base}"
+            " ORDER BY p.created_at DESC LIMIT :limit OFFSET :offset"
+        ),
+        params,
+    )
+    items = [ProjectResponse(**row) for row in rows_result.mappings()]
+    return PaginatedProjectsResponse(items=items, total=total, page=page, size=size)
 
 
 # ---------------------------------------------------------------------------

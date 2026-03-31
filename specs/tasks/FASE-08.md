@@ -81,11 +81,11 @@
 - **Referencias:** `specs/arch/API.md` §/reports, RF-17-01..RF-17-03
 - **Descripción:** Reportes de proyectos para el Administrador: listado general con filtros, pendientes de evaluación, correcciones sin respuesta.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/projects` con filtros `status`, `modality_id`, `academic_program_id`, `academic_period`, `docente_id` → `200` lista paginada (solo Administrador)
-  - [ ] `GET /api/v1/reports/projects/pending-review` → `200` (ya implementado en T-F06-10, verificar aquí)
-  - [ ] `GET /api/v1/reports/projects/pending-corrections` → `200` (ya implementado en T-F06-11, verificar aquí)
+  - [x] `GET /api/v1/reports/projects` con filtros `status`, `modality_id`, `academic_program_id`, `academic_period`, `docente_id` → `200` lista paginada (solo Administrador)
+  - [x] `GET /api/v1/reports/projects/pending-review` → `200` (ya implementado en T-F06-10, verificar aquí)
+  - [x] `GET /api/v1/reports/projects/pending-corrections` → `200` (ya implementado en T-F06-11, verificar aquí)
 - **Dependencias:** T-F06-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

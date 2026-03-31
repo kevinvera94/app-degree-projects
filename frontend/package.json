@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "verify:deps": "node scripts/verify-deps.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",

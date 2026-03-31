@@ -7,10 +7,10 @@ Rutas implementadas:
 """
 
 from datetime import date, datetime
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession

@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
-from app.core.supabase_client import supabase_admin
+from app.core.supabase_client import get_supabase_admin
 
 router = APIRouter(prefix="/projects", tags=["act"])
 
@@ -270,7 +270,7 @@ async def issue_act(
         ext = os.path.splitext(file.filename or "act.pdf")[1] or ".pdf"
         storage_path = f"acts/{project_id}/acta{ext}"
         try:
-            supabase_admin.storage.from_(settings.supabase_storage_bucket).upload(
+            get_supabase_admin().storage.from_(settings.supabase_storage_bucket).upload(
                 storage_path,
                 content,
                 {"content-type": file.content_type or "application/pdf", "upsert": "true"},
@@ -378,7 +378,7 @@ async def get_act(
     if act_data.get("act_file_url"):
         storage_path = _extract_storage_path(act_data["act_file_url"])
         try:
-            signed_response = supabase_admin.storage.from_(
+            signed_response = get_supabase_admin().storage.from_(
                 settings.supabase_storage_bucket
             ).create_signed_url(storage_path, 3600)
             signed_url: str = (

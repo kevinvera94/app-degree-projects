@@ -521,7 +521,9 @@ def test_get_acta_genera_url_firmada(student_user):
     mock_signed = MagicMock()
     mock_signed.signed_url = "https://storage.example.com/signed-url"
 
-    with patch("app.routers.act.supabase_admin") as mock_supa:
+    with patch("app.routers.act.get_supabase_admin") as mock_get_supa:
+        mock_supa = MagicMock()
+        mock_get_supa.return_value = mock_supa
         mock_supa.storage.from_.return_value.create_signed_url.return_value = mock_signed
 
         client = make_client(student_user, mock_db)

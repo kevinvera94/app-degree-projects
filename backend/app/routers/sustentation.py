@@ -503,12 +503,11 @@ async def submit_sustentation_evaluation(
 
             # Obtener estado actual del proyecto
             proj_result = await db.execute(
-                text("SELECT status, title FROM public.thesis_projects WHERE id = :id"),
+                text("SELECT status FROM public.thesis_projects WHERE id = :id"),
                 {"id": project_id},
             )
             proj = proj_result.mappings().first()
             prev_status = proj["status"]
-            title = proj["title"]
 
             if is_approved:
                 new_status = "trabajo_aprobado"

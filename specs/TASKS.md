@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-05
-**Próxima tarea:** `T-F05-03` — Implementar registro de calificación de jurado (anteproyecto)
+**Fase activa:** FASE-06
+**Próxima tarea:** `T-F08-04` — Implementar historial de cambios de estado
 
 ---
 
@@ -21,10 +21,10 @@
 | FASE-02 | [FASE-02.md](tasks/FASE-02.md) | Base de datos: esquema y migraciones | 12 | ✅ |
 | FASE-03 | [FASE-03.md](tasks/FASE-03.md) | Backend: Auth, usuarios y parámetros del sistema | 9 | ✅ |
 | FASE-04 | [FASE-04.md](tasks/FASE-04.md) | Backend: Inscripción y evaluación de idea | 8 | ✅ |
-| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | 🔄 |
-| FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ⬜ |
-| FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ⬜ |
-| FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ⬜ |
+| FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ✅ |
+| FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ✅ |
+| FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ✅ |
+| FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | 🔄 |
 | FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ⬜ |
 | FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ⬜ |
 | FASE-11 | [FASE-11.md](tasks/FASE-11.md) | Testing, integración y deploy | 9 | ⬜ |
@@ -74,6 +74,37 @@
 - `T-F04-08` — Tests de integración: inscripción y evaluación de idea — 2026-03-29
 - `T-F05-01` — Implementar radicación de anteproyecto y adjuntos (`POST /submissions`, `PATCH /confirm`) — 2026-03-29
 - `T-F05-02` — Implementar asignación de jurados al anteproyecto (`POST/GET/DELETE /projects/{id}/jurors`) — 2026-03-29
+- `T-F05-03` — Implementar registro de calificación de jurado (anteproyecto) — 2026-03-30
+- `T-F05-04` — Implementar lógica de resultado del anteproyecto (evaluate_anteproyecto_result) — 2026-03-30
+- `T-F05-05` — Implementar asignación y registro de Jurado 3 (anteproyecto) — 2026-03-30
+- `T-F05-06` — Implementar entrega de correcciones del anteproyecto — 2026-03-30
+- `T-F05-07` — Implementar lógica de bloqueo por incumplimiento de correcciones — 2026-03-30
+- `T-F05-08` — Implementar segunda revisión del anteproyecto — 2026-03-30
+- `T-F05-09` — Implementar historial de radicaciones y adjuntos — 2026-03-30
+- `T-F05-10` — Tests de integración: flujo completo del anteproyecto — 2026-03-30
+- `T-F06-01` — Implementar radicación de producto final — 2026-03-30
+- `T-F06-02` — Implementar asignación de jurados al producto final — 2026-03-30
+- `T-F06-03` — Implementar registro de calificación del producto final — 2026-03-30
+- `T-F06-04` — Implementar lógica de resultado del producto final — 2026-03-30
+- `T-F06-05` — Implementar Jurado 3 para producto final — 2026-03-30
+- `T-F06-06` — Implementar correcciones del producto final — 2026-03-30
+- `T-F06-07` — Implementar segunda revisión del producto final — 2026-03-30
+- `T-F06-08` — Implementar suspensión por plagio — 2026-03-30
+- `T-F06-09` — Tests de integración: producto final y correcciones — 2026-03-30
+- `T-F06-10` — Implementar señales de estado para el Administrador — 2026-03-30
+- `T-F06-11` — Implementar reporte de correcciones sin respuesta — 2026-03-30
+- `T-F07-01` — Implementar registro de sustentación — 2026-03-30
+- `T-F07-02` — Implementar registro de calificaciones de sustentación — 2026-03-30
+- `T-F07-03` — Implementar restricción de Jurado 3 en sustentación — 2026-03-30
+- `T-F07-04` — Implementar autorización de biblioteca — 2026-03-30
+- `T-F07-05` — Implementar emisión del acta — 2026-03-30
+- `T-F07-06` — Implementar asignación de jurados para sustentación — 2026-03-30
+- `T-F07-07` — Tests de integración: sustentación y acta — 2026-03-30
+- `T-F07-08` — Implementar reporte de jurados con calificaciones extemporáneas — 2026-03-30
+- `T-F07-09` — Implementar alerta de vencimiento próximo de jurados — 2026-03-30
+- `T-F08-01` — Implementar bandeja de mensajes (`GET/POST /projects/{id}/messages`) — 2026-03-30
+- `T-F08-02` — Implementar marcar mensaje como leído — 2026-03-30
+- `T-F08-03` — Implementar conteo de mensajes no leídos para badge en UI — 2026-03-30
 
 ---
 

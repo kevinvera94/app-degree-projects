@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 class JurorCreate(BaseModel):
     user_id: UUID
     juror_number: int = Field(..., ge=1, le=3)
-    stage: str = Field(..., pattern="^(anteproyecto|producto_final)$")
+    stage: str = Field(..., pattern="^(anteproyecto|producto_final|sustentacion)$")
 
 
 class JurorResponse(BaseModel):

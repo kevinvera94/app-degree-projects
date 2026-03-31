@@ -60,17 +60,17 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/evaluations, RF-06-04..RF-06-09
 - **Descripción:** Cada jurado registra su calificación individual. El sistema marca extemporáneas automáticamente y evalúa el resultado cuando ambos han calificado.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/evaluations` body: `{ stage: "anteproyecto", score: 0.0–5.0, observations: texto }` → `201` (solo Docente con rol jurado asignado en esta etapa)
-  - [ ] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403` si no
-  - [ ] Si `submitted_at > evaluations.due_date` → `is_extemporaneous = true` (no bloquea, solo marca)
-  - [ ] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver esquemas en `specs/arch/API.md` línea 139-154):
+  - [x] `POST /projects/{id}/evaluations` body: `{ stage: "anteproyecto", score: 0.0–5.0, observations: texto }` → `201` (solo Docente con rol jurado asignado en esta etapa)
+  - [x] Valida que el jurado que registra sea el asignado para esa etapa (via `project_jurors`) → `403` si no
+  - [x] Si `submitted_at > evaluations.due_date` → `is_extemporaneous = true` (no bloquea, solo marca)
+  - [x] `GET /projects/{id}/evaluations` — respuesta diferenciada por rol (ver esquemas en `specs/arch/API.md` línea 139-154):
     - **Estudiante:** `juror_id` y `full_name` **nunca** incluidos — solo `juror_number`, `score`, `observations`, `submitted_at`
     - **Administrador:** visibilidad completa incluyendo `juror_id`, `juror_name`, `is_extemporaneous`
     - **Docente (Director):** incluye `juror_id` y `juror_name`
-  - [ ] El serializer aplica el filtro de identidad en la **capa de servicio**, no solo en el frontend (AUTH.md línea 79)
-  - [ ] `GET /projects/{id}/evaluations/{evalId}` → `200` (Administrador, Docente)
+  - [x] El serializer aplica el filtro de identidad en la **capa de servicio**, no solo en el frontend (AUTH.md línea 79)
+  - [x] `GET /projects/{id}/evaluations/{evalId}` → `200` (Administrador, Docente)
 - **Dependencias:** T-F05-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -79,17 +79,17 @@
 - **Referencias:** RF-06-07, RF-06-08, RF-06-09, RF-06-11, RF-06-12, RF-06-13
 - **Descripción:** Lógica central: cuando ambos jurados han calificado, el sistema determina el resultado y ejecuta las transiciones de estado correspondientes. Incluye manejo de Jurado 3.
 - **Criterios de aceptación:**
-  - [ ] Función de servicio `evaluate_anteproyecto_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
-  - [ ] Ambas ≥ 4.0 → `anteproyecto_aprobado` → `en_desarrollo` (transición automática). Bloquea adición de nuevos integrantes (`project_members` queda cerrado)
-  - [ ] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `due_date = add_business_days(now(), 10, project.period)` y lo registra en el contexto del estado para mostrárselo al estudiante
-  - [ ] Ambas < 3.0 → `anteproyecto_reprobado` → `idea_aprobada` (retorno automático). Conserva integrantes existentes
-  - [ ] Un jurado ≥ 4.0 y el otro < 3.0 (divergencia) → notifica al Administrador para designar Jurado 3 (mensaje automático). Estado queda en `anteproyecto_pendiente_evaluacion`
-  - [ ] Al reprobarse: mensaje automático al estudiante: "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo."
-  - [ ] Al aprobarse: mensaje automático al estudiante: "Tu anteproyecto fue aprobado. Estado: En desarrollo."
-  - [ ] Al solicitar correcciones: dos canales (RF-06-11): (1) la vista de evaluaciones muestra calificación y observaciones; (2) mensaje automático en bandeja: "Tienes correcciones pendientes. Ver evaluaciones."
-  - [ ] Todos los cambios de estado registrados en `project_status_history`
+  - [x] Función de servicio `evaluate_anteproyecto_result(project_id)` ejecutada automáticamente al registrar la segunda calificación
+  - [x] Ambas ≥ 4.0 → `anteproyecto_aprobado` → `en_desarrollo` (transición automática). Bloquea adición de nuevos integrantes (`project_members` queda cerrado)
+  - [x] Ambas entre 3.0 y 3.9 → `correcciones_anteproyecto_solicitadas`. Calcula `due_date = add_business_days(now(), 10, project.period)` y lo registra en el contexto del estado para mostrárselo al estudiante
+  - [x] Ambas < 3.0 → `anteproyecto_reprobado` → `idea_aprobada` (retorno automático). Conserva integrantes existentes
+  - [x] Un jurado ≥ 4.0 y el otro < 3.0 (divergencia) → notifica al Administrador para designar Jurado 3 (mensaje automático). Estado queda en `anteproyecto_pendiente_evaluacion`
+  - [x] Al reprobarse: mensaje automático al estudiante: "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo."
+  - [x] Al aprobarse: mensaje automático al estudiante: "Tu anteproyecto fue aprobado. Estado: En desarrollo."
+  - [x] Al solicitar correcciones: dos canales (RF-06-11): (1) la vista de evaluaciones muestra calificación y observaciones; (2) mensaje automático en bandeja: "Tienes correcciones pendientes. Ver evaluaciones."
+  - [x] Todos los cambios de estado registrados en `project_status_history`
 - **Dependencias:** T-F05-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -98,14 +98,14 @@
 - **Referencias:** RF-06-08, RF-06-09
 - **Descripción:** Flujo separado para asignar Jurado 3 cuando hay divergencia entre Jurado 1 y Jurado 2. El Jurado 3 solo puede registrar Aprobado o Reprobado.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "anteproyecto" }` → `201` (solo Administrador, solo cuando el sistema haya notificado divergencia)
-  - [ ] Valida que exista divergencia (una ≥ 4.0, otra < 3.0) antes de permitir asignación de J3 → `409` si no hay divergencia
-  - [ ] La calificación del Jurado 3 solo acepta `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
-  - [ ] J3 aprueba → `anteproyecto_aprobado` → `en_desarrollo`
-  - [ ] J3 reprueba → `anteproyecto_reprobado` → `idea_aprobada` (conserva integrantes)
-  - [ ] Registra en `project_status_history`
+  - [x] `POST /projects/{id}/jurors` body: `{ user_id, juror_number: 3, stage: "anteproyecto" }` → `201` (solo Administrador, solo cuando el sistema haya notificado divergencia)
+  - [x] Valida que exista divergencia (una ≥ 4.0, otra < 3.0) antes de permitir asignación de J3 → `409` si no hay divergencia
+  - [x] La calificación del Jurado 3 solo acepta `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
+  - [x] J3 aprueba → `anteproyecto_aprobado` → `en_desarrollo`
+  - [x] J3 reprueba → `anteproyecto_reprobado` → `idea_aprobada` (conserva integrantes)
+  - [x] Registra en `project_status_history`
 - **Dependencias:** T-F05-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -114,14 +114,14 @@
 - **Referencias:** RF-07-01..RF-07-07
 - **Descripción:** El estudiante entrega el documento corregido con Vo.Bo. del director. El sistema inicia la segunda revisión automáticamente.
 - **Criterios de aceptación:**
-  - [ ] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", is_correction: true, academic_period }` → `201` (solo Estudiante)
-  - [ ] Valida estado `correcciones_anteproyecto_solicitadas` → `409` si estado distinto
-  - [ ] Valida que haya ventana activa para `radicacion_anteproyecto` O que el plazo original no haya vencido → `409` si la ventana está cerrada y el plazo venció
-  - [ ] Al confirmar radicación de corrección (`PATCH /submissions/{subId}/confirm`): `submission.status → "en_revision"`, `project.status → anteproyecto_corregido_entregado`. Registra `evaluations.start_date = submissions.submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, project.period)` con `revision_number = 2`
-  - [ ] Crea nuevos registros en `evaluations` para la segunda revisión (mismos jurados, `revision_number = 2`)
-  - [ ] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [due_date]"
+  - [x] `POST /projects/{id}/submissions` body: `{ stage: "anteproyecto", is_correction: true, academic_period }` → `201` (solo Estudiante)
+  - [x] Valida estado `correcciones_anteproyecto_solicitadas` → `409` si estado distinto
+  - [x] Valida que haya ventana activa para `radicacion_anteproyecto` O que el plazo original no haya vencido → `409` si la ventana está cerrada y el plazo venció
+  - [x] Al confirmar radicación de corrección (`PATCH /submissions/{subId}/confirm`): `submission.status → "en_revision"`, `project.status → anteproyecto_corregido_entregado`. Registra `evaluations.start_date = submissions.submitted_at`. Calcula nuevo `due_date = add_business_days(start_date, 10, project.period)` con `revision_number = 2`
+  - [x] Crea nuevos registros en `evaluations` para la segunda revisión (mismos jurados, `revision_number = 2`)
+  - [x] Mensaje automático a los jurados: "El estudiante entregó correcciones. Plazo: [due_date]"
 - **Dependencias:** T-F05-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -130,13 +130,13 @@
 - **Referencias:** RF-07-04, RF-07-05
 - **Descripción:** Si el estudiante no entrega las correcciones dentro del plazo de 10 días hábiles, el sistema bloquea la entrega. El estado permanece en `correcciones_anteproyecto_solicitadas`; el estudiante podrá radicar cuando abra la siguiente ventana.
 - **Criterios de aceptación:**
-  - [ ] Función de servicio (o validación en endpoint) que detecta si el plazo venció
-  - [ ] Si el plazo venció Y no hay ventana activa → intentar radicar corrección devuelve `409` con mensaje explicativo
-  - [ ] Si abre una nueva ventana de `radicacion_anteproyecto` → la entrega vuelve a estar disponible (sin reinicio de proceso)
-  - [ ] El estado **no cambia** automáticamente al vencer el plazo (no hay cron job en MVP); la restricción se aplica en el endpoint de radicación
-  - [ ] El Administrador puede cancelar el trabajo via T-F04-07 si lo considera abandonado
+  - [x] Función de servicio (o validación en endpoint) que detecta si el plazo venció
+  - [x] Si el plazo venció Y no hay ventana activa → intentar radicar corrección devuelve `409` con mensaje explicativo
+  - [x] Si abre una nueva ventana de `radicacion_anteproyecto` → la entrega vuelve a estar disponible (sin reinicio de proceso)
+  - [x] El estado **no cambia** automáticamente al vencer el plazo (no hay cron job en MVP); la restricción se aplica en el endpoint de radicación
+  - [x] El Administrador puede cancelar el trabajo via T-F04-07 si lo considera abandonado
 - **Dependencias:** T-F05-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -145,15 +145,15 @@
 - **Referencias:** RF-07-06, RF-07-07
 - **Descripción:** En la segunda revisión, los jurados solo pueden aprobar o reprobar (no solicitar más correcciones). El sistema ejecuta las transiciones finales.
 - **Criterios de aceptación:**
-  - [ ] Los jurados registran calificaciones en la segunda revisión igual que en la primera, pero el sistema valida que solo se permitan `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
-  - [ ] La diferenciación de "primera" o "segunda" revisión se detecta por `evaluations.revision_number` (1 o 2)
-  - [ ] Al completarse la segunda revisión:
+  - [x] Los jurados registran calificaciones en la segunda revisión igual que en la primera, pero el sistema valida que solo se permitan `score >= 4.0` (Aprobado) o `score < 3.0` (Reprobado) → `400` si `3.0 <= score < 4.0`
+  - [x] La diferenciación de "primera" o "segunda" revisión se detecta por `evaluations.revision_number` (1 o 2)
+  - [x] Al completarse la segunda revisión:
     - Ambas aprobadas → `en_desarrollo` (igual que primera revisión)
     - Una o ambas reprobadas → `idea_aprobada` (retorno, conserva integrantes)
-  - [ ] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, con `stage = "anteproyecto"` y `revision_number = 2`). Se asigna un nuevo Jurado 3 si no hay uno activo de la primera revisión para esta etapa
-  - [ ] Registra en `project_status_history`
+  - [x] Divergencia en segunda revisión → Jurado 3 (mismo flujo de T-F05-05, con `stage = "anteproyecto"` y `revision_number = 2`). Se asigna un nuevo Jurado 3 si no hay uno activo de la primera revisión para esta etapa
+  - [x] Registra en `project_status_history`
 - **Dependencias:** T-F05-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -162,12 +162,12 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/submissions
 - **Descripción:** Endpoints para consultar el historial de radicaciones y descargar adjuntos.
 - **Criterios de aceptación:**
-  - [ ] `GET /projects/{id}/submissions` → `200` lista de todas las radicaciones del proyecto con fechas y etapa (todos con pertenencia)
-  - [ ] `GET /projects/{id}/submissions/{subId}` → `200` detalle con lista de adjuntos (sin URL; URL se genera en endpoint separado)
-  - [ ] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada de Supabase Storage (TTL 1h) → `200` (todos con pertenencia)
-  - [ ] Estudiante sin pertenencia → `403`
+  - [x] `GET /projects/{id}/submissions` → `200` lista de todas las radicaciones del proyecto con fechas y etapa (todos con pertenencia)
+  - [x] `GET /projects/{id}/submissions/{subId}` → `200` detalle con lista de adjuntos (sin URL; URL se genera en endpoint separado)
+  - [x] `GET /projects/{id}/submissions/{subId}/attachments/{attId}` genera URL firmada de Supabase Storage (TTL 1h) → `200` (todos con pertenencia)
+  - [x] Estudiante sin pertenencia → `403`
 - **Dependencias:** T-F05-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -176,19 +176,19 @@
 - **Referencias:** RF-05-01..RF-05-06, RF-06-01..RF-06-13, RF-07-01..RF-07-07
 - **Descripción:** Tests de integración para todos los flujos del anteproyecto.
 - **Criterios de aceptación:**
-  - [ ] Test: radicar anteproyecto sin ventana activa → `409`
-  - [ ] Test: radicar anteproyecto sin adjunto obligatorio → `400`
-  - [ ] Test: modalidad Investigación sin `aval_etica` → `400`
-  - [ ] Test: flujo completo aprobación (ambas ≥ 4.0) → estado `en_desarrollo`
-  - [ ] Test: flujo correcciones (3.0–3.9) → estado `correcciones_anteproyecto_solicitadas`
-  - [ ] Test: flujo reprobación unánime → estado `idea_aprobada` (integrantes conservados)
-  - [ ] Test: divergencia → Jurado 3 asignado → aprueba → `en_desarrollo`
-  - [ ] Test: divergencia → Jurado 3 asignado → reprueba → `idea_aprobada`
-  - [ ] Test: entrega de correcciones vencida sin ventana → `409`
-  - [ ] Test: segunda revisión solo acepta aprobado/reprobado (no correcciones)
-  - [ ] Test: calificación extemporánea marcada correctamente
-  - [ ] Test: jurado no asignado intenta calificar → `403`
-  - [ ] Test: estudiante ve jurados como "Jurado 1" / "Jurado 2" (sin identidad real)
-  - [ ] Tests en `backend/tests/test_anteproyecto.py`
+  - [x] Test: radicar anteproyecto sin ventana activa → `409`
+  - [x] Test: radicar anteproyecto sin adjunto obligatorio → `400`
+  - [x] Test: modalidad Investigación sin `aval_etica` → `400`
+  - [x] Test: flujo completo aprobación (ambas ≥ 4.0) → estado `en_desarrollo`
+  - [x] Test: flujo correcciones (3.0–3.9) → estado `correcciones_anteproyecto_solicitadas`
+  - [x] Test: flujo reprobación unánime → estado `idea_aprobada` (integrantes conservados)
+  - [x] Test: divergencia → Jurado 3 asignado → aprueba → `en_desarrollo`
+  - [x] Test: divergencia → Jurado 3 asignado → reprueba → `idea_aprobada`
+  - [x] Test: entrega de correcciones vencida sin ventana → `409`
+  - [x] Test: segunda revisión solo acepta aprobado/reprobado (no correcciones)
+  - [x] Test: calificación extemporánea marcada correctamente
+  - [x] Test: jurado no asignado intenta calificar → `403`
+  - [x] Test: estudiante ve jurados como "Jurado 1" / "Jurado 2" (sin identidad real)
+  - [x] Tests en `backend/tests/test_anteproyecto.py`
 - **Dependencias:** T-F05-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

@@ -14,7 +14,7 @@ from app.core.dependencies import (
     require_admin,
     require_estudiante,
 )
-from app.core.supabase_client import supabase_admin
+from app.core.supabase_client import get_supabase_admin
 from app.schemas.date_window import WindowType
 from app.schemas.extemporaneous_window import (
     ExtemporaneousWindowCreate,
@@ -31,6 +31,7 @@ from app.schemas.project import (
     ProjectMemberInfo,
     ProjectResponse,
     SubmissionBasicInfo,
+    SuggestedJurorInfo,
     TERMINAL_STATUSES,
 )
 from app.services.modality_service import get_max_members
@@ -272,12 +273,31 @@ async def get_project(
     )
     submissions = [SubmissionBasicInfo(**r) for r in subs_result.mappings()]
 
+    # Jurados sugeridos para producto final (anteproyecto J1/J2 activos)
+    # Solo visibles para Admin y Docente; estudiante ve lista vacía
+    if not is_student:
+        suggested_result = await db.execute(
+            text(
+                "SELECT pj.juror_number, pj.docente_id, u.full_name"
+                " FROM public.project_jurors pj"
+                " JOIN public.users u ON u.id = pj.docente_id"
+                " WHERE pj.project_id = :pid AND pj.stage = 'anteproyecto'"
+                " AND pj.juror_number IN (1, 2) AND pj.is_active = true"
+                " ORDER BY pj.juror_number"
+            ),
+            {"pid": project_id},
+        )
+        suggested_jurors = [SuggestedJurorInfo(**r) for r in suggested_result.mappings()]
+    else:
+        suggested_jurors = []
+
     return ProjectDetailResponse(
         **row,
         members=members,
         directors=directors,
         jurors=jurors,
         submissions=submissions,
+        suggested_jurors=suggested_jurors,
     )
 
 
@@ -502,6 +522,13 @@ async def update_project_status(
 
     action = body.action.lower()
 
+    # Guard global: proyecto suspendido por plagio bloquea cualquier avance (T-F06-08)
+    if project["status"] == "suspendido_por_plagio" and action != "suspender_plagio":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="El trabajo está suspendido por plagio y no puede avanzar",
+        )
+
     if action == "aprobar":
         if project["status"] != "pendiente_evaluacion_idea":
             raise HTTPException(
@@ -707,6 +734,63 @@ async def update_project_status(
                 "pid": project_id,
                 "sid": current_user.id,
                 "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",  # noqa: E501
+            },
+        )
+
+        await db.commit()
+        return ProjectResponse(**updated_row)
+
+    # ------------------------------------------------------------------
+    # Acción: suspender_plagio (T-F06-08)
+    # ------------------------------------------------------------------
+    if action == "suspender_plagio":
+        if not body.reason or not body.reason.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="El motivo de suspensión es obligatorio",
+            )
+        # Estados terminales: no se puede suspender un trabajo ya finalizado
+        _no_suspend = {"acta_generada", "cancelado", "suspendido_por_plagio"}
+        if project["status"] in _no_suspend:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    f"No se puede suspender un trabajo en estado '{project['status']}'"
+                ),
+            )
+
+        updated = await db.execute(
+            text(
+                f"UPDATE public.thesis_projects SET status = 'suspendido_por_plagio',"
+                f" updated_at = now() WHERE id = :id RETURNING {_SELECT_PROJECT}"
+            ),
+            {"id": project_id},
+        )
+        updated_row = updated.mappings().first()
+
+        await db.execute(
+            text(
+                "INSERT INTO public.project_status_history"
+                " (project_id, previous_status, new_status, changed_by, notes)"
+                " VALUES (:pid, :prev, 'suspendido_por_plagio', :by, :notes)"
+            ),
+            {
+                "pid": project_id,
+                "prev": project["status"],
+                "by": current_user.id,
+                "notes": body.reason.strip(),
+            },
+        )
+        await db.execute(
+            text(
+                "INSERT INTO public.messages"
+                " (project_id, sender_id, recipient_id, content, sender_display)"
+                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+            ),
+            {
+                "pid": project_id,
+                "sid": current_user.id,
+                "content": f"Tu trabajo ha sido suspendido por plagio. Motivo: {body.reason.strip()}",
             },
         )
 
@@ -1051,7 +1135,7 @@ async def remove_member(
     ts = int(datetime.now(timezone.utc).timestamp())
     storage_path = f"{project_id}/integrantes/{member_id}/retiro_{ts}.pdf"
     try:
-        supabase_admin.storage.from_(settings.supabase_storage_bucket).upload(
+        get_supabase_admin().storage.from_(settings.supabase_storage_bucket).upload(
             path=storage_path,
             file=file_bytes,
             file_options={"content-type": "application/pdf"},

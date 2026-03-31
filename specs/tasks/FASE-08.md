@@ -51,11 +51,11 @@
 - **Referencias:** RF-15-09
 - **Descripción:** Endpoint auxiliar que retorna el número de mensajes no leídos del usuario autenticado, para mostrar el badge en la interfaz.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/messages/unread-count` → `200 { "unread": N }` (todos los roles)
-  - [ ] Cuenta mensajes en `messages` donde `recipient_id = current_user.id` Y `is_read = false`
-  - [ ] Respuesta eficiente (COUNT query, no traer todos los mensajes)
+  - [x] `GET /api/v1/messages/unread-count` → `200 { "unread": N }` (todos los roles)
+  - [x] Cuenta mensajes en `messages` donde `recipient_id = current_user.id` Y `is_read = false`
+  - [x] Respuesta eficiente (COUNT query, no traer todos los mensajes)
 - **Dependencias:** T-F08-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

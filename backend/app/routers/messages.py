@@ -5,6 +5,7 @@ Rutas implementadas:
   GET   /projects/{id}/messages              — bandeja de mensajes (T-F08-01)
   POST  /projects/{id}/messages              — enviar mensaje (T-F08-01)
   PATCH /projects/{id}/messages/{msgId}/read — marcar como leído (T-F08-02)
+  GET   /messages/unread-count               — conteo de no leídos para badge (T-F08-03)
 """
 
 from datetime import datetime
@@ -20,6 +21,7 @@ from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user
 
 router = APIRouter(prefix="/projects", tags=["messages"])
+inbox_router = APIRouter(prefix="/messages", tags=["messages"])
 
 
 # ---------------------------------------------------------------------------
@@ -379,3 +381,36 @@ async def mark_message_read(
 
     updated = update_result.mappings().first()
     return MessageResponse(**updated)
+
+
+# ---------------------------------------------------------------------------
+# GET /messages/unread-count — Badge de no leídos (T-F08-03)
+# ---------------------------------------------------------------------------
+
+
+class UnreadCountResponse(BaseModel):
+    unread: int
+
+
+@inbox_router.get(
+    "/unread-count",
+    response_model=UnreadCountResponse,
+)
+async def get_unread_count(
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> UnreadCountResponse:
+    """
+    Retorna el número de mensajes no leídos dirigidos al usuario autenticado.
+    Usa un COUNT directo para eficiencia — no trae filas completas.
+    """
+    result = await db.execute(
+        text(
+            "SELECT COUNT(*) AS unread"
+            " FROM public.messages"
+            " WHERE recipient_id = :uid AND is_read = false"
+        ),
+        {"uid": current_user.id},
+    )
+    row = result.mappings().first()
+    return UnreadCountResponse(unread=row["unread"] if row else 0)

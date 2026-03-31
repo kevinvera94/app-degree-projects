@@ -19,16 +19,16 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/messages, RF-15-01..RF-15-09
 - **Descripción:** Endpoints para leer y enviar mensajes de la bandeja de un trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/projects/{id}/messages` → `200` lista de mensajes del trabajo, ordenados por `sent_at` DESC (todos con pertenencia)
-  - [ ] Cada mensaje incluye: `id`, `sender_display`, `content`, `is_read`, `sent_at`
-  - [ ] El campo `sender_display` muestra el nombre real si el emisor es Administrador o Director; muestra "Jurado 1" o "Jurado 2" si es Jurado (determinado por `project_jurors`)
-  - [ ] `POST /api/v1/projects/{id}/messages` body: `{ content, recipient_id? }` → `201` (todos con pertenencia)
-  - [ ] Valida que el emisor tenga pertenencia activa en el proyecto → `403`
-  - [ ] Valida reglas de mensajería por rol (RF-15-02..RF-15-07): Estudiante → Director o Jurado; Director → Estudiante o Admin; Jurado → Estudiante; Admin → cualquiera → `403` si la combinación emisor/receptor no está permitida
-  - [ ] Al enviar: si el receptor es el Estudiante y el emisor es Jurado, `sender_display = "Jurado N"` (anonimato)
-  - [ ] Mensaje creado en `messages` con `is_read = false` para el receptor
+  - [x] `GET /api/v1/projects/{id}/messages` → `200` lista de mensajes del trabajo, ordenados por `sent_at` DESC (todos con pertenencia)
+  - [x] Cada mensaje incluye: `id`, `sender_display`, `content`, `is_read`, `sent_at`
+  - [x] El campo `sender_display` muestra el nombre real si el emisor es Administrador o Director; muestra "Jurado 1" o "Jurado 2" si es Jurado (determinado por `project_jurors`)
+  - [x] `POST /api/v1/projects/{id}/messages` body: `{ content, recipient_id? }` → `201` (todos con pertenencia)
+  - [x] Valida que el emisor tenga pertenencia activa en el proyecto → `403`
+  - [x] Valida reglas de mensajería por rol (RF-15-02..RF-15-07): Estudiante → Director o Jurado; Director → Estudiante o Admin; Jurado → Estudiante; Admin → cualquiera → `403` si la combinación emisor/receptor no está permitida
+  - [x] Al enviar: si el receptor es el Estudiante y el emisor es Jurado, `sender_display = "Jurado N"` (anonimato)
+  - [x] Mensaje creado en `messages` con `is_read = false` para el receptor
 - **Dependencias:** T-F02-11, T-F04-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

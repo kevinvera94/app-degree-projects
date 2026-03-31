@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-08
-**Próxima tarea:** `T-F08-09` — Verificación final de la API: cobertura completa de endpoints
+**Próxima tarea:** `T-F08-10` — Implementar servicio de mensajes automáticos del sistema
 
 ---
 
@@ -110,6 +110,7 @@
 - `T-F08-06` — Implementar reporte de carga docente — 2026-03-30
 - `T-F08-07` — Implementar fichas individuales (estudiante y proyecto) — 2026-03-30
 - `T-F08-08` — Tests de integración: mensajería, historial y reportes — 2026-03-30
+- `T-F08-09` — Verificación final de la API: cobertura completa de endpoints — 2026-03-30
 
 ---
 

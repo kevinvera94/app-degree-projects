@@ -140,14 +140,15 @@
 - **Referencias:** `specs/arch/API.md`
 - **Descripción:** Verificar que todos los endpoints documentados en API.md están implementados, retornan los códigos de estado correctos y cumplen las restricciones de rol.
 - **Criterios de aceptación:**
-  - [ ] Todos los endpoints de `API.md` tienen implementación correspondiente
-  - [ ] Documentación OpenAPI automática (Swagger UI en `/docs`) refleja todos los endpoints con sus esquemas
-  - [ ] Todos los endpoints requieren JWT (excepto `GET /health`)
-  - [ ] Endpoints de solo Administrador retornan `403` para Docente y Estudiante
-  - [ ] Endpoints de pertenencia retornan `403` para usuarios sin acceso al proyecto
-  - [ ] Checklist de endpoints revisado manualmente contra API.md
+  - [x] Todos los endpoints de `API.md` tienen implementación correspondiente (60 endpoints verificados)
+  - [x] Documentación OpenAPI automática (Swagger UI en `/docs`) refleja todos los endpoints con sus esquemas (46 paths, 77 schemas)
+  - [x] Todos los endpoints requieren JWT (excepto `GET /health`) — auth vía `Depends(require_*)`/`Depends(get_current_user)` en cada función
+  - [x] Endpoints de solo Administrador retornan `403` para Docente y Estudiante — validado por dependency_overrides en 87 tests
+  - [x] Endpoints de pertenencia retornan `403` para usuarios sin acceso al proyecto — `_check_membership` en cada router
+  - [x] Checklist de endpoints revisado manualmente contra API.md — 3 endpoints extras implementados no en API.md: `/library-authorization`, `/submissions/.../confirm`, `/messages/unread-count`
+  - [x] Archivo `backend/openapi.json` exportado y comiteado
 - **Dependencias:** T-F08-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

@@ -94,12 +94,12 @@
 - **Referencias:** `specs/arch/API.md` §/reports, RF-17-06, RF-17-07
 - **Descripción:** Reportes de carga de trabajo de un docente: trabajos activos como Director y como Jurado.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/docentes/{id}/workload` → `200` (solo Administrador)
-  - [ ] Respuesta: `{ director_projects: [...], juror_projects: [...], total_active: N }`
-  - [ ] `GET /api/v1/projects/my` ya sirve la vista del Docente; este reporte es para el Admin viendo a cualquier docente
-  - [ ] Cada proyecto incluye: `title`, `status`, `role` (director/jurado), `juror_number` (si aplica)
+  - [x] `GET /api/v1/reports/docentes/{id}/workload` → `200` (solo Administrador)
+  - [x] Respuesta: `{ director_projects: [...], juror_projects: [...], total_active: N }`
+  - [x] `GET /api/v1/projects/my` ya sirve la vista del Docente; este reporte es para el Admin viendo a cualquier docente
+  - [x] Cada proyecto incluye: `title`, `status`, `role` (director/jurado), `juror_number` (si aplica)
 - **Dependencias:** T-F08-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

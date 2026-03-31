@@ -13,7 +13,7 @@ from datetime import date, datetime
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -382,3 +382,98 @@ async def get_expiring_jurors(
             )
 
     return items
+
+
+# ---------------------------------------------------------------------------
+# GET /reports/docentes/{docente_id}/workload — Carga docente (T-F08-06)
+# ---------------------------------------------------------------------------
+
+
+class WorkloadProjectItem(BaseModel):
+    project_id: UUID
+    title: str
+    status: str
+    role: str                        # "director" | "jurado"
+    juror_number: Optional[int] = None  # solo cuando role == "jurado"
+
+
+class WorkloadResponse(BaseModel):
+    director_projects: List[WorkloadProjectItem]
+    juror_projects: List[WorkloadProjectItem]
+    total_active: int
+
+
+@router.get(
+    "/docentes/{docente_id}/workload",
+    response_model=WorkloadResponse,
+)
+async def get_docente_workload(
+    docente_id: UUID,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> WorkloadResponse:
+    """
+    Carga activa de un docente: proyectos donde es Director o Jurado activo.
+    Responde 404 si el docente no existe.
+    """
+    # Verificar que el docente existe
+    user_result = await db.execute(
+        text("SELECT id FROM public.users WHERE id = :uid AND role = 'docente'"),
+        {"uid": docente_id},
+    )
+    if user_result.mappings().first() is None:
+        raise HTTPException(status_code=404, detail="Docente no encontrado")
+
+    # Proyectos como Director activo
+    dir_result = await db.execute(
+        text(
+            """
+            SELECT p.id AS project_id, p.title, p.status
+            FROM public.project_directors pd
+            JOIN public.thesis_projects p ON p.id = pd.project_id
+            WHERE pd.docente_id = :uid AND pd.is_active = true
+            ORDER BY p.created_at DESC
+            """
+        ),
+        {"uid": docente_id},
+    )
+    director_projects = [
+        WorkloadProjectItem(
+            project_id=row["project_id"],
+            title=row["title"],
+            status=row["status"],
+            role="director",
+        )
+        for row in dir_result.mappings()
+    ]
+
+    # Proyectos como Jurado activo
+    jur_result = await db.execute(
+        text(
+            """
+            SELECT p.id AS project_id, p.title, p.status, pj.juror_number
+            FROM public.project_jurors pj
+            JOIN public.thesis_projects p ON p.id = pj.project_id
+            WHERE pj.docente_id = :uid AND pj.is_active = true
+            ORDER BY p.created_at DESC
+            """
+        ),
+        {"uid": docente_id},
+    )
+    juror_projects = [
+        WorkloadProjectItem(
+            project_id=row["project_id"],
+            title=row["title"],
+            status=row["status"],
+            role="jurado",
+            juror_number=row["juror_number"],
+        )
+        for row in jur_result.mappings()
+    ]
+
+    total_active = len(director_projects) + len(juror_projects)
+    return WorkloadResponse(
+        director_projects=director_projects,
+        juror_projects=juror_projects,
+        total_active=total_active,
+    )

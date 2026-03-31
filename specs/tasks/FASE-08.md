@@ -121,17 +121,17 @@
 - **Referencias:** RF-15-01..RF-15-09, RF-16-01..RF-16-06, RF-17-01..RF-17-09
 - **Descripción:** Tests de integración para los módulos transversales.
 - **Criterios de aceptación:**
-  - [ ] Test: Estudiante envía mensaje a Jurado → `sender_display = "Jurado N"` en respuesta
-  - [ ] Test: Jurado envía mensaje al Estudiante → Estudiante ve "Jurado N" como remitente (sin nombre real)
-  - [ ] Test: Jurado intenta enviar mensaje al Admin → `403`
-  - [ ] Test: marcar mensaje como leído por usuario que no es receptor → `403`
-  - [ ] Test: historial incluye cambios de estado en orden cronológico
-  - [ ] Test: historial no revela `juror_id` al Estudiante
-  - [ ] Test: reporte de jurados extemporáneos incluye `days_late` calculado correctamente
-  - [ ] Test: reporte de vencimiento próximo filtra correctamente por N días
-  - [ ] Tests en `backend/tests/test_messaging_reports.py`
+  - [x] Test: Estudiante envía mensaje a Jurado → sender_display = nombre real del estudiante
+  - [x] Test: Jurado envía mensaje al Estudiante → sender_display = "Jurado N" (anonimato)
+  - [x] Test: Jurado intenta enviar mensaje al Admin → `403`
+  - [x] Test: marcar mensaje como leído por usuario que no es receptor → `403`
+  - [x] Test: historial incluye cambios de estado en orden cronológico
+  - [x] Test: historial no revela `juror_id` al Estudiante
+  - [x] Test: reporte de jurados extemporáneos incluye `days_late` calculado correctamente
+  - [x] Test: reporte de vencimiento próximo filtra correctamente por N días
+  - [x] Tests en `backend/tests/test_messaging_reports.py`
 - **Dependencias:** T-F08-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

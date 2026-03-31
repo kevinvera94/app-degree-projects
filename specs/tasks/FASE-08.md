@@ -64,15 +64,15 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/history, RF-16-01..RF-16-06
 - **Descripción:** Endpoint que retorna el historial cronológico de todos los eventos de un proyecto: cambios de estado, documentos adjuntos y calificaciones.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/projects/{id}/history` → `200` lista ordenada por fecha ASC (todos con pertenencia)
-  - [ ] Incluye eventos de `project_status_history`: `{ type: "status_change", previous_status, new_status, changed_by_name, reason, changed_at }`
-  - [ ] Incluye eventos de `attachments`: `{ type: "document_uploaded", attachment_type, file_name, stage, uploaded_by_name, uploaded_at }`
-  - [ ] Incluye eventos de `evaluations`: `{ type: "evaluation_submitted", juror_number, score, stage, submitted_at, is_extemporaneous }` — sin revelar `juror_id` al Estudiante
-  - [ ] Administrador ve el historial completo de cualquier trabajo
-  - [ ] Estudiante ve el historial de su propio trabajo (sin identidad de jurados)
-  - [ ] Docente ve el historial de trabajos donde tiene función asignada (Director o Jurado)
+  - [x] `GET /api/v1/projects/{id}/history` → `200` lista ordenada por fecha ASC (todos con pertenencia)
+  - [x] Incluye eventos de `project_status_history`: `{ type: "status_change", previous_status, new_status, changed_by_name, reason, changed_at }`
+  - [x] Incluye eventos de `attachments`: `{ type: "document_uploaded", attachment_type, file_name, stage, uploaded_by_name, uploaded_at }`
+  - [x] Incluye eventos de `evaluations`: `{ type: "evaluation_submitted", juror_number, score, stage, submitted_at, is_extemporaneous }` — sin revelar `juror_id` al Estudiante
+  - [x] Administrador ve el historial completo de cualquier trabajo
+  - [x] Estudiante ve el historial de su propio trabajo (sin identidad de jurados)
+  - [x] Docente ve el historial de trabajos donde tiene función asignada (Director o Jurado)
 - **Dependencias:** T-F04-01, T-F05-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

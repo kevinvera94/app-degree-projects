@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-06
-**Próxima tarea:** `T-F08-04` — Implementar historial de cambios de estado
+**Fase activa:** FASE-08
+**Próxima tarea:** `T-F08-05` — Implementar reportes principales de proyectos
 
 ---
 
@@ -105,6 +105,7 @@
 - `T-F08-01` — Implementar bandeja de mensajes (`GET/POST /projects/{id}/messages`) — 2026-03-30
 - `T-F08-02` — Implementar marcar mensaje como leído — 2026-03-30
 - `T-F08-03` — Implementar conteo de mensajes no leídos para badge en UI — 2026-03-30
+- `T-F08-04` — Implementar historial de cambios de estado — 2026-03-30
 
 ---
 

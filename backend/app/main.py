@@ -8,6 +8,7 @@ from app.routers import (
     auth,
     date_windows,
     evaluations,
+    history,
     jurors,
     modalities,
     projects,
@@ -49,6 +50,7 @@ app.include_router(sustentation.router, prefix="/api/v1")
 app.include_router(act.router, prefix="/api/v1")
 app.include_router(messages_router, prefix="/api/v1")
 app.include_router(inbox_router, prefix="/api/v1")
+app.include_router(history.router, prefix="/api/v1")
 
 
 @app.get("/health", tags=["health"])

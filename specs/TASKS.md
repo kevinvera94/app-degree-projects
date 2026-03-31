@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-06
-**Próxima tarea:** `T-F08-02` — Implementar marcar mensaje como leído
+**Próxima tarea:** `T-F08-03` — Implementar conteo de mensajes no leídos
 
 ---
 
@@ -103,6 +103,7 @@
 - `T-F07-08` — Implementar reporte de jurados con calificaciones extemporáneas — 2026-03-30
 - `T-F07-09` — Implementar alerta de vencimiento próximo de jurados — 2026-03-30
 - `T-F08-01` — Implementar bandeja de mensajes (`GET/POST /projects/{id}/messages`) — 2026-03-30
+- `T-F08-02` — Implementar marcar mensaje como leído — 2026-03-30
 
 ---
 

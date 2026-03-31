@@ -2,8 +2,9 @@
 Router de mensajería asíncrona.
 
 Rutas implementadas:
-  GET  /projects/{id}/messages              — bandeja de mensajes (T-F08-01)
-  POST /projects/{id}/messages              — enviar mensaje (T-F08-01)
+  GET   /projects/{id}/messages              — bandeja de mensajes (T-F08-01)
+  POST  /projects/{id}/messages              — enviar mensaje (T-F08-01)
+  PATCH /projects/{id}/messages/{msgId}/read — marcar como leído (T-F08-02)
 """
 
 from datetime import datetime
@@ -306,3 +307,75 @@ async def send_message(
 
     row = insert_result.mappings().first()
     return MessageResponse(**row)
+
+
+# ---------------------------------------------------------------------------
+# PATCH /projects/{id}/messages/{msg_id}/read — Marcar como leído (T-F08-02)
+# ---------------------------------------------------------------------------
+
+
+@router.patch(
+    "/{project_id}/messages/{msg_id}/read",
+    response_model=MessageResponse,
+)
+async def mark_message_read(
+    project_id: UUID,
+    msg_id: UUID,
+    current_user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> MessageResponse:
+    """
+    Marca un mensaje como leído. Solo el receptor puede hacerlo.
+    Si el mensaje ya está leído, responde 200 (idempotente).
+    """
+    # 1. Verificar pertenencia al proyecto
+    await _check_membership_and_get_role(project_id, current_user, db)
+
+    # 2. Cargar el mensaje
+    result = await db.execute(
+        text(
+            "SELECT id, project_id, recipient_id, sender_display, content, is_read, sent_at"
+            " FROM public.messages"
+            " WHERE id = :mid AND project_id = :pid"
+        ),
+        {"mid": msg_id, "pid": project_id},
+    )
+    row = result.mappings().first()
+    if row is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Mensaje no encontrado",
+        )
+
+    # 3. Solo el receptor puede marcarlo como leído
+    # recipient_id = null significa broadcast; en ese caso todos son receptores implícitos
+    if row["recipient_id"] is not None and row["recipient_id"] != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo el receptor del mensaje puede marcarlo como leído",
+        )
+
+    # 4. Idempotente: si ya está leído, devolver sin tocar BD
+    if row["is_read"]:
+        return MessageResponse(
+            id=row["id"],
+            sender_display=row["sender_display"],
+            content=row["content"],
+            is_read=row["is_read"],
+            sent_at=row["sent_at"],
+        )
+
+    # 5. Actualizar
+    update_result = await db.execute(
+        text(
+            "UPDATE public.messages"
+            " SET is_read = true, read_at = NOW()"
+            " WHERE id = :mid"
+            " RETURNING id, sender_display, content, is_read, sent_at"
+        ),
+        {"mid": msg_id},
+    )
+    await db.commit()
+
+    updated = update_result.mappings().first()
+    return MessageResponse(**updated)

@@ -37,12 +37,12 @@
 - **Referencias:** `specs/arch/API.md` §/projects/{id}/messages, RF-15-01
 - **Descripción:** El receptor puede marcar un mensaje como leído.
 - **Criterios de aceptación:**
-  - [ ] `PATCH /api/v1/projects/{id}/messages/{msgId}/read` → `200` (todos con pertenencia)
-  - [ ] Solo el receptor del mensaje puede marcarlo como leído → `403` si el solicitante no es el `recipient_id`
-  - [ ] Actualiza `messages.is_read = true`
-  - [ ] Si el mensaje ya está leído: idempotente → `200`
+  - [x] `PATCH /api/v1/projects/{id}/messages/{msgId}/read` → `200` (todos con pertenencia)
+  - [x] Solo el receptor del mensaje puede marcarlo como leído → `403` si el solicitante no es el `recipient_id`
+  - [x] Actualiza `messages.is_read = true`
+  - [x] Si el mensaje ya está leído: idempotente → `200`
 - **Dependencias:** T-F08-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

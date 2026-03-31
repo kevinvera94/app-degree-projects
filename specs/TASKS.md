@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-08
-**Próxima tarea:** `T-F08-07` — Implementar fichas individuales (estudiante y proyecto)
+**Próxima tarea:** `T-F08-08` — Tests de integración: mensajería, historial y reportes
 
 ---
 
@@ -108,6 +108,7 @@
 - `T-F08-04` — Implementar historial de cambios de estado — 2026-03-30
 - `T-F08-05` — Implementar reportes principales de proyectos — 2026-03-30
 - `T-F08-06` — Implementar reporte de carga docente — 2026-03-30
+- `T-F08-07` — Implementar fichas individuales (estudiante y proyecto) — 2026-03-30
 
 ---
 

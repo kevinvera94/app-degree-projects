@@ -108,11 +108,11 @@
 - **Referencias:** RF-17-08, RF-17-09
 - **Descripción:** Endpoints de consulta completa de un trabajo de grado y de un estudiante específico.
 - **Criterios de aceptación:**
-  - [ ] `GET /api/v1/reports/projects` con `GET /projects/{id}` ya cubre RF-17-08 (detalle completo del trabajo). Verificar que incluye: estado actual, historial, documentos, calificaciones, integrantes, director(es), jurados
-  - [ ] `GET /api/v1/reports/students/{id}` → `200` (solo Administrador): `{ user_info, project: { title, status, submissions[], evaluations[], history[] } }`
-  - [ ] Si el estudiante no tiene trabajo activo: retorna `project: null`
+  - [x] `GET /api/v1/reports/projects` con `GET /projects/{id}` ya cubre RF-17-08 (detalle completo del trabajo). Verificar que incluye: estado actual, historial, documentos, calificaciones, integrantes, director(es), jurados
+  - [x] `GET /api/v1/reports/students/{id}` → `200` (solo Administrador): `{ user_info, project: { title, status, submissions[], evaluations[], history[] } }`
+  - [x] Si el estudiante no tiene trabajo activo: retorna `project: null`
 - **Dependencias:** T-F08-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

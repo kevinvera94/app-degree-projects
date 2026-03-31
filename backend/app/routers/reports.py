@@ -477,3 +477,146 @@ async def get_docente_workload(
         juror_projects=juror_projects,
         total_active=total_active,
     )
+
+
+# ---------------------------------------------------------------------------
+# GET /reports/students/{student_id} — Ficha del estudiante (T-F08-07)
+# ---------------------------------------------------------------------------
+
+
+class StudentUserInfo(BaseModel):
+    id: UUID
+    full_name: str
+    email: str
+    is_active: bool
+
+
+class StudentSubmissionItem(BaseModel):
+    id: UUID
+    stage: str
+    status: str
+    submitted_at: Optional[datetime]
+
+
+class StudentEvaluationItem(BaseModel):
+    juror_number: int
+    stage: str
+    score: Optional[float]
+    submitted_at: Optional[datetime]
+    is_extemporaneous: bool
+
+
+class StudentStatusHistoryItem(BaseModel):
+    previous_status: Optional[str]
+    new_status: str
+    changed_at: datetime
+
+
+class StudentProjectInfo(BaseModel):
+    id: UUID
+    title: str
+    status: str
+    period: str
+    submissions: List[StudentSubmissionItem]
+    evaluations: List[StudentEvaluationItem]
+    history: List[StudentStatusHistoryItem]
+
+
+class StudentReportResponse(BaseModel):
+    user_info: StudentUserInfo
+    project: Optional[StudentProjectInfo] = None
+
+
+@router.get(
+    "/students/{student_id}",
+    response_model=StudentReportResponse,
+)
+async def get_student_report(
+    student_id: UUID,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> StudentReportResponse:
+    """
+    Ficha completa de un estudiante: datos personales + proyecto activo con
+    radicaciones, calificaciones e historial de estados.
+    Retorna project: null si el estudiante no tiene trabajo activo.
+    """
+    # 1. Obtener datos del estudiante
+    user_result = await db.execute(
+        text(
+            "SELECT id, full_name, email, is_active"
+            " FROM public.users"
+            " WHERE id = :uid AND role = 'estudiante'"
+        ),
+        {"uid": student_id},
+    )
+    user_row = user_result.mappings().first()
+    if user_row is None:
+        raise HTTPException(status_code=404, detail="Estudiante no encontrado")
+
+    user_info = StudentUserInfo(**user_row)
+
+    # 2. Buscar proyecto activo (el estudiante puede estar en solo uno a la vez)
+    proj_result = await db.execute(
+        text(
+            "SELECT p.id, p.title, p.status, p.period"
+            " FROM public.thesis_projects p"
+            " JOIN public.project_members pm ON pm.project_id = p.id"
+            " WHERE pm.student_id = :uid AND pm.is_active = true"
+            " ORDER BY p.created_at DESC LIMIT 1"
+        ),
+        {"uid": student_id},
+    )
+    proj_row = proj_result.mappings().first()
+
+    if proj_row is None:
+        return StudentReportResponse(user_info=user_info, project=None)
+
+    project_id = proj_row["id"]
+
+    # 3. Radicaciones del proyecto
+    sub_result = await db.execute(
+        text(
+            "SELECT id, stage, status, submitted_at"
+            " FROM public.submissions"
+            " WHERE project_id = :pid"
+            " ORDER BY submitted_at ASC"
+        ),
+        {"pid": project_id},
+    )
+    submissions = [StudentSubmissionItem(**row) for row in sub_result.mappings()]
+
+    # 4. Calificaciones del proyecto
+    eval_result = await db.execute(
+        text(
+            "SELECT juror_number, stage, score, submitted_at, is_extemporaneous"
+            " FROM public.evaluations"
+            " WHERE project_id = :pid"
+            " ORDER BY submitted_at ASC"
+        ),
+        {"pid": project_id},
+    )
+    evaluations = [StudentEvaluationItem(**row) for row in eval_result.mappings()]
+
+    # 5. Historial de estados
+    hist_result = await db.execute(
+        text(
+            "SELECT previous_status, new_status, changed_at"
+            " FROM public.project_status_history"
+            " WHERE project_id = :pid"
+            " ORDER BY changed_at ASC"
+        ),
+        {"pid": project_id},
+    )
+    history = [StudentStatusHistoryItem(**row) for row in hist_result.mappings()]
+
+    project_info = StudentProjectInfo(
+        id=proj_row["id"],
+        title=proj_row["title"],
+        status=proj_row["status"],
+        period=proj_row["period"],
+        submissions=submissions,
+        evaluations=evaluations,
+        history=history,
+    )
+    return StudentReportResponse(user_info=user_info, project=project_info)

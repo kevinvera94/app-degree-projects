@@ -157,12 +157,12 @@
 - **Referencias:** RF-15-09
 - **Descripción:** Refactorizar/centralizar la función que genera mensajes automáticos del sistema (usada en todas las fases anteriores) en un servicio compartido.
 - **Criterios de aceptación:**
-  - [ ] `backend/app/services/notifications.py` con función `send_system_message(project_id, recipient_id, content, sender_display="Sistema")`
-  - [ ] Todos los mensajes automáticos generados en FASE-04 a FASE-07 usan este servicio
-  - [ ] Los mensajes del sistema tienen `sender_display = "Sistema"` o el nombre del actor que disparó la acción
-  - [ ] Tests unitarios de la función
+  - [x] `backend/app/services/notifications.py` con función `send_system_message(project_id, recipient_id, content, sender_display="Sistema")`
+  - [x] Todos los mensajes automáticos generados en FASE-04 a FASE-07 usan este servicio
+  - [x] Los mensajes del sistema tienen `sender_display = "Sistema"` o el nombre del actor que disparó la acción
+  - [x] Tests unitarios de la función (4 tests, 4/4 OK)
 - **Dependencias:** T-F08-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, require_admin
 from app.core.supabase_client import get_supabase_admin
+from app.services.notifications import send_system_message
 from app.schemas.user import (
     DeactivateUserResponse,
     PaginatedUsersResponse,
@@ -243,24 +244,12 @@ async def deactivate_user(
 
     # Crear mensaje de alerta por cada proyecto afectado
     for project_id in affected_project_ids:
-        await db.execute(
-            text(
-                """
-                INSERT INTO public.messages
-                    (project_id, sender_id, recipient_id, content, sender_display)
-                VALUES
-                    (:project_id, :sender_id, :recipient_id, :content, 'Sistema')
-            """
+        await send_system_message(
+            db, project_id, current_user.id, current_user.id,
+            (
+                "Un docente asignado a este trabajo ha sido desactivado. "
+                "Se requiere reasignación de director o jurado."
             ),
-            {
-                "project_id": project_id,
-                "sender_id": current_user.id,
-                "recipient_id": current_user.id,
-                "content": (
-                    "Un docente asignado a este trabajo ha sido desactivado. "
-                    "Se requiere reasignación de director o jurado."
-                ),
-            },
         )
 
     await db.commit()

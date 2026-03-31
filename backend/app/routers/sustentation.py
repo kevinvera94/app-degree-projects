@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin
+from app.services.notifications import send_system_message
 
 router = APIRouter(prefix="/projects", tags=["sustentation"])
 
@@ -140,19 +141,6 @@ async def _get_project(project_id: UUID, db: AsyncSession) -> dict:
     return dict(row)
 
 
-async def _send_message(
-    project_id: UUID, sender_id: UUID, recipient_id, content: str, db: AsyncSession
-) -> None:
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-        ),
-        {"pid": project_id, "sid": sender_id, "rid": recipient_id, "content": content},
-    )
-
-
 # ---------------------------------------------------------------------------
 # POST /projects/{id}/sustentation — Programar sustentación (T-F07-01)
 # ---------------------------------------------------------------------------
@@ -263,7 +251,7 @@ async def schedule_sustentation(
     )
 
     # Notificar a estudiantes (broadcast: recipient_id = NULL)
-    await _send_message(project_id, current_user.id, None, msg, db)
+    await send_system_message(db, project_id, current_user.id, None, msg)
 
     # Notificar a directores activos
     directors_result = await db.execute(
@@ -274,7 +262,7 @@ async def schedule_sustentation(
         {"pid": project_id},
     )
     for director in directors_result.mappings():
-        await _send_message(project_id, current_user.id, director["docente_id"], msg, db)
+        await send_system_message(db, project_id, current_user.id, director["docente_id"], msg)
 
     # Notificar a jurados de sustentación si ya están asignados
     jurors_result = await db.execute(
@@ -285,7 +273,7 @@ async def schedule_sustentation(
         {"pid": project_id},
     )
     for juror in jurors_result.mappings():
-        await _send_message(project_id, current_user.id, juror["docente_id"], msg, db)
+        await send_system_message(db, project_id, current_user.id, juror["docente_id"], msg)
 
     await db.commit()
     return SustentationResponse(**sut_row, evaluations=[])
@@ -545,7 +533,7 @@ async def submit_sustentation_evaluation(
                 },
             )
             # Notificar al estudiante (broadcast)
-            await _send_message(project_id, current_user.id, None, msg, db)
+            await send_system_message(db, project_id, current_user.id, None, msg)
 
     await db.commit()
     return SustentationEvalAdminResponse(**eval_row)

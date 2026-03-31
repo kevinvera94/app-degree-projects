@@ -21,6 +21,7 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
 from app.core.supabase_client import get_supabase_admin
+from app.services.notifications import send_system_message
 
 router = APIRouter(prefix="/projects", tags=["act"])
 
@@ -183,20 +184,12 @@ async def set_library_authorization(
     )
     student_name = student_result.scalar_one()
 
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+    await send_system_message(
+        db, project_id, current_user.id, None,
+        (
+            f"El estudiante {student_name} ha diligenciado la autorización de biblioteca "
+            f"para '{project['title']}'. Valor: {'Autorizado' if body.library_authorization else 'No autorizado'}."
         ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "content": (
-                f"El estudiante {student_name} ha diligenciado la autorización de biblioteca "
-                f"para '{project['title']}'. Valor: {'Autorizado' if body.library_authorization else 'No autorizado'}."
-            ),
-        },
     )
 
     await db.commit()
@@ -325,17 +318,9 @@ async def issue_act(
         },
     )
     # Notificar al estudiante
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-        ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "content": "Tu acta ha sido emitida. Puedes descargarla desde el sistema.",
-        },
+    await send_system_message(
+        db, project_id, current_user.id, None,
+        "Tu acta ha sido emitida. Puedes descargarla desde el sistema.",
     )
 
     await db.commit()

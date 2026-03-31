@@ -115,7 +115,9 @@ def test_deactivate_docente_generates_alert_messages(admin_user):
 
     client = make_client(admin_user, mock_db)
     try:
-        with patch("app.routers.users.supabase_admin") as mock_supa:
+        with patch("app.routers.users.get_supabase_admin") as mock_get_supa:
+            mock_supa = MagicMock()
+            mock_get_supa.return_value = mock_supa
             mock_supa.auth.admin.update_user_by_id.return_value = None
             response = client.patch(f"/api/v1/users/{docente_id}/deactivate")
     finally:

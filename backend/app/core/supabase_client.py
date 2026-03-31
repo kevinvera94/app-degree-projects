@@ -21,9 +21,3 @@ def get_supabase_admin() -> Client:
             settings.supabase_service_role_key,
         )
     return _supabase_admin
-
-
-# Alias para retrocompatibilidad en otros módulos que importen supabase_admin
-# directamente (e.g. act.py). Se reemplaza en los módulos que lo usen
-# por la función get_supabase_admin() para evitar la inicialización al importar.
-supabase_admin = None  # type: ignore[assignment]

@@ -14,7 +14,7 @@ from app.core.dependencies import (
     require_admin,
     require_estudiante,
 )
-from app.core.supabase_client import supabase_admin
+from app.core.supabase_client import get_supabase_admin
 from app.schemas.date_window import WindowType
 from app.schemas.extemporaneous_window import (
     ExtemporaneousWindowCreate,
@@ -1135,7 +1135,7 @@ async def remove_member(
     ts = int(datetime.now(timezone.utc).timestamp())
     storage_path = f"{project_id}/integrantes/{member_id}/retiro_{ts}.pdf"
     try:
-        supabase_admin.storage.from_(settings.supabase_storage_bucket).upload(
+        get_supabase_admin().storage.from_(settings.supabase_storage_bucket).upload(
             path=storage_path,
             file=file_bytes,
             file_options={"content-type": "application/pdf"},

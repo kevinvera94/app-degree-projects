@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, require_admin
-from app.core.supabase_client import supabase_admin
+from app.core.supabase_client import get_supabase_admin
 from app.schemas.user import (
     DeactivateUserResponse,
     PaginatedUsersResponse,
@@ -74,7 +74,7 @@ async def create_user(
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
     try:
-        supabase_admin.auth.admin.create_user(
+        get_supabase_admin().auth.admin.create_user(
             {
                 "email": body.email,
                 "password": body.password,
@@ -166,7 +166,7 @@ async def update_user(
         auth_updates["app_metadata"] = {"role": updates["role"]}
     if auth_updates:
         try:
-            supabase_admin.auth.admin.update_user_by_id(str(user_id), auth_updates)
+            get_supabase_admin().auth.admin.update_user_by_id(str(user_id), auth_updates)
         except AuthApiError as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
@@ -191,7 +191,7 @@ async def deactivate_user(
 
     # Bloquear login en Supabase Auth primero (si falla, no se toca la BD)
     try:
-        supabase_admin.auth.admin.update_user_by_id(
+        get_supabase_admin().auth.admin.update_user_by_id(
             str(user_id), {"ban_duration": "876600h"}
         )
     except AuthApiError as e:

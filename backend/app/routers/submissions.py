@@ -33,7 +33,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_estudiante
-from app.core.supabase_client import supabase_admin
+from app.core.supabase_client import get_supabase_admin
 from app.schemas.submission import (
     REQUIRED_ATTACHMENTS_BASE,
     REQUIRED_ATTACHMENTS_CORRECTION,
@@ -603,7 +603,7 @@ async def upload_attachment(
     )
 
     try:
-        supabase_admin.storage.from_(settings.supabase_storage_bucket).upload(
+        get_supabase_admin().storage.from_(settings.supabase_storage_bucket).upload(
             path=storage_path,
             file=file_bytes,
             file_options={"content-type": "application/pdf"},
@@ -674,7 +674,7 @@ async def get_attachment_signed_url(
 
     storage_path = _extract_storage_path(att["file_url"])
     try:
-        signed_response = supabase_admin.storage.from_(
+        signed_response = get_supabase_admin().storage.from_(
             settings.supabase_storage_bucket
         ).create_signed_url(storage_path, 3600)
         # supabase-py v2 returns an object with signed_url attribute
@@ -754,7 +754,7 @@ async def delete_attachment(
     # Eliminar del Storage
     storage_path = _extract_storage_path(att["file_url"])
     try:
-        supabase_admin.storage.from_(settings.supabase_storage_bucket).remove(
+        get_supabase_admin().storage.from_(settings.supabase_storage_bucket).remove(
             [storage_path]
         )
     except Exception as exc:

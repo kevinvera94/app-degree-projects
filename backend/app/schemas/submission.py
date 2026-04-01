@@ -5,7 +5,7 @@ from enum import Enum
 from typing import List, Optional
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SubmissionStage(str, Enum):
@@ -55,11 +55,28 @@ REQUIRED_ATTACHMENT_BUSINESS_PLAN = AttachmentType.certificacion_plan_negocio
 
 
 class SubmissionCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "stage": "anteproyecto",
+        "is_correction": False,
+    }})
+
     stage: SubmissionStage
     is_correction: bool = False
 
 
 class SubmissionResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "stage": "anteproyecto",
+        "submitted_at": "2026-02-20T16:00:00Z",
+        "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "date_window_id": "d4e5f6a7-4567-89ab-def0-123456789012",
+        "is_extemporaneous": False,
+        "revision_number": 1,
+        "status": "pendiente",
+    }})
+
     id: UUID
     project_id: UUID
     stage: str
@@ -72,6 +89,15 @@ class SubmissionResponse(BaseModel):
 
 
 class AttachmentResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "e1f2a3b4-1234-f012-4567-890123456789",
+        "submission_id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "attachment_type": "plantilla",
+        "file_name": "anteproyecto_v1.pdf",
+        "uploaded_at": "2026-02-20T16:05:00Z",
+        "uploaded_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    }})
+
     id: UUID
     submission_id: UUID
     attachment_type: str
@@ -81,8 +107,31 @@ class AttachmentResponse(BaseModel):
 
 
 class AttachmentSignedURLResponse(AttachmentResponse):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "e1f2a3b4-1234-f012-4567-890123456789",
+        "submission_id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "attachment_type": "plantilla",
+        "file_name": "anteproyecto_v1.pdf",
+        "uploaded_at": "2026-02-20T16:05:00Z",
+        "uploaded_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "signed_url": "https://storage.supabase.co/object/sign/attachments/anteproyecto_v1.pdf?token=eyJ...",
+    }})
+
     signed_url: str
 
 
 class SubmissionDetailResponse(SubmissionResponse):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "stage": "anteproyecto",
+        "submitted_at": "2026-02-20T16:00:00Z",
+        "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "date_window_id": "d4e5f6a7-4567-89ab-def0-123456789012",
+        "is_extemporaneous": False,
+        "revision_number": 1,
+        "status": "pendiente",
+        "attachments": [],
+    }})
+
     attachments: List[AttachmentResponse] = []

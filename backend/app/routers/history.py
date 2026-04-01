@@ -15,7 +15,7 @@ from typing import List, Literal, Optional, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,6 +31,15 @@ router = APIRouter(prefix="/projects", tags=["history"])
 
 
 class StatusChangeEvent(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "type": "status_change",
+        "previous_status": "idea_inscrita",
+        "new_status": "idea_aprobada",
+        "changed_by_name": "Admin USC",
+        "reason": "Cumple con todos los requisitos.",
+        "changed_at": "2026-02-08T11:00:00Z",
+    }})
+
     type: Literal["status_change"]
     previous_status: Optional[str]
     new_status: str
@@ -40,6 +49,15 @@ class StatusChangeEvent(BaseModel):
 
 
 class DocumentUploadedEvent(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "type": "document_uploaded",
+        "attachment_type": "plantilla",
+        "file_name": "anteproyecto_v1.pdf",
+        "stage": "anteproyecto",
+        "uploaded_by_name": "Ana María Torres",
+        "uploaded_at": "2026-02-20T16:05:00Z",
+    }})
+
     type: Literal["document_uploaded"]
     attachment_type: str
     file_name: str
@@ -49,6 +67,16 @@ class DocumentUploadedEvent(BaseModel):
 
 
 class EvaluationSubmittedEvent(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "type": "evaluation_submitted",
+        "juror_number": 1,
+        "score": 3.8,
+        "stage": "anteproyecto",
+        "submitted_at": "2026-03-01T14:00:00Z",
+        "is_extemporaneous": False,
+        "juror_name": "Dra. Laura Martínez",
+    }})
+
     type: Literal["evaluation_submitted"]
     juror_number: int
     score: float

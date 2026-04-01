@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 VALID_LEVELS = {
     "tecnologico",
@@ -14,6 +14,12 @@ VALID_LEVELS = {
 
 
 class AcademicProgramCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "name": "Ingeniería de Sistemas",
+        "level": "profesional",
+        "faculty": "Ingeniería",
+    }})
+
     name: str = Field(..., max_length=150)
     level: str
     faculty: str = Field("Ingeniería", max_length=100)
@@ -29,6 +35,12 @@ class AcademicProgramCreate(BaseModel):
 
 
 class AcademicProgramUpdate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "name": "Ingeniería de Sistemas y Computación",
+        "level": "profesional",
+        "is_active": True,
+    }})
+
     name: Optional[str] = Field(None, max_length=150)
     level: Optional[str] = None
     is_active: Optional[bool] = None
@@ -44,6 +56,14 @@ class AcademicProgramUpdate(BaseModel):
 
 
 class AcademicProgramResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+        "name": "Ingeniería de Sistemas",
+        "level": "profesional",
+        "faculty": "Ingeniería",
+        "is_active": True,
+    }})
+
     id: UUID
     name: str
     level: str

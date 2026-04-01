@@ -13,7 +13,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,19 +35,30 @@ _MAX_FILE_BYTES = 20 * 1024 * 1024  # 20 MB
 
 
 class LibraryAuthorizationUpdate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {"library_authorization": True}})
+
     library_authorization: bool
 
 
 class ActResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"example": {
+            "id": "a0b1c2d3-abcd-1234-5678-9abcdef01234",
+            "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+            "issued_at": "2026-05-20T10:00:00Z",
+            "issued_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+            "library_authorization": True,
+            "act_file_url": "https://storage.supabase.co/object/sign/acts/acta.pdf?token=eyJ...",
+        }},
+    )
+
     id: UUID
     project_id: UUID
     issued_at: Optional[datetime]
     issued_by: Optional[UUID]
     library_authorization: Optional[bool]
     act_file_url: Optional[str]
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------

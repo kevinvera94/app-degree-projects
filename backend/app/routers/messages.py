@@ -13,7 +13,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,6 +30,14 @@ inbox_router = APIRouter(prefix="/messages", tags=["messages"])
 
 
 class MessageResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "f0a1b2c3-0abc-1234-5678-9abcdef01234",
+        "sender_display": "Dr. Carlos Rodríguez",
+        "content": "Por favor revisar el capítulo 3 antes del viernes.",
+        "is_read": False,
+        "sent_at": "2026-03-10T14:30:00Z",
+    }})
+
     id: UUID
     sender_display: str
     content: str
@@ -38,6 +46,11 @@ class MessageResponse(BaseModel):
 
 
 class MessageCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "content": "Por favor revisar el capítulo 3 antes del viernes.",
+        "recipient_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    }})
+
     content: str
     recipient_id: Optional[UUID] = None
 
@@ -389,6 +402,8 @@ async def mark_message_read(
 
 
 class UnreadCountResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {"unread": 3}})
+
     unread: int
 
 

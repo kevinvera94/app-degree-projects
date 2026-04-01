@@ -3520,7 +3520,12 @@
           "name",
           "level"
         ],
-        "title": "AcademicProgramCreate"
+        "title": "AcademicProgramCreate",
+        "example": {
+          "faculty": "Ingeniería",
+          "level": "profesional",
+          "name": "Ingeniería de Sistemas"
+        }
       },
       "AcademicProgramResponse": {
         "properties": {
@@ -3554,7 +3559,14 @@
           "faculty",
           "is_active"
         ],
-        "title": "AcademicProgramResponse"
+        "title": "AcademicProgramResponse",
+        "example": {
+          "faculty": "Ingeniería",
+          "id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+          "is_active": true,
+          "level": "profesional",
+          "name": "Ingeniería de Sistemas"
+        }
       },
       "AcademicProgramUpdate": {
         "properties": {
@@ -3594,7 +3606,12 @@
           }
         },
         "type": "object",
-        "title": "AcademicProgramUpdate"
+        "title": "AcademicProgramUpdate",
+        "example": {
+          "is_active": true,
+          "level": "profesional",
+          "name": "Ingeniería de Sistemas y Computación"
+        }
       },
       "ActResponse": {
         "properties": {
@@ -3664,7 +3681,15 @@
           "library_authorization",
           "act_file_url"
         ],
-        "title": "ActResponse"
+        "title": "ActResponse",
+        "example": {
+          "act_file_url": "https://storage.supabase.co/object/sign/acts/acta.pdf?token=eyJ...",
+          "id": "a0b1c2d3-abcd-1234-5678-9abcdef01234",
+          "issued_at": "2026-05-20T10:00:00Z",
+          "issued_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+          "library_authorization": true,
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234"
+        }
       },
       "AttachmentResponse": {
         "properties": {
@@ -3706,7 +3731,15 @@
           "uploaded_at",
           "uploaded_by"
         ],
-        "title": "AttachmentResponse"
+        "title": "AttachmentResponse",
+        "example": {
+          "attachment_type": "plantilla",
+          "file_name": "anteproyecto_v1.pdf",
+          "id": "e1f2a3b4-1234-f012-4567-890123456789",
+          "submission_id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "uploaded_at": "2026-02-20T16:05:00Z",
+          "uploaded_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "AttachmentSignedURLResponse": {
         "properties": {
@@ -3753,7 +3786,16 @@
           "uploaded_by",
           "signed_url"
         ],
-        "title": "AttachmentSignedURLResponse"
+        "title": "AttachmentSignedURLResponse",
+        "example": {
+          "attachment_type": "plantilla",
+          "file_name": "anteproyecto_v1.pdf",
+          "id": "e1f2a3b4-1234-f012-4567-890123456789",
+          "signed_url": "https://storage.supabase.co/object/sign/attachments/anteproyecto_v1.pdf?token=eyJ...",
+          "submission_id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "uploaded_at": "2026-02-20T16:05:00Z",
+          "uploaded_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "AttachmentType": {
         "type": "string",
@@ -3858,7 +3900,14 @@
           "start_date",
           "end_date"
         ],
-        "title": "DateWindowCreate"
+        "title": "DateWindowCreate",
+        "example": {
+          "end_date": "2026-02-28",
+          "is_active": true,
+          "period": "2026-1",
+          "start_date": "2026-02-01",
+          "window_type": "inscripcion_idea"
+        }
       },
       "DateWindowResponse": {
         "properties": {
@@ -3910,7 +3959,17 @@
           "created_by",
           "created_at"
         ],
-        "title": "DateWindowResponse"
+        "title": "DateWindowResponse",
+        "example": {
+          "created_at": "2026-01-20T09:00:00Z",
+          "created_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "end_date": "2026-02-28",
+          "id": "d4e5f6a7-4567-89ab-def0-123456789012",
+          "is_active": true,
+          "period": "2026-1",
+          "start_date": "2026-02-01",
+          "window_type": "inscripcion_idea"
+        }
       },
       "DateWindowUpdate": {
         "properties": {
@@ -3973,7 +4032,11 @@
           }
         },
         "type": "object",
-        "title": "DateWindowUpdate"
+        "title": "DateWindowUpdate",
+        "example": {
+          "end_date": "2026-03-07",
+          "is_active": true
+        }
       },
       "DeactivateUserResponse": {
         "properties": {
@@ -3996,7 +4059,13 @@
           "user_id",
           "affected_project_ids"
         ],
-        "title": "DeactivateUserResponse"
+        "title": "DeactivateUserResponse",
+        "example": {
+          "affected_project_ids": [
+            "a1b2c3d4-1234-5678-abcd-ef0123456789"
+          ],
+          "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "DirectorCreate": {
         "properties": {
@@ -4017,7 +4086,11 @@
           "user_id",
           "order"
         ],
-        "title": "DirectorCreate"
+        "title": "DirectorCreate",
+        "example": {
+          "order": 1,
+          "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "DirectorResponse": {
         "properties": {
@@ -4064,7 +4137,16 @@
           "is_active",
           "assigned_at"
         ],
-        "title": "DirectorResponse"
+        "title": "DirectorResponse",
+        "example": {
+          "assigned_at": "2026-02-10T10:00:00Z",
+          "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "full_name": "Dr. Carlos Rodríguez",
+          "id": "e5f6a7b8-5678-9abc-ef01-234567890123",
+          "is_active": true,
+          "order": 1,
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234"
+        }
       },
       "DocumentUploadedEvent": {
         "properties": {
@@ -4104,7 +4186,15 @@
           "uploaded_by_name",
           "uploaded_at"
         ],
-        "title": "DocumentUploadedEvent"
+        "title": "DocumentUploadedEvent",
+        "example": {
+          "attachment_type": "plantilla",
+          "file_name": "anteproyecto_v1.pdf",
+          "stage": "anteproyecto",
+          "type": "document_uploaded",
+          "uploaded_at": "2026-02-20T16:05:00Z",
+          "uploaded_by_name": "Ana María Torres"
+        }
       },
       "EvaluationAdminResponse": {
         "properties": {
@@ -4193,7 +4283,20 @@
           "is_extemporaneous"
         ],
         "title": "EvaluationAdminResponse",
-        "description": "Administrador ve todo, incluyendo extemporáneo."
+        "description": "Administrador ve todo, incluyendo extemporáneo.",
+        "example": {
+          "due_date": "2026-03-15T23:59:59Z",
+          "id": "b8c9d0e1-8901-cdef-1234-567890123456",
+          "is_extemporaneous": false,
+          "juror_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "juror_name": "Dra. Laura Martínez",
+          "juror_number": 1,
+          "observations": "El trabajo presenta una metodología sólida.",
+          "revision_number": 1,
+          "score": 3.8,
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-01T14:00:00Z"
+        }
       },
       "EvaluationCreate": {
         "properties": {
@@ -4220,7 +4323,12 @@
           "score",
           "observations"
         ],
-        "title": "EvaluationCreate"
+        "title": "EvaluationCreate",
+        "example": {
+          "observations": "El trabajo presenta una metodología sólida. Se recomienda ampliar el marco teórico.",
+          "score": 3.8,
+          "stage": "anteproyecto"
+        }
       },
       "EvaluationDirectorResponse": {
         "properties": {
@@ -4298,7 +4406,18 @@
           "submitted_at"
         ],
         "title": "EvaluationDirectorResponse",
-        "description": "Director ve identidad del jurado pero no is_extemporaneous."
+        "description": "Director ve identidad del jurado pero no is_extemporaneous.",
+        "example": {
+          "id": "b8c9d0e1-8901-cdef-1234-567890123456",
+          "juror_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "juror_name": "Dra. Laura Martínez",
+          "juror_number": 1,
+          "observations": "El trabajo presenta una metodología sólida.",
+          "revision_number": 1,
+          "score": 3.8,
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-01T14:00:00Z"
+        }
       },
       "EvaluationStudentResponse": {
         "properties": {
@@ -4365,7 +4484,16 @@
           "submitted_at"
         ],
         "title": "EvaluationStudentResponse",
-        "description": "Solo juror_number — sin identidad del jurado."
+        "description": "Solo juror_number — sin identidad del jurado.",
+        "example": {
+          "id": "b8c9d0e1-8901-cdef-1234-567890123456",
+          "juror_number": 1,
+          "observations": "El trabajo presenta una metodología sólida.",
+          "revision_number": 1,
+          "score": 3.8,
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-01T14:00:00Z"
+        }
       },
       "EvaluationSubmittedEvent": {
         "properties": {
@@ -4416,7 +4544,16 @@
           "submitted_at",
           "is_extemporaneous"
         ],
-        "title": "EvaluationSubmittedEvent"
+        "title": "EvaluationSubmittedEvent",
+        "example": {
+          "is_extemporaneous": false,
+          "juror_name": "Dra. Laura Martínez",
+          "juror_number": 1,
+          "score": 3.8,
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-01T14:00:00Z",
+          "type": "evaluation_submitted"
+        }
       },
       "ExpiringEvaluationItem": {
         "properties": {
@@ -4450,7 +4587,14 @@
           "deadline_date",
           "business_days_remaining"
         ],
-        "title": "ExpiringEvaluationItem"
+        "title": "ExpiringEvaluationItem",
+        "example": {
+          "business_days_remaining": 2,
+          "deadline_date": "2026-03-17",
+          "docente_name": "Dr. Carlos Rodríguez",
+          "project_title": "Sistema de gestión de trabajos de grado USC",
+          "stage": "anteproyecto"
+        }
       },
       "ExtemporaneousWindowCreate": {
         "properties": {
@@ -4480,7 +4624,12 @@
           "window_type",
           "valid_until"
         ],
-        "title": "ExtemporaneousWindowCreate"
+        "title": "ExtemporaneousWindowCreate",
+        "example": {
+          "notes": "Prórroga aprobada por el comité por fuerza mayor.",
+          "valid_until": "2026-04-15",
+          "window_type": "radicacion_anteproyecto"
+        }
       },
       "ExtemporaneousWindowResponse": {
         "properties": {
@@ -4534,7 +4683,16 @@
           "valid_until",
           "notes"
         ],
-        "title": "ExtemporaneousWindowResponse"
+        "title": "ExtemporaneousWindowResponse",
+        "example": {
+          "granted_at": "2026-03-20T09:00:00Z",
+          "granted_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+          "id": "c9d0e1f2-9012-def0-2345-678901234567",
+          "notes": "Prórroga aprobada por el comité por fuerza mayor.",
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "stage": "radicacion_anteproyecto",
+          "valid_until": "2026-04-15"
+        }
       },
       "HTTPValidationError": {
         "properties": {
@@ -4574,7 +4732,12 @@
           "juror_number",
           "stage"
         ],
-        "title": "JurorCreate"
+        "title": "JurorCreate",
+        "example": {
+          "juror_number": 1,
+          "stage": "anteproyecto",
+          "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "JurorResponse": {
         "properties": {
@@ -4651,7 +4814,18 @@
           "assigned_at"
         ],
         "title": "JurorResponse",
-        "description": "Respuesta completa para Admin y Docente.\nLos campos opcionales quedan en None cuando el receptor es Estudiante\n(anonimato aplicado en la capa de servicio, no en el frontend)."
+        "description": "Respuesta completa para Admin y Docente.\nLos campos opcionales quedan en None cuando el receptor es Estudiante\n(anonimato aplicado en la capa de servicio, no en el frontend).",
+        "example": {
+          "assigned_at": "2026-02-15T11:00:00Z",
+          "assigned_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+          "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "full_name": "Dra. Laura Martínez",
+          "id": "a7b8c9d0-7890-bcde-0123-456789012345",
+          "is_active": true,
+          "juror_number": 1,
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "stage": "anteproyecto"
+        }
       },
       "JurorStudentResponse": {
         "properties": {
@@ -4675,7 +4849,12 @@
           "is_active"
         ],
         "title": "JurorStudentResponse",
-        "description": "Respuesta reducida enviada a Estudiantes — sin identidad del jurado."
+        "description": "Respuesta reducida enviada a Estudiantes — sin identidad del jurado.",
+        "example": {
+          "is_active": true,
+          "juror_number": 1,
+          "stage": "anteproyecto"
+        }
       },
       "LateEvaluationItem": {
         "properties": {
@@ -4715,7 +4894,15 @@
           "submitted_at",
           "days_late"
         ],
-        "title": "LateEvaluationItem"
+        "title": "LateEvaluationItem",
+        "example": {
+          "days_late": 3,
+          "deadline_date": "2026-03-15",
+          "docente_name": "Dra. Laura Martínez",
+          "project_title": "Sistema de gestión de trabajos de grado USC",
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-18T10:00:00Z"
+        }
       },
       "LibraryAuthorizationUpdate": {
         "properties": {
@@ -4728,7 +4915,10 @@
         "required": [
           "library_authorization"
         ],
-        "title": "LibraryAuthorizationUpdate"
+        "title": "LibraryAuthorizationUpdate",
+        "example": {
+          "library_authorization": true
+        }
       },
       "MemberAdd": {
         "properties": {
@@ -4742,7 +4932,10 @@
         "required": [
           "user_id"
         ],
-        "title": "MemberAdd"
+        "title": "MemberAdd",
+        "example": {
+          "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "MessageCreate": {
         "properties": {
@@ -4767,7 +4960,11 @@
         "required": [
           "content"
         ],
-        "title": "MessageCreate"
+        "title": "MessageCreate",
+        "example": {
+          "content": "Por favor revisar el capítulo 3 antes del viernes.",
+          "recipient_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "MessageResponse": {
         "properties": {
@@ -4802,7 +4999,14 @@
           "is_read",
           "sent_at"
         ],
-        "title": "MessageResponse"
+        "title": "MessageResponse",
+        "example": {
+          "content": "Por favor revisar el capítulo 3 antes del viernes.",
+          "id": "f0a1b2c3-0abc-1234-5678-9abcdef01234",
+          "is_read": false,
+          "sender_display": "Dr. Carlos Rodríguez",
+          "sent_at": "2026-03-10T14:30:00Z"
+        }
       },
       "ModalityCreate": {
         "properties": {
@@ -4845,7 +5049,18 @@
           "levels",
           "max_members"
         ],
-        "title": "ModalityCreate"
+        "title": "ModalityCreate",
+        "example": {
+          "levels": [
+            "profesional",
+            "maestria_investigacion"
+          ],
+          "max_members": 2,
+          "name": "Investigación",
+          "requires_business_plan_cert": false,
+          "requires_ethics_approval": true,
+          "requires_sustentation": true
+        }
       },
       "ModalityLimitResponse": {
         "properties": {
@@ -4881,7 +5096,14 @@
           "max_members",
           "updated_at"
         ],
-        "title": "ModalityLimitResponse"
+        "title": "ModalityLimitResponse",
+        "example": {
+          "id": "c3d4e5f6-3456-789a-cdef-012345678901",
+          "level": "maestria_investigacion",
+          "max_members": 1,
+          "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+          "updated_at": "2026-01-12T10:00:00Z"
+        }
       },
       "ModalityLimitUpsert": {
         "properties": {
@@ -4895,7 +5117,10 @@
         "required": [
           "max_members"
         ],
-        "title": "ModalityLimitUpsert"
+        "title": "ModalityLimitUpsert",
+        "example": {
+          "max_members": 3
+        }
       },
       "ModalityResponse": {
         "properties": {
@@ -4953,7 +5178,21 @@
           "is_active",
           "created_at"
         ],
-        "title": "ModalityResponse"
+        "title": "ModalityResponse",
+        "example": {
+          "created_at": "2026-01-10T08:00:00Z",
+          "id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+          "is_active": true,
+          "levels": [
+            "profesional",
+            "maestria_investigacion"
+          ],
+          "max_members": 2,
+          "name": "Investigación",
+          "requires_business_plan_cert": false,
+          "requires_ethics_approval": true,
+          "requires_sustentation": true
+        }
       },
       "ModalityUpdate": {
         "properties": {
@@ -4994,7 +5233,12 @@
           }
         },
         "type": "object",
-        "title": "ModalityUpdate"
+        "title": "ModalityUpdate",
+        "example": {
+          "is_active": true,
+          "max_members": 3,
+          "name": "Investigación Aplicada"
+        }
       },
       "PaginatedProjectsResponse": {
         "properties": {
@@ -5025,7 +5269,13 @@
           "page",
           "size"
         ],
-        "title": "PaginatedProjectsResponse"
+        "title": "PaginatedProjectsResponse",
+        "example": {
+          "items": [],
+          "page": 1,
+          "size": 20,
+          "total": 0
+        }
       },
       "PaginatedUsersResponse": {
         "properties": {
@@ -5056,7 +5306,13 @@
           "page",
           "size"
         ],
-        "title": "PaginatedUsersResponse"
+        "title": "PaginatedUsersResponse",
+        "example": {
+          "items": [],
+          "page": 1,
+          "size": 20,
+          "total": 0
+        }
       },
       "PendingCorrectionItem": {
         "properties": {
@@ -5091,7 +5347,14 @@
           "deadline_date",
           "days_remaining"
         ],
-        "title": "PendingCorrectionItem"
+        "title": "PendingCorrectionItem",
+        "example": {
+          "days_remaining": 3,
+          "deadline_date": "2026-03-18",
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "status": "correcciones_anteproyecto_solicitadas",
+          "title": "Sistema de gestión de trabajos de grado USC"
+        }
       },
       "PendingReviewItem": {
         "properties": {
@@ -5125,7 +5388,14 @@
           "period",
           "days_elapsed"
         ],
-        "title": "PendingReviewItem"
+        "title": "PendingReviewItem",
+        "example": {
+          "days_elapsed": 5,
+          "period": "2026-1",
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "status": "anteproyecto_pendiente_evaluacion",
+          "title": "Sistema de gestión de trabajos de grado USC"
+        }
       },
       "ProjectCreate": {
         "properties": {
@@ -5189,7 +5459,19 @@
           "member_ids",
           "prerequisite_declaration"
         ],
-        "title": "ProjectCreate"
+        "title": "ProjectCreate",
+        "example": {
+          "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+          "member_ids": [
+            "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          ],
+          "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+          "prerequisite_declaration": true,
+          "research_group": "GIEIAM",
+          "research_line": "Ingeniería de software y sistemas de información",
+          "suggested_director": "Dr. Carlos Rodríguez",
+          "title": "Sistema de gestión de trabajos de grado USC"
+        }
       },
       "ProjectDetailResponse": {
         "properties": {
@@ -5314,7 +5596,27 @@
           "created_at",
           "updated_at"
         ],
-        "title": "ProjectDetailResponse"
+        "title": "ProjectDetailResponse",
+        "example": {
+          "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+          "created_at": "2026-02-05T09:00:00Z",
+          "directors": [],
+          "has_company_link": false,
+          "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "jurors": [],
+          "members": [],
+          "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+          "period": "2026-1",
+          "plagiarism_suspended": false,
+          "research_group": "GIEIAM",
+          "research_line": "Ingeniería de software y sistemas de información",
+          "status": "en_desarrollo",
+          "submissions": [],
+          "suggested_director": "Dr. Carlos Rodríguez",
+          "suggested_jurors": [],
+          "title": "Sistema de gestión de trabajos de grado USC",
+          "updated_at": "2026-03-01T10:00:00Z"
+        }
       },
       "ProjectDirectorInfo": {
         "properties": {
@@ -5355,7 +5657,15 @@
           "is_active",
           "assigned_at"
         ],
-        "title": "ProjectDirectorInfo"
+        "title": "ProjectDirectorInfo",
+        "example": {
+          "assigned_at": "2026-02-10T10:00:00Z",
+          "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "full_name": "Dr. Carlos Rodríguez",
+          "id": "e5f6a7b8-5678-9abc-ef01-234567890123",
+          "is_active": true,
+          "order": 1
+        }
       },
       "ProjectJurorInfo": {
         "properties": {
@@ -5426,7 +5736,16 @@
           "is_active"
         ],
         "title": "ProjectJurorInfo",
-        "description": "Información de jurado. Los campos de identidad son None cuando\nel receptor es un estudiante (anonimato garantizado por el router)."
+        "description": "Información de jurado. Los campos de identidad son None cuando\nel receptor es un estudiante (anonimato garantizado por el router).",
+        "example": {
+          "assigned_at": "2026-02-15T11:00:00Z",
+          "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "full_name": "Dra. Laura Martínez",
+          "id": "a7b8c9d0-7890-bcde-0123-456789012345",
+          "is_active": true,
+          "juror_number": 1,
+          "stage": "anteproyecto"
+        }
       },
       "ProjectMemberInfo": {
         "properties": {
@@ -5467,7 +5786,15 @@
           "is_active",
           "joined_at"
         ],
-        "title": "ProjectMemberInfo"
+        "title": "ProjectMemberInfo",
+        "example": {
+          "email": "ana.torres@usc.edu.co",
+          "full_name": "Ana María Torres",
+          "id": "1a2b3c4d-1234-5678-9abc-def012345678",
+          "is_active": true,
+          "joined_at": "2026-02-05T09:00:00Z",
+          "student_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "ProjectResponse": {
         "properties": {
@@ -5552,7 +5879,22 @@
           "created_at",
           "updated_at"
         ],
-        "title": "ProjectResponse"
+        "title": "ProjectResponse",
+        "example": {
+          "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+          "created_at": "2026-02-05T09:00:00Z",
+          "has_company_link": false,
+          "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+          "period": "2026-1",
+          "plagiarism_suspended": false,
+          "research_group": "GIEIAM",
+          "research_line": "Ingeniería de software y sistemas de información",
+          "status": "idea_inscrita",
+          "suggested_director": "Dr. Carlos Rodríguez",
+          "title": "Sistema de gestión de trabajos de grado USC",
+          "updated_at": "2026-02-05T09:00:00Z"
+        }
       },
       "ProjectStatusUpdate": {
         "properties": {
@@ -5576,7 +5918,11 @@
         "required": [
           "action"
         ],
-        "title": "ProjectStatusUpdate"
+        "title": "ProjectStatusUpdate",
+        "example": {
+          "action": "aprobar",
+          "reason": "Cumple con todos los requisitos del comité."
+        }
       },
       "StatusChangeEvent": {
         "properties": {
@@ -5630,7 +5976,15 @@
           "reason",
           "changed_at"
         ],
-        "title": "StatusChangeEvent"
+        "title": "StatusChangeEvent",
+        "example": {
+          "changed_at": "2026-02-08T11:00:00Z",
+          "changed_by_name": "Admin USC",
+          "new_status": "idea_aprobada",
+          "previous_status": "idea_inscrita",
+          "reason": "Cumple con todos los requisitos.",
+          "type": "status_change"
+        }
       },
       "StudentEvaluationItem": {
         "properties": {
@@ -5678,7 +6032,14 @@
           "submitted_at",
           "is_extemporaneous"
         ],
-        "title": "StudentEvaluationItem"
+        "title": "StudentEvaluationItem",
+        "example": {
+          "is_extemporaneous": false,
+          "juror_number": 1,
+          "score": 3.8,
+          "stage": "anteproyecto",
+          "submitted_at": "2026-03-01T14:00:00Z"
+        }
       },
       "StudentProjectInfo": {
         "properties": {
@@ -5731,7 +6092,16 @@
           "evaluations",
           "history"
         ],
-        "title": "StudentProjectInfo"
+        "title": "StudentProjectInfo",
+        "example": {
+          "evaluations": [],
+          "history": [],
+          "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "period": "2026-1",
+          "status": "en_desarrollo",
+          "submissions": [],
+          "title": "Sistema de gestión de trabajos de grado USC"
+        }
       },
       "StudentReportResponse": {
         "properties": {
@@ -5753,7 +6123,15 @@
         "required": [
           "user_info"
         ],
-        "title": "StudentReportResponse"
+        "title": "StudentReportResponse",
+        "example": {
+          "user_info": {
+            "email": "ana.torres@usc.edu.co",
+            "full_name": "Ana María Torres",
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "is_active": true
+          }
+        }
       },
       "StudentStatusHistoryItem": {
         "properties": {
@@ -5784,7 +6162,12 @@
           "new_status",
           "changed_at"
         ],
-        "title": "StudentStatusHistoryItem"
+        "title": "StudentStatusHistoryItem",
+        "example": {
+          "changed_at": "2026-02-08T11:00:00Z",
+          "new_status": "idea_aprobada",
+          "previous_status": "idea_inscrita"
+        }
       },
       "StudentSubmissionItem": {
         "properties": {
@@ -5821,7 +6204,13 @@
           "status",
           "submitted_at"
         ],
-        "title": "StudentSubmissionItem"
+        "title": "StudentSubmissionItem",
+        "example": {
+          "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "stage": "anteproyecto",
+          "status": "pendiente",
+          "submitted_at": "2026-02-20T16:00:00Z"
+        }
       },
       "StudentUserInfo": {
         "properties": {
@@ -5850,7 +6239,13 @@
           "email",
           "is_active"
         ],
-        "title": "StudentUserInfo"
+        "title": "StudentUserInfo",
+        "example": {
+          "email": "ana.torres@usc.edu.co",
+          "full_name": "Ana María Torres",
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "is_active": true
+        }
       },
       "SubmissionBasicInfo": {
         "properties": {
@@ -5890,7 +6285,15 @@
           "revision_number",
           "is_extemporaneous"
         ],
-        "title": "SubmissionBasicInfo"
+        "title": "SubmissionBasicInfo",
+        "example": {
+          "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "is_extemporaneous": false,
+          "revision_number": 1,
+          "stage": "anteproyecto",
+          "status": "pendiente",
+          "submitted_at": "2026-02-20T16:00:00Z"
+        }
       },
       "SubmissionCreate": {
         "properties": {
@@ -5907,7 +6310,11 @@
         "required": [
           "stage"
         ],
-        "title": "SubmissionCreate"
+        "title": "SubmissionCreate",
+        "example": {
+          "is_correction": false,
+          "stage": "anteproyecto"
+        }
       },
       "SubmissionDetailResponse": {
         "properties": {
@@ -5980,7 +6387,19 @@
           "revision_number",
           "status"
         ],
-        "title": "SubmissionDetailResponse"
+        "title": "SubmissionDetailResponse",
+        "example": {
+          "attachments": [],
+          "date_window_id": "d4e5f6a7-4567-89ab-def0-123456789012",
+          "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "is_extemporaneous": false,
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "revision_number": 1,
+          "stage": "anteproyecto",
+          "status": "pendiente",
+          "submitted_at": "2026-02-20T16:00:00Z",
+          "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "SubmissionResponse": {
         "properties": {
@@ -6045,7 +6464,18 @@
           "revision_number",
           "status"
         ],
-        "title": "SubmissionResponse"
+        "title": "SubmissionResponse",
+        "example": {
+          "date_window_id": "d4e5f6a7-4567-89ab-def0-123456789012",
+          "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+          "is_extemporaneous": false,
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "revision_number": 1,
+          "stage": "anteproyecto",
+          "status": "pendiente",
+          "submitted_at": "2026-02-20T16:00:00Z",
+          "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
       },
       "SubmissionStage": {
         "type": "string",
@@ -6080,7 +6510,12 @@
           "full_name"
         ],
         "title": "SuggestedJurorInfo",
-        "description": "Jurado del anteproyecto sugerido para producto final (Admin/Docente solamente)."
+        "description": "Jurado del anteproyecto sugerido para producto final (Admin/Docente solamente).",
+        "example": {
+          "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "full_name": "Dra. Laura Martínez",
+          "juror_number": 1
+        }
       },
       "SustentationCreate": {
         "properties": {
@@ -6104,7 +6539,12 @@
           "scheduled_time",
           "location"
         ],
-        "title": "SustentationCreate"
+        "title": "SustentationCreate",
+        "example": {
+          "location": "Sala de conferencias B, Edificio de Ingenierías",
+          "scheduled_date": "2026-04-25",
+          "scheduled_time": "09:30"
+        }
       },
       "SustentationEvalAdminResponse": {
         "properties": {
@@ -6152,7 +6592,16 @@
           "submitted_at",
           "submitted_by"
         ],
-        "title": "SustentationEvalAdminResponse"
+        "title": "SustentationEvalAdminResponse",
+        "example": {
+          "id": "b1c2d3e4-bcde-2345-6789-0abcdef12345",
+          "juror_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "juror_number": 1,
+          "score": 4.2,
+          "submitted_at": "2026-04-25T11:15:00Z",
+          "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "sustentation_id": "c2d3e4f5-cdef-3456-789a-bcdef0123456"
+        }
       },
       "SustentationEvalCreate": {
         "properties": {
@@ -6165,7 +6614,10 @@
         "required": [
           "score"
         ],
-        "title": "SustentationEvalCreate"
+        "title": "SustentationEvalCreate",
+        "example": {
+          "score": 4.2
+        }
       },
       "SustentationEvalStudentResponse": {
         "properties": {
@@ -6201,7 +6653,14 @@
           "score",
           "submitted_at"
         ],
-        "title": "SustentationEvalStudentResponse"
+        "title": "SustentationEvalStudentResponse",
+        "example": {
+          "id": "b1c2d3e4-bcde-2345-6789-0abcdef12345",
+          "juror_number": 1,
+          "score": 4.2,
+          "submitted_at": "2026-04-25T11:15:00Z",
+          "sustentation_id": "c2d3e4f5-cdef-3456-789a-bcdef0123456"
+        }
       },
       "SustentationResponse": {
         "properties": {
@@ -6283,7 +6742,18 @@
           "registered_at",
           "registered_by"
         ],
-        "title": "SustentationResponse"
+        "title": "SustentationResponse",
+        "example": {
+          "evaluations": [],
+          "final_score": 4.1,
+          "id": "c2d3e4f5-cdef-3456-789a-bcdef0123456",
+          "is_approved": true,
+          "location": "Sala de conferencias B, Edificio de Ingenierías",
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "registered_at": "2026-04-10T09:00:00Z",
+          "registered_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+          "scheduled_at": "2026-04-25T09:30:00Z"
+        }
       },
       "UnreadCountResponse": {
         "properties": {
@@ -6296,7 +6766,10 @@
         "required": [
           "unread"
         ],
-        "title": "UnreadCountResponse"
+        "title": "UnreadCountResponse",
+        "example": {
+          "unread": 3
+        }
       },
       "UserCreate": {
         "properties": {
@@ -6327,7 +6800,13 @@
           "password",
           "role"
         ],
-        "title": "UserCreate"
+        "title": "UserCreate",
+        "example": {
+          "email": "carlos.rodriguez@usc.edu.co",
+          "full_name": "Carlos Rodríguez Gómez",
+          "password": "Segura1234",
+          "role": "docente"
+        }
       },
       "UserMeResponse": {
         "properties": {
@@ -6362,7 +6841,14 @@
           "role",
           "is_active"
         ],
-        "title": "UserMeResponse"
+        "title": "UserMeResponse",
+        "example": {
+          "email": "ana.torres@usc.edu.co",
+          "full_name": "Ana María Torres",
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "is_active": true,
+          "role": "estudiante"
+        }
       },
       "UserResponse": {
         "properties": {
@@ -6403,7 +6889,15 @@
           "is_active",
           "created_at"
         ],
-        "title": "UserResponse"
+        "title": "UserResponse",
+        "example": {
+          "created_at": "2026-01-15T08:00:00Z",
+          "email": "carlos.rodriguez@usc.edu.co",
+          "full_name": "Carlos Rodríguez Gómez",
+          "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "is_active": true,
+          "role": "docente"
+        }
       },
       "UserUpdate": {
         "properties": {
@@ -6444,7 +6938,12 @@
           }
         },
         "type": "object",
-        "title": "UserUpdate"
+        "title": "UserUpdate",
+        "example": {
+          "email": "carlos.rodriguez@usc.edu.co",
+          "full_name": "Carlos Rodríguez Gómez",
+          "role": "docente"
+        }
       },
       "ValidationError": {
         "properties": {
@@ -6526,7 +7025,13 @@
           "status",
           "role"
         ],
-        "title": "WorkloadProjectItem"
+        "title": "WorkloadProjectItem",
+        "example": {
+          "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+          "role": "director",
+          "status": "en_desarrollo",
+          "title": "Sistema de gestión de trabajos de grado USC"
+        }
       },
       "WorkloadResponse": {
         "properties": {
@@ -6555,7 +7060,12 @@
           "juror_projects",
           "total_active"
         ],
-        "title": "WorkloadResponse"
+        "title": "WorkloadResponse",
+        "example": {
+          "director_projects": [],
+          "juror_projects": [],
+          "total_active": 0
+        }
       }
     },
     "securitySchemes": {

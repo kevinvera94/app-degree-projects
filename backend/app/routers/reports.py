@@ -14,7 +14,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -34,6 +34,14 @@ _CORRECTION_DEADLINE_DAYS = 10
 
 
 class PendingReviewItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "status": "anteproyecto_pendiente_evaluacion",
+        "period": "2026-1",
+        "days_elapsed": 5,
+    }})
+
     project_id: UUID
     title: str
     status: str
@@ -42,6 +50,14 @@ class PendingReviewItem(BaseModel):
 
 
 class PendingCorrectionItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "status": "correcciones_anteproyecto_solicitadas",
+        "deadline_date": "2026-03-18",
+        "days_remaining": 3,
+    }})
+
     project_id: UUID
     title: str
     status: str
@@ -264,6 +280,15 @@ async def get_pending_corrections(
 
 
 class LateEvaluationItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "docente_name": "Dra. Laura Martínez",
+        "project_title": "Sistema de gestión de trabajos de grado USC",
+        "stage": "anteproyecto",
+        "deadline_date": "2026-03-15",
+        "submitted_at": "2026-03-18T10:00:00Z",
+        "days_late": 3,
+    }})
+
     docente_name: str
     project_title: str
     stage: str
@@ -316,6 +341,14 @@ async def get_late_jurors(
 
 
 class ExpiringEvaluationItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "docente_name": "Dr. Carlos Rodríguez",
+        "project_title": "Sistema de gestión de trabajos de grado USC",
+        "stage": "anteproyecto",
+        "deadline_date": "2026-03-17",
+        "business_days_remaining": 2,
+    }})
+
     docente_name: str
     project_title: str
     stage: str
@@ -390,6 +423,14 @@ async def get_expiring_jurors(
 
 
 class WorkloadProjectItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "status": "en_desarrollo",
+        "role": "director",
+        "juror_number": None,
+    }})
+
     project_id: UUID
     title: str
     status: str
@@ -398,6 +439,12 @@ class WorkloadProjectItem(BaseModel):
 
 
 class WorkloadResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "director_projects": [],
+        "juror_projects": [],
+        "total_active": 0,
+    }})
+
     director_projects: List[WorkloadProjectItem]
     juror_projects: List[WorkloadProjectItem]
     total_active: int
@@ -485,6 +532,13 @@ async def get_docente_workload(
 
 
 class StudentUserInfo(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Ana María Torres",
+        "email": "ana.torres@usc.edu.co",
+        "is_active": True,
+    }})
+
     id: UUID
     full_name: str
     email: str
@@ -492,6 +546,13 @@ class StudentUserInfo(BaseModel):
 
 
 class StudentSubmissionItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "stage": "anteproyecto",
+        "status": "pendiente",
+        "submitted_at": "2026-02-20T16:00:00Z",
+    }})
+
     id: UUID
     stage: str
     status: str
@@ -499,6 +560,14 @@ class StudentSubmissionItem(BaseModel):
 
 
 class StudentEvaluationItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "juror_number": 1,
+        "stage": "anteproyecto",
+        "score": 3.8,
+        "submitted_at": "2026-03-01T14:00:00Z",
+        "is_extemporaneous": False,
+    }})
+
     juror_number: int
     stage: str
     score: Optional[float]
@@ -507,12 +576,28 @@ class StudentEvaluationItem(BaseModel):
 
 
 class StudentStatusHistoryItem(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "previous_status": "idea_inscrita",
+        "new_status": "idea_aprobada",
+        "changed_at": "2026-02-08T11:00:00Z",
+    }})
+
     previous_status: Optional[str]
     new_status: str
     changed_at: datetime
 
 
 class StudentProjectInfo(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "status": "en_desarrollo",
+        "period": "2026-1",
+        "submissions": [],
+        "evaluations": [],
+        "history": [],
+    }})
+
     id: UUID
     title: str
     status: str
@@ -523,6 +608,16 @@ class StudentProjectInfo(BaseModel):
 
 
 class StudentReportResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "user_info": {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "full_name": "Ana María Torres",
+            "email": "ana.torres@usc.edu.co",
+            "is_active": True,
+        },
+        "project": None,
+    }})
+
     user_info: StudentUserInfo
     project: Optional[StudentProjectInfo] = None
 

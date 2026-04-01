@@ -100,16 +100,16 @@
 - **Referencias:** RF-09-01..RF-09-06
 - **Descripción:** Vista para radicar el producto final. Análoga a la del anteproyecto con adjuntos adicionales.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/radicar-producto-final`
-  - [ ] Solo accesible si `status = en_desarrollo` y hay ventana activa para `radicacion_producto_final`
-  - [ ] Lista de adjuntos requeridos:
+  - [x] Ruta: `/estudiante/proyectos/{id}/radicar-producto-final`
+  - [x] Solo accesible si `status = en_desarrollo` y hay ventana activa para `radicacion_producto_final`
+  - [x] Lista de adjuntos requeridos:
     - Siempre: plantilla, carta de aval, reporte de similitud
     - Solo Innovación y Emprendimiento: certificación de inscripción del Plan de Negocio
     - Opcional (si vinculado a empresa): carta de impacto (con aviso de que el Admin la validará)
-  - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Flujo 3 pasos: (1) `POST /submissions { stage: "producto_final" }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
+  - [x] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
+  - [x] Flujo 3 pasos: (1) `POST /submissions { stage: "producto_final" }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
 - **Dependencias:** T-F10-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

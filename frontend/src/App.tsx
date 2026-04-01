@@ -1,32 +1,20 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
+import LoginPage from "./pages/LoginPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 
-// Login se implementa en T-F09-02; placeholder mientras tanto
-function LoginPlaceholder() {
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow p-8 max-w-sm w-full text-center">
-        <div className="w-12 h-12 bg-usc-navy rounded-full mx-auto mb-4" />
-        <h1 className="text-xl font-bold text-usc-navy mb-1">
-          USC — Trabajos de Grado
-        </h1>
-        <p className="text-gray-500 text-sm">
-          Página de login — próximamente (T-F09-02)
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <Routes>
-      {/* Ruta pública */}
-      <Route path="/login" element={<LoginPlaceholder />} />
+      {/* Rutas públicas */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
       {/* Rutas protegidas — Administrador */}
       <Route

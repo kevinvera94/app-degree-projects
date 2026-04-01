@@ -38,15 +38,15 @@
 - **Referencias:** RF-01-02, RF-01-06, `specs/arch/AUTH.md`
 - **Descripción:** Página de login con email/password usando Supabase Auth. Flujo de recuperación de contraseña.
 - **Criterios de aceptación:**
-  - [ ] Página `/login` con formulario: email, contraseña, botón "Ingresar"
-  - [ ] Logo USC centrado, fondo blanco, botón con `--usc-blue`
-  - [ ] Llama a `supabase.auth.signInWithPassword()`. Al éxito: guarda JWT en contexto, redirige según `user.role`
-  - [ ] Errores de credenciales: mensaje en español "Credenciales inválidas"
-  - [ ] Link "¿Olvidaste tu contraseña?" → flujo `supabase.auth.resetPasswordForEmail()`
-  - [ ] Página de confirmación de envío de email de recuperación
-  - [ ] Sin sesión activa ninguna ruta protegida es accesible (redirige a `/login`)
+  - [x] Página `/login` con formulario: email, contraseña, botón "Ingresar"
+  - [x] Logo USC centrado, fondo blanco, botón con `--usc-blue`
+  - [x] Llama a `supabase.auth.signInWithPassword()`. Al éxito: guarda JWT en contexto, redirige según `user.role`
+  - [x] Errores de credenciales: mensaje en español "Credenciales inválidas"
+  - [x] Link "¿Olvidaste tu contraseña?" → flujo `supabase.auth.resetPasswordForEmail()`
+  - [x] Página de confirmación de envío de email de recuperación
+  - [x] Sin sesión activa ninguna ruta protegida es accesible (redirige a `/login`)
 - **Dependencias:** T-F09-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

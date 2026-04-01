@@ -162,7 +162,7 @@ function getActionForStatus(
     case "acta_generada":
       return {
         label: "Descargar acta",
-        to: `/estudiante/proyectos/${projectId}/acta`,
+        to: `/estudiante/proyectos/${projectId}/biblioteca`,
       };
     default:
       return null;

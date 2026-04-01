@@ -335,6 +335,240 @@ function HistoryEventRow({ event }: { event: HistoryEvent }) {
   return null;
 }
 
+// ── Modal: Aprobar idea ────────────────────────────────────────────────────
+
+interface Docente {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+function ApproveIdeaModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [director1, setDirector1] = useState("");
+  const [director2, setDirector2] = useState("");
+  const [loadingDocentes, setLoadingDocentes] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    api
+      .get<{ items: Docente[] }>("/users", {
+        params: { role: "docente", is_active: "true", size: 200 },
+      })
+      .then((res) => setDocentes(res.data.items))
+      .finally(() => setLoadingDocentes(false));
+  }, []);
+
+  async function handleConfirm(e: React.FormEvent) {
+    e.preventDefault();
+    if (!director1) {
+      setError("Selecciona al menos un director.");
+      return;
+    }
+    if (director2 && director2 === director1) {
+      setError("El director principal y el co-director deben ser distintos.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      // Asignar director(es) primero
+      await api.post(`/projects/${projectId}/directors`, {
+        user_id: director1,
+        order: 1,
+      });
+      if (director2) {
+        await api.post(`/projects/${projectId}/directors`, {
+          user_id: director2,
+          order: 2,
+        });
+      }
+      // Luego cambiar estado
+      await api.patch(`/projects/${projectId}/status`, { action: "aprobar" });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">Aprobar idea</h2>
+        <p className="text-sm text-gray-500 mb-5">
+          Selecciona el director principal (obligatorio) y opcionalmente un co-director.
+        </p>
+
+        {loadingDocentes ? (
+          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
+        ) : (
+          <form onSubmit={handleConfirm} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Director principal <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={director1}
+                onChange={(e) => setDirector1(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              >
+                <option value="">— Seleccionar docente —</option>
+                {docentes.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Co-director{" "}
+                <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <select
+                value={director2}
+                onChange={(e) => setDirector2(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              >
+                <option value="">— Sin co-director —</option>
+                {docentes
+                  .filter((d) => d.id !== director1)
+                  .map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.full_name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60"
+              >
+                {loading ? "Aprobando..." : "Confirmar aprobación"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Modal: Rechazar idea ───────────────────────────────────────────────────
+
+function RejectIdeaModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reason.trim()) {
+      setError("El motivo es obligatorio.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.patch(`/projects/${projectId}/status`, {
+        action: "rechazar",
+        reason: reason.trim(),
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">Rechazar idea</h2>
+        <p className="text-sm text-gray-500 mb-5">
+          El motivo será registrado en el historial y visible para el estudiante.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Motivo del rechazo <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              rows={4}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Describe el motivo por el que se rechaza la idea..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue resize-none"
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60"
+            >
+              {loading ? "Rechazando..." : "Confirmar rechazo"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────
 
 export default function AdminProyectoDetalle() {
@@ -350,10 +584,9 @@ export default function AdminProyectoDetalle() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
 
-  // Modales de acción (implementados en T-F09-08 a T-F09-11)
-  // Se dejan como state booleano para recibir la implementación futura
-  const [_approveOpen, setApproveOpen] = useState(false);
-  const [_rejectOpen, setRejectOpen] = useState(false);
+  // Modales de acción
+  const [approveOpen, setApproveOpen] = useState(false);
+  const [rejectOpen, setRejectOpen] = useState(false);
   const [_assignJurorsOpen, setAssignJurorsOpen] = useState(false);
   const [_scheduleOpen, setScheduleOpen] = useState(false);
   const [_actOpen, setActOpen] = useState(false);
@@ -813,8 +1046,31 @@ export default function AdminProyectoDetalle() {
         )}
       </SectionCard>
 
-      {/* Placeholder: los modales de T-F09-08 a T-F09-11 se insertan aquí */}
-      {/* approveOpen, rejectOpen, assignJurorsOpen, scheduleOpen, actOpen */}
+      {/* Modal: Aprobar idea */}
+      {approveOpen && (
+        <ApproveIdeaModal
+          projectId={project.id}
+          onClose={() => setApproveOpen(false)}
+          onSuccess={() => {
+            setApproveOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Rechazar idea */}
+      {rejectOpen && (
+        <RejectIdeaModal
+          projectId={project.id}
+          onClose={() => setRejectOpen(false)}
+          onSuccess={() => {
+            setRejectOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Placeholders T-F09-09 a T-F09-11: assignJurorsOpen, scheduleOpen, actOpen */}
     </div>
   );
 }

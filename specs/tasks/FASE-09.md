@@ -140,14 +140,14 @@
 - **Referencias:** RF-04-02, RF-04-03, RF-04-06
 - **Descripción:** Modal para aprobar idea: seleccionar director(es) activos y confirmar.
 - **Criterios de aceptación:**
-  - [ ] Modal "Aprobar idea" en ficha de proyecto
-  - [ ] Selector de docentes activos (llama `GET /users?role=docente&is_active=true`)
-  - [ ] Permite seleccionar 1 o 2 directores (máx. 2)
-  - [ ] Botón "Confirmar aprobación" → llama `POST /projects/{id}/directors` y `PATCH /projects/{id}/status { action: "aprobar" }`
-  - [ ] Al éxito: actualiza estado en UI y muestra mensaje de confirmación
-  - [ ] Modal "Rechazar idea": campo de texto para motivo (obligatorio) → llama `PATCH /projects/{id}/status { action: "rechazar", reason }`
+  - [x] Modal "Aprobar idea" en ficha de proyecto
+  - [x] Selector de docentes activos (llama `GET /users?role=docente&is_active=true`)
+  - [x] Permite seleccionar 1 o 2 directores (máx. 2)
+  - [x] Botón "Confirmar aprobación" → llama `POST /projects/{id}/directors` y `PATCH /projects/{id}/status { action: "aprobar" }`
+  - [x] Al éxito: actualiza estado en UI y recarga la ficha
+  - [x] Modal "Rechazar idea": campo de texto para motivo (obligatorio) → llama `PATCH /projects/{id}/status { action: "rechazar", reason }`
 - **Dependencias:** T-F09-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

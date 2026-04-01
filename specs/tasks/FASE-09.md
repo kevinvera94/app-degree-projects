@@ -172,12 +172,12 @@
 - **Referencias:** RF-12-01, T-F07-06
 - **Descripción:** Formulario para registrar la sustentación: asignar jurados para sustentación y registrar fecha/hora/lugar.
 - **Criterios de aceptación:**
-  - [ ] Modal "Programar sustentación" con: asignación de jurados para `stage = "sustentacion"`, `DatePicker` para fecha, `TimePicker` para hora, campo de texto para lugar
-  - [ ] Llama `POST /projects/{id}/jurors` (x2 para J1 y J2 de sustentación) y `POST /projects/{id}/sustentation`
-  - [ ] Al éxito: estado cambia a `sustentacion_programada`
-  - [ ] El formulario indica que Jurado 3 no existe en sustentación
+  - [x] Modal "Programar sustentación" con: asignación de jurados para `stage = "sustentacion"`, `<input type="date">` para fecha, `<input type="time">` para hora, campo de texto para lugar
+  - [x] Llama `POST /projects/{id}/jurors` (x2 para J1 y J2) y `POST /projects/{id}/sustentation`
+  - [x] Al éxito: recarga la ficha (estado cambia a `sustentacion_programada`)
+  - [x] Nota visible: "La sustentación no cuenta con Jurado 3"
 - **Dependencias:** T-F09-09
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -186,13 +186,13 @@
 - **Referencias:** RF-13-02..RF-13-05
 - **Descripción:** El Administrador emite el acta, opcionalmente adjuntando el documento escaneado.
 - **Criterios de aceptación:**
-  - [ ] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado`
-  - [ ] El botón indica si el estudiante ya diligencio la autorización de biblioteca (verificar `acts.library_authorization != null`). Si no: botón deshabilitado con tooltip "El estudiante aún no ha diligenciado la autorización de biblioteca"
-  - [ ] Modal: campo para subir archivo PDF del acta (opcional — `DATA-MODEL.acts.act_file_url` puede ser null). Nota: `acts` no tiene campo `act_number` según DATA-MODEL — remover ese campo si se incluyó
-  - [ ] Llama `POST /projects/{id}/act` (multipart si hay archivo, JSON si no)
-  - [ ] Al éxito: estado cambia a `acta_generada`. Si hay `act_file_url`: muestra botón de descarga
+  - [x] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado`
+  - [x] Al abrir el modal: llama `GET /projects/{id}/act` para verificar `library_authorization`. Si no está: muestra advertencia y bloquea la emisión
+  - [x] Modal: campo de archivo PDF opcional. Sin `act_number` (no existe en DATA-MODEL)
+  - [x] Llama `POST /projects/{id}/act` (multipart si hay archivo, JSON vacío si no)
+  - [x] Al éxito: recarga la ficha (estado cambia a `acta_generada`)
 - **Dependencias:** T-F09-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

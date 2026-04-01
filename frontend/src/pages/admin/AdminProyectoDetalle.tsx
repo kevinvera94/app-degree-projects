@@ -669,6 +669,356 @@ function AssignJuror3Modal({
   );
 }
 
+// ── Modal: Programar sustentación ─────────────────────────────────────────
+
+function ScheduleSustentationModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [juror1, setJuror1] = useState("");
+  const [juror2, setJuror2] = useState("");
+  const [search1, setSearch1] = useState("");
+  const [search2, setSearch2] = useState("");
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [loadingDocentes, setLoadingDocentes] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    api
+      .get<{ items: Docente[] }>("/users", {
+        params: { role: "docente", is_active: "true", size: 200 },
+      })
+      .then((res) => setDocentes(res.data.items))
+      .finally(() => setLoadingDocentes(false));
+  }, []);
+
+  const filtered1 = docentes.filter(
+    (d) =>
+      d.id !== juror2 &&
+      (search1 === "" || d.full_name.toLowerCase().includes(search1.toLowerCase()))
+  );
+  const filtered2 = docentes.filter(
+    (d) =>
+      d.id !== juror1 &&
+      (search2 === "" || d.full_name.toLowerCase().includes(search2.toLowerCase()))
+  );
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!juror1 || !juror2) {
+      setError("Selecciona ambos jurados de sustentación.");
+      return;
+    }
+    if (juror1 === juror2) {
+      setError("El Jurado 1 y el Jurado 2 deben ser distintos.");
+      return;
+    }
+    if (!scheduledDate || !scheduledTime || !location.trim()) {
+      setError("Completa todos los campos de fecha, hora y lugar.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      // Asignar jurados de sustentación
+      await api.post(`/projects/${projectId}/jurors`, {
+        user_id: juror1,
+        juror_number: 1,
+        stage: "sustentacion",
+      });
+      await api.post(`/projects/${projectId}/jurors`, {
+        user_id: juror2,
+        juror_number: 2,
+        stage: "sustentacion",
+      });
+      // Registrar sustentación
+      await api.post(`/projects/${projectId}/sustentation`, {
+        scheduled_date: scheduledDate,
+        scheduled_time: scheduledTime,
+        location: location.trim(),
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">
+          Programar sustentación
+        </h2>
+        <p className="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-3 py-2 mb-5">
+          La sustentación no cuenta con Jurado 3. Solo se asignan J1 y J2.
+        </p>
+
+        {loadingDocentes ? (
+          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Jurado 1 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Jurado 1 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                value={search1}
+                onChange={(e) => setSearch1(e.target.value)}
+                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              />
+              <select
+                size={4}
+                value={juror1}
+                onChange={(e) => setJuror1(e.target.value)}
+                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              >
+                <option value="">— Seleccionar —</option>
+                {filtered1.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Jurado 2 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Jurado 2 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                value={search2}
+                onChange={(e) => setSearch2(e.target.value)}
+                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              />
+              <select
+                size={4}
+                value={juror2}
+                onChange={(e) => setJuror2(e.target.value)}
+                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              >
+                <option value="">— Seleccionar —</option>
+                {filtered2.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Fecha y hora */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Fecha <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Hora <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="time"
+                  required
+                  value={scheduledTime}
+                  onChange={(e) => setScheduledTime(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+                />
+              </div>
+            </div>
+
+            {/* Lugar */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Lugar <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Ej. Sala de conferencias B, Edificio de Ingenierías"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              />
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+              >
+                {loading ? "Registrando..." : "Programar sustentación"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Modal: Emitir acta ─────────────────────────────────────────────────────
+
+function EmitActModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [file, setFile] = useState<File | null>(null);
+  const [hasAuth, setHasAuth] = useState<boolean | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Verificar si ya hay autorización de biblioteca
+  useEffect(() => {
+    api
+      .get<{ library_authorization: boolean | null }>(`/projects/${projectId}/act`)
+      .then((res) => setHasAuth(res.data.library_authorization === true))
+      .catch(() => setHasAuth(false))
+      .finally(() => setCheckingAuth(false));
+  }, [projectId]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      if (file) {
+        const formData = new FormData();
+        formData.append("act_file", file);
+        await api.post(`/projects/${projectId}/act`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        await api.post(`/projects/${projectId}/act`, {});
+      }
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">Emitir acta</h2>
+
+        {checkingAuth ? (
+          <p className="text-sm text-gray-400 py-4">Verificando autorización de biblioteca...</p>
+        ) : !hasAuth ? (
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
+              <p className="text-sm text-yellow-800 font-medium">
+                El estudiante aún no ha diligenciado la autorización de biblioteca.
+              </p>
+              <p className="text-xs text-yellow-700 mt-1">
+                El acta no puede emitirse hasta que el estudiante autorice la publicación.
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+              Autorización de biblioteca diligenciada.
+            </p>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Archivo PDF del acta{" "}
+                <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-usc-navy file:text-white hover:file:bg-usc-blue"
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Puedes emitir el acta sin adjunto y subir el PDF posteriormente.
+              </p>
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60"
+              >
+                {loading ? "Emitiendo..." : "Emitir acta"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Modal: Aprobar idea ────────────────────────────────────────────────────
 
 interface Docente {
@@ -923,8 +1273,8 @@ export default function AdminProyectoDetalle() {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [assignJurorsOpen, setAssignJurorsOpen] = useState(false);
   const [assignJ3Open, setAssignJ3Open] = useState(false);
-  const [_scheduleOpen, setScheduleOpen] = useState(false);
-  const [_actOpen, setActOpen] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [actOpen, setActOpen] = useState(false);
 
   // Acciones simples
   const [actionError, setActionError] = useState("");
@@ -1111,6 +1461,7 @@ export default function AdminProyectoDetalle() {
                 <button
                   onClick={() => setActOpen(true)}
                   className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  title="Verifica autorización de biblioteca al abrir"
                 >
                   Emitir acta
                 </button>
@@ -1437,7 +1788,29 @@ export default function AdminProyectoDetalle() {
         />
       )}
 
-      {/* Placeholders T-F09-10 a T-F09-11: scheduleOpen, actOpen */}
+      {/* Modal: Programar sustentación */}
+      {scheduleOpen && (
+        <ScheduleSustentationModal
+          projectId={project.id}
+          onClose={() => setScheduleOpen(false)}
+          onSuccess={() => {
+            setScheduleOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Emitir acta */}
+      {actOpen && (
+        <EmitActModal
+          projectId={project.id}
+          onClose={() => setActOpen(false)}
+          onSuccess={() => {
+            setActOpen(false);
+            load();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-10` — Implementar flujo de programación de sustentación (Admin)
+**Próxima tarea:** `T-F09-12` — Implementar reportes para Admin (vistas)
 
 ---
 
@@ -122,6 +122,8 @@
 - `T-F09-07` — Implementar ficha detalle de proyecto (Admin) — 2026-03-31
 - `T-F09-08` — Implementar flujo de aprobación de idea (Admin) — 2026-03-31
 - `T-F09-09` — Implementar flujo de asignación de jurados (Admin) — 2026-03-31
+- `T-F09-10` — Implementar flujo de programación de sustentación (Admin) — 2026-03-31
+- `T-F09-11` — Implementar flujo de emisión de acta (Admin) — 2026-03-31
 
 ---
 

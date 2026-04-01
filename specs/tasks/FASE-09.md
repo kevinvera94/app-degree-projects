@@ -201,13 +201,13 @@
 - **Referencias:** RF-17-04, RF-17-05, RF-17-06, RF-17-09
 - **Descripción:** Vistas de los reportes del sistema: jurados extemporáneos, alerta de vencimiento, carga docente, ficha de estudiante.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/reportes`
-  - [ ] Pestaña "Jurados extemporáneos": tabla con docente, trabajo, etapa, días de retraso → llama `GET /reports/jurors/late`
-  - [ ] Pestaña "Vencimiento próximo": tabla con N configurable en la vista, datos de jurados con plazo activo → llama `GET /reports/jurors/expiring?days=N`
-  - [ ] Pestaña "Carga docente": selector de docente → tabla de trabajos como Director y Jurado → llama `GET /reports/docentes/{id}/workload`
-  - [ ] Pestaña "Ficha estudiante": buscador por nombre/email → muestra ficha con trabajo, historial y calificaciones → llama `GET /reports/students/{id}`
+  - [x] Ruta: `/admin/reportes`
+  - [x] Pestaña "Jurados extemporáneos": tabla con docente, trabajo, etapa, días de retraso → llama `GET /reports/jurors/late`
+  - [x] Pestaña "Vencimiento próximo": tabla con N configurable en la vista, datos de jurados con plazo activo → llama `GET /reports/jurors/expiring?days=N`
+  - [x] Pestaña "Carga docente": selector de docente → tabla de trabajos como Director y Jurado → llama `GET /reports/docentes/{id}/workload`
+  - [x] Pestaña "Ficha estudiante": buscador por nombre/email → muestra ficha con trabajo, historial y calificaciones → llama `GET /reports/students/{id}`
 - **Dependencias:** T-F09-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

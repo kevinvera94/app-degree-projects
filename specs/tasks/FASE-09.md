@@ -20,16 +20,16 @@
 - **Referencias:** `specs/ARCHITECTURE.md`, `specs/DESIGN.md`
 - **Descripción:** Configurar React Router con rutas protegidas por rol, layout con sidebar de navegación diferenciado por rol y estructura base de la aplicación.
 - **Criterios de aceptación:**
-  - [ ] `react-router-dom` configurado con rutas anidadas (layout + páginas)
-  - [ ] Ruta pública: `/login`
-  - [ ] Rutas protegidas: `/admin/*`, `/docente/*`, `/estudiante/*`
-  - [ ] `ProtectedRoute` component que verifica JWT y rol; redirige a `/login` si no hay sesión
-  - [ ] Layout con sidebar: logo USC, links de navegación según rol, badge de mensajes no leídos, botón de logout
-  - [ ] Colores del sidebar: `--usc-navy` (#0D2B5E) como fondo, texto blanco, link activo con `--usc-blue`
-  - [ ] Componente `AuthContext` con `user`, `token`, `login()`, `logout()`
-  - [ ] Axios instance con interceptor `Authorization: Bearer <token>` configurado
+  - [x] `react-router-dom` configurado con rutas anidadas (layout + páginas)
+  - [x] Ruta pública: `/login`
+  - [x] Rutas protegidas: `/admin/*`, `/docente/*`, `/estudiante/*`
+  - [x] `ProtectedRoute` component que verifica JWT y rol; redirige a `/login` si no hay sesión
+  - [x] Layout con sidebar: logo USC, links de navegación según rol, badge de mensajes no leídos, botón de logout
+  - [x] Colores del sidebar: `--usc-navy` (#0D2B5E) como fondo, texto blanco, link activo con `--usc-blue`
+  - [x] Componente `AuthContext` con `user`, `token`, `login()`, `logout()`
+  - [x] Axios instance con interceptor `Authorization: Bearer <token>` configurado
 - **Dependencias:** T-F01-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

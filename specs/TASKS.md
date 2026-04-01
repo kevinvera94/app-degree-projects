@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-01` — Configurar proyecto React + Vite + estructura base
+**Próxima tarea:** `T-F09-02` — Implementar página de login y recuperación de contraseña
 
 ---
 
@@ -113,6 +113,7 @@
 - `T-F08-09` — Verificación final de la API: cobertura completa de endpoints — 2026-03-30
 - `T-F08-10` — Implementar servicio de mensajes automáticos del sistema — 2026-03-31
 - `T-F08-11` — Generar documentación OpenAPI y exportar colección — 2026-03-31
+- `T-F09-01` — Implementar layout base y sistema de routing — 2026-03-31
 
 ---
 

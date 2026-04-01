@@ -91,7 +91,16 @@ function Modal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-usc-navy mb-5">{title}</h2>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-usc-navy">{title}</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Cerrar modal"
+          >
+            ✕
+          </button>
+        </div>
         {children}
       </div>
     </div>

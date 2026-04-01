@@ -82,16 +82,16 @@
 - **Referencias:** RF-07-01..RF-07-06, RF-11-01..RF-11-02
 - **Descripción:** Vista unificada para entregar correcciones de anteproyecto o producto final.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/entregar-correcciones`
-  - [ ] Muestra el tipo de corrección pendiente (anteproyecto o producto final) y el plazo restante
-  - [ ] Si el plazo venció y no hay ventana activa: muestra aviso "El plazo venció. La entrega estará disponible cuando se abra la siguiente ventana de radicación"
-  - [ ] Misma interfaz de subida de documentos que radicación inicial
-  - [ ] Los mismos adjuntos obligatorios de la radicación original son requeridos en la corrección
-  - [ ] Flujo de 3 pasos: (1) `POST /submissions { stage }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
-  - [ ] El `stage` correcto es `"correcciones_anteproyecto"` o `"correcciones_producto_final"` (valores del DATA-MODEL, no enviar `is_correction`)
-  - [ ] Al confirmar: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
+  - [x] Ruta: `/estudiante/proyectos/{id}/entregar-correcciones`
+  - [x] Muestra el tipo de corrección pendiente (anteproyecto o producto final) y el plazo restante
+  - [x] Si el plazo venció y no hay ventana activa: muestra aviso "El plazo venció. La entrega estará disponible cuando se abra la siguiente ventana de radicación"
+  - [x] Misma interfaz de subida de documentos que radicación inicial
+  - [x] Los mismos adjuntos obligatorios de la radicación original son requeridos en la corrección
+  - [x] Flujo de 3 pasos: (1) `POST /submissions { stage }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
+  - [x] El `stage` correcto es `"correcciones_anteproyecto"` o `"correcciones_producto_final"` (valores del DATA-MODEL, no enviar `is_correction`)
+  - [x] Al confirmar: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
 - **Dependencias:** T-F10-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

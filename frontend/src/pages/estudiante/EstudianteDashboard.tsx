@@ -112,6 +112,23 @@ const CORRECTION_STATUSES = new Set([
   "correcciones_producto_final_solicitadas",
 ]);
 
+// Statuses en los que tiene sentido mostrar el enlace a evaluaciones del anteproyecto
+const ANTEPROYECTO_EVAL_STATUSES = new Set([
+  "anteproyecto_pendiente_evaluacion",
+  "correcciones_anteproyecto_solicitadas",
+  "anteproyecto_corregido_entregado",
+  "anteproyecto_reprobado",
+  "en_desarrollo",
+  "producto_final_entregado",
+  "en_revision_jurados_producto_final",
+  "correcciones_producto_final_solicitadas",
+  "producto_final_corregido_entregado",
+  "aprobado_para_sustentacion",
+  "sustentacion_programada",
+  "trabajo_aprobado",
+  "acta_generada",
+]);
+
 function getTimelineStep(status: string): number {
   return TIMELINE_STEPS.findIndex((s) => s.statuses.includes(status));
 }
@@ -531,18 +548,29 @@ export default function EstudianteDashboard() {
             )}
           </div>
 
-          {/* Acción principal */}
+          {/* Acciones */}
           {(() => {
             const action = getActionForStatus(project.status, project.id);
-            if (!action) return null;
+            const showEvals = ANTEPROYECTO_EVAL_STATUSES.has(project.status);
+            if (!action && !showEvals) return null;
             return (
-              <div className="flex justify-start">
-                <Link
-                  to={action.to}
-                  className="inline-block bg-usc-blue text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity"
-                >
-                  {action.label}
-                </Link>
+              <div className="flex flex-wrap items-center gap-3">
+                {action && (
+                  <Link
+                    to={action.to}
+                    className="inline-block bg-usc-blue text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity"
+                  >
+                    {action.label}
+                  </Link>
+                )}
+                {showEvals && (
+                  <Link
+                    to={`/estudiante/proyectos/${project.id}/evaluaciones`}
+                    className="inline-block text-sm font-semibold text-usc-blue border border-usc-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors"
+                  >
+                    Ver evaluaciones
+                  </Link>
+                )}
               </div>
             );
           })()}

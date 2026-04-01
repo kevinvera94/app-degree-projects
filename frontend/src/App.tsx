@@ -16,6 +16,7 @@ import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
 import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea";
 import EstudianteRadicarAnteproyecto from "./pages/estudiante/EstudianteRadicarAnteproyecto";
+import EstudianteEvaluaciones from "./pages/estudiante/EstudianteEvaluaciones";
 
 export default function App() {
   return (
@@ -71,6 +72,7 @@ export default function App() {
                 <Route path="dashboard" element={<EstudianteDashboard />} />
                 <Route path="inscribir-idea" element={<EstudianteInscribirIdea />} />
                 <Route path="proyectos/:id/radicar-anteproyecto" element={<EstudianteRadicarAnteproyecto />} />
+                <Route path="proyectos/:id/evaluaciones" element={<EstudianteEvaluaciones />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>

@@ -27,16 +27,17 @@
 - **Referencias:** RF-03-01..RF-03-08
 - **Descripción:** Formulario completo para inscribir una nueva idea de trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/inscribir-idea`
-  - [ ] Solo accesible si hay ventana activa para `inscripcion_idea` (si no hay, muestra aviso de "Ventana cerrada")
-  - [ ] Campos: nombre del trabajo (máx. 100 chars con contador), modalidad (selector), programa académico (selector), línea de profundización (selector), grupo de investigación (`GIEIAM | COMBA I+D`), director sugerido (texto libre, opcional)
-  - [ ] Sección "Integrantes": buscador de usuarios tipo `estudiante` activos. Agrega integrante a lista. Muestra el límite máximo calculado para la modalidad/nivel seleccionados
-  - [ ] Checkbox declaración de requisitos previos (obligatorio para continuar)
-  - [ ] Validaciones client-side antes de enviar: todos los campos obligatorios, mínimo 1 integrante, límite no superado
-  - [ ] Llama `POST /projects` → al éxito redirige al dashboard con mensaje "Idea inscrita exitosamente"
-  - [ ] Si no hay ventana activa: muestra fecha de próxima apertura si está disponible
+  - [x] Ruta: `/estudiante/inscribir-idea`
+  - [x] Solo accesible si hay ventana activa para `inscripcion_idea` (si no hay, muestra aviso de "Ventana cerrada")
+  - [x] Campos: nombre del trabajo (máx. 100 chars con contador), modalidad (selector), programa académico (selector), línea de profundización (selector), grupo de investigación (`GIEIAM | COMBA I+D`), director sugerido (texto libre, opcional)
+  - [x] Sección "Integrantes": buscador de usuarios tipo `estudiante` activos. Agrega integrante a lista. Muestra el límite máximo calculado para la modalidad/nivel seleccionados
+  - [x] Checkbox declaración de requisitos previos (obligatorio para continuar)
+  - [x] Validaciones client-side antes de enviar: todos los campos obligatorios, mínimo 1 integrante, límite no superado
+  - [x] Llama `POST /projects` → al éxito redirige al dashboard con mensaje "Idea inscrita exitosamente"
+  - [x] Si no hay ventana activa: muestra fecha de próxima apertura si está disponible
 - **Dependencias:** T-F10-01
-- **Estado:** ⬜ Pendiente
+- **Nota backend:** se añadió `GET /users/search-students` (accesible a todos los usuarios autenticados) para cubrir el buscador de integrantes, ya que `GET /users` es admin-only.
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

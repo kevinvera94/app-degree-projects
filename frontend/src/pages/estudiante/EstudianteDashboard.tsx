@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import api from "../../services/api";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -276,6 +276,10 @@ function Timeline({ status }: { status: string }) {
 // ── Página principal ───────────────────────────────────────────────────────
 
 export default function EstudianteDashboard() {
+  const location = useLocation();
+  const successMessage = (location.state as { successMessage?: string } | null)
+    ?.successMessage ?? "";
+
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [modalities, setModalities] = useState<Modality[]>([]);
   const [dateWindows, setDateWindows] = useState<DateWindow[]>([]);
@@ -375,6 +379,15 @@ export default function EstudianteDashboard() {
   return (
     <div className="p-8 space-y-6 max-w-4xl">
       <h1 className="text-2xl font-bold text-usc-navy">Dashboard</h1>
+
+      {successMessage && (
+        <div className="flex items-center gap-3 px-4 py-3 rounded-lg border bg-green-50 border-green-300 text-green-700 text-sm font-medium">
+          <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          {successMessage}
+        </div>
+      )}
 
       {/* ── Sin trabajo inscrito ────────────────────────────────────────── */}
       {!project && (

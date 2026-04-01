@@ -7,12 +7,13 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.dependencies import CurrentUser, require_admin
+from app.core.dependencies import CurrentUser, get_current_user, require_admin
 from app.core.supabase_client import get_supabase_admin
 from app.services.notifications import send_system_message
 from app.schemas.user import (
     DeactivateUserResponse,
     PaginatedUsersResponse,
+    StudentSearchResult,
     UserCreate,
     UserResponse,
     UserUpdate,
@@ -107,6 +108,29 @@ async def create_user(
         )
 
     return UserResponse(**row)
+
+
+@router.get("/search-students", response_model=list[StudentSearchResult])
+async def search_students(
+    q: str = Query(..., min_length=2, max_length=100),
+    _: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[StudentSearchResult]:
+    """
+    Busca estudiantes activos por nombre o email (coincidencia parcial).
+    Accesible para cualquier usuario autenticado — expone solo id, full_name, email.
+    Se usa en el formulario de inscripción de idea para añadir integrantes.
+    """
+    result = await db.execute(
+        text(
+            "SELECT id, full_name, email FROM public.users"
+            " WHERE role = 'estudiante' AND is_active = true"
+            " AND (full_name ILIKE :q OR email ILIKE :q)"
+            " ORDER BY full_name ASC LIMIT 20"
+        ),
+        {"q": f"%{q}%"},
+    )
+    return [StudentSearchResult(**row) for row in result.mappings()]
 
 
 @router.get("/{user_id}", response_model=UserResponse)

@@ -14,6 +14,7 @@ import AdminMensajes from "./pages/admin/AdminMensajes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
+import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea";
 
 export default function App() {
   return (
@@ -67,6 +68,7 @@ export default function App() {
             <AppLayout>
               <Routes>
                 <Route path="dashboard" element={<EstudianteDashboard />} />
+                <Route path="inscribir-idea" element={<EstudianteInscribirIdea />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>

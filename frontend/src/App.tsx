@@ -13,6 +13,7 @@ import AdminReportes from "./pages/admin/AdminReportes";
 import AdminMensajes from "./pages/admin/AdminMensajes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
+import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
 
 export default function App() {
   return (
@@ -65,8 +66,9 @@ export default function App() {
           <ProtectedRoute role="estudiante">
             <AppLayout>
               <Routes>
+                <Route path="dashboard" element={<EstudianteDashboard />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
-                <Route index element={<Navigate to="proyecto" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
           </ProtectedRoute>

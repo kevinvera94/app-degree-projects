@@ -11,14 +11,14 @@
 - **Referencias:** RF-03-08
 - **Descripción:** Vista de inicio del Estudiante con el estado actual de su trabajo de grado y acciones disponibles.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/dashboard`
-  - [ ] Si no tiene trabajo inscrito: banner "No tienes un trabajo de grado inscrito" con botón "Inscribir idea" (solo visible si hay ventana activa)
-  - [ ] Si tiene trabajo: tarjeta con título, modalidad, estado actual (badge con color), integrantes y director(es) asignados
-  - [ ] Línea de tiempo del proceso (pasos visuales: Idea → Anteproyecto → Desarrollo → Producto Final → Sustentación → Acta) con indicador del paso actual
-  - [ ] Acciones disponibles según estado: botón "Radicar anteproyecto" / "Subir correcciones" / "Radicar producto final" / "Diligenciar autorización de biblioteca" / "Descargar acta"
-  - [ ] Si hay correcciones pendientes: contador de días hábiles restantes con color de alerta (rojo si ≤ 2 días)
+  - [x] Ruta: `/estudiante/dashboard`
+  - [x] Si no tiene trabajo inscrito: banner "No tienes un trabajo de grado inscrito" con botón "Inscribir idea" (solo visible si hay ventana activa)
+  - [x] Si tiene trabajo: tarjeta con título, modalidad, estado actual (badge con color), integrantes y director(es) asignados
+  - [x] Línea de tiempo del proceso (pasos visuales: Idea → Anteproyecto → Desarrollo → Producto Final → Sustentación → Acta) con indicador del paso actual
+  - [x] Acciones disponibles según estado: botón "Radicar anteproyecto" / "Subir correcciones" / "Radicar producto final" / "Diligenciar autorización de biblioteca" / "Descargar acta"
+  - [x] Si hay correcciones pendientes: contador de días hábiles restantes con color de alerta (rojo si ≤ 2 días)
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

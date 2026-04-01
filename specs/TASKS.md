@@ -7,11 +7,9 @@
 
 ## Estado actual
 
-**Tarea activa:** —
-**Fase activa:** FASE-09
-**Tarea activa:** —
 **Fase activa:** FASE-10
-**Próxima tarea:** `T-F10-01` — (ver FASE-10.md)
+**Tarea activa:** —
+**Próxima tarea:** `T-F10-02` — (ver FASE-10.md)
 
 ---
 
@@ -131,6 +129,7 @@
 - `T-F09-14` — Implementar bandeja de mensajes (vista Admin) — 2026-04-01
 - `T-F09-15` — Implementar suspensión por plagio y cancelación (Admin) — 2026-04-01
 - `T-F09-16` — Tests E2E básicos: flujos del Administrador — 2026-04-01
+- `T-F10-01` — Implementar dashboard del Estudiante — 2026-04-01
 
 ---
 

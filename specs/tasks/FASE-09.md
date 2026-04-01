@@ -231,14 +231,14 @@
 - **Referencias:** RF-15-07
 - **Descripción:** Vista de mensajería del Administrador: ver mensajes por proyecto y enviar mensajes a cualquier usuario.
 - **Criterios de aceptación:**
-  - [ ] Badge de mensajes no leídos en el sidebar (llama `GET /messages/unread-count` periódicamente o al cargar)
-  - [ ] Ruta: `/admin/mensajes` con listado de proyectos con mensajes, o acceso desde ficha del proyecto
-  - [ ] Hilo de mensajes por proyecto (ordenados cronológicamente)
-  - [ ] Formulario de nuevo mensaje: selector de destinatario (integrante, director, jurado o grupo)
-  - [ ] Mensajes leídos/no leídos diferenciados visualmente
-  - [ ] Al abrir un mensaje no leído: llama `PATCH /projects/{id}/messages/{msgId}/read`
+  - [x] Badge de mensajes no leídos en el sidebar (llama `GET /messages/unread-count` periódicamente o al cargar)
+  - [x] Ruta: `/admin/mensajes` con listado de proyectos con mensajes, o acceso desde ficha del proyecto
+  - [x] Hilo de mensajes por proyecto (ordenados cronológicamente)
+  - [x] Formulario de nuevo mensaje: selector de destinatario (integrante, director, jurado o grupo)
+  - [x] Mensajes leídos/no leídos diferenciados visualmente
+  - [x] Al abrir un mensaje no leído: llama `PATCH /projects/{id}/messages/{msgId}/read`
 - **Dependencias:** T-F09-12
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

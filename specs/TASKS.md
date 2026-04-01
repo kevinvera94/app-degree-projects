@@ -9,7 +9,7 @@
 
 **Fase activa:** FASE-10
 **Tarea activa:** —
-**Próxima tarea:** `T-F10-03` — (ver FASE-10.md)
+**Próxima tarea:** `T-F10-04` — (ver FASE-10.md)
 
 ---
 
@@ -131,6 +131,7 @@
 - `T-F09-16` — Tests E2E básicos: flujos del Administrador — 2026-04-01
 - `T-F10-01` — Implementar dashboard del Estudiante — 2026-04-01
 - `T-F10-02` — Implementar formulario de inscripción de idea (Estudiante) — 2026-04-01
+- `T-F10-03` — Implementar radicación de anteproyecto (Estudiante) — 2026-04-01
 
 ---
 

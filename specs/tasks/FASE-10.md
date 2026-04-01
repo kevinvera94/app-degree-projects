@@ -46,18 +46,18 @@
 - **Referencias:** RF-05-01..RF-05-06
 - **Descripción:** Vista para radicar el anteproyecto subiendo los documentos obligatorios según la modalidad del trabajo.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/radicar-anteproyecto`
-  - [ ] Solo accesible si `status = idea_aprobada` y hay ventana activa para `radicacion_anteproyecto`
-  - [ ] Lista de adjuntos requeridos según modalidad (con íconos de ✅ o ❌ según si ya fueron subidos):
+  - [x] Ruta: `/estudiante/proyectos/{id}/radicar-anteproyecto`
+  - [x] Solo accesible si `status = idea_aprobada` y hay ventana activa para `radicacion_anteproyecto`
+  - [x] Lista de adjuntos requeridos según modalidad (con íconos de ✅ o ❌ según si ya fueron subidos):
     - Siempre: plantilla de anteproyecto, carta de aval, reporte de similitud
     - Solo Investigación: aval del comité de ética
-  - [ ] Área de subida por adjunto: tipo de documento, botón "Seleccionar archivo" (acepta PDF, máx. 20MB), previsualización del nombre del archivo subido
-  - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Flujo 3 pasos: (1) `POST /projects/{id}/submissions { stage: "anteproyecto" }`, (2) `POST .../attachments` para cada archivo, (3) `PATCH .../confirm` para confirmar
-  - [ ] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
-  - [ ] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
+  - [x] Área de subida por adjunto: tipo de documento, botón "Seleccionar archivo" (acepta PDF, máx. 20MB), previsualización del nombre del archivo subido
+  - [x] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
+  - [x] Flujo 3 pasos: (1) `POST /projects/{id}/submissions { stage: "anteproyecto" }`, (2) `POST .../attachments` para cada archivo, (3) `PATCH .../confirm` para confirmar
+  - [x] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
+  - [x] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
 - **Dependencias:** T-F10-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

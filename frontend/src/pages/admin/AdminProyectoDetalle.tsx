@@ -1253,6 +1253,133 @@ function RejectIdeaModal({
   );
 }
 
+// Retiro disponible en cualquier etapa posterior a la aprobación del anteproyecto
+const RETIRO_ALLOWED_STATUSES = new Set([
+  "en_desarrollo",
+  "producto_final_entregado",
+  "en_revision_jurados_producto_final",
+  "correcciones_producto_final_solicitadas",
+  "producto_final_corregido_entregado",
+  "aprobado_para_sustentacion",
+  "sustentacion_programada",
+  "trabajo_aprobado",
+  "reprobado_en_sustentacion",
+  "acta_generada",
+]);
+
+// ── Modal: Retirar integrante ──────────────────────────────────────────────
+
+function RetireMemberModal({
+  projectId,
+  memberId,
+  memberName,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  memberId: string;
+  memberName: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const canSubmit = reason.trim().length > 0 && file !== null && !loading;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setError("");
+    setLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append("reason", reason.trim());
+      fd.append("attachment", file!);
+      await api.patch(`/projects/${projectId}/members/${memberId}/remove`, fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+        <h2 className="text-lg font-bold text-gray-800 mb-1">
+          Retirar integrante
+        </h2>
+        <p className="text-sm text-gray-500 mb-5">
+          Retiro de <span className="font-medium text-gray-700">{memberName}</span>. Esta acción es definitiva.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Justificación <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={3}
+              placeholder="Motivo del retiro..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Aval del director (PDF) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+            />
+          </div>
+
+          {!canSubmit && !loading && (
+            <p className="text-xs text-gray-400">
+              {!reason.trim() && !file
+                ? "Debes ingresar la justificación y adjuntar el aval del director."
+                : !reason.trim()
+                ? "La justificación es obligatoria."
+                : "El aval del director es obligatorio."}
+            </p>
+          )}
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1 border border-gray-200 rounded-lg py-2 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? "Procesando..." : "Confirmar retiro"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────
 
 export default function AdminProyectoDetalle() {
@@ -1275,6 +1402,7 @@ export default function AdminProyectoDetalle() {
   const [assignJ3Open, setAssignJ3Open] = useState(false);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [actOpen, setActOpen] = useState(false);
+  const [retireMember, setRetireMember] = useState<{ id: string; name: string } | null>(null);
 
   // Acciones simples
   const [actionError, setActionError] = useState("");
@@ -1527,6 +1655,7 @@ export default function AdminProyectoDetalle() {
                 <th className="pb-2 font-semibold text-gray-600">Email</th>
                 <th className="pb-2 font-semibold text-gray-600">Estado</th>
                 <th className="pb-2 font-semibold text-gray-600">Ingresó</th>
+                <th className="pb-2 font-semibold text-gray-600"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -1541,6 +1670,16 @@ export default function AdminProyectoDetalle() {
                   </td>
                   <td className="py-2 text-gray-500">
                     {new Date(m.joined_at).toLocaleDateString("es-CO")}
+                  </td>
+                  <td className="py-2 text-right">
+                    {m.is_active && RETIRO_ALLOWED_STATUSES.has(project.status) && (
+                      <button
+                        onClick={() => setRetireMember({ id: m.id, name: m.full_name })}
+                        className="text-xs text-red-600 hover:underline font-medium"
+                      >
+                        Retirar
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -1807,6 +1946,20 @@ export default function AdminProyectoDetalle() {
           onClose={() => setActOpen(false)}
           onSuccess={() => {
             setActOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Retirar integrante */}
+      {retireMember && (
+        <RetireMemberModal
+          projectId={project.id}
+          memberId={retireMember.id}
+          memberName={retireMember.name}
+          onClose={() => setRetireMember(null)}
+          onSuccess={() => {
+            setRetireMember(null);
             load();
           }}
         />

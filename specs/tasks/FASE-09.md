@@ -216,13 +216,13 @@
 - **Referencias:** RF-08-02, RF-08-03
 - **Descripción:** Vista de integrantes en la ficha del proyecto con opción de retiro.
 - **Criterios de aceptación:**
-  - [ ] Lista de integrantes en la ficha del proyecto con nombre, email, estado (activo/retirado)
-  - [ ] Botón "Retirar" disponible en cualquier etapa posterior a aprobación del anteproyecto
-  - [ ] Modal "Retirar integrante": campo de texto para justificación (obligatorio) + subida de archivo con aval del director (obligatorio)
-  - [ ] Llama `PATCH /projects/{id}/members/{memberId}/remove` (multipart)
-  - [ ] Si falta texto o archivo: botón "Confirmar" deshabilitado con mensaje explicativo
+  - [x] Lista de integrantes en la ficha del proyecto con nombre, email, estado (activo/retirado)
+  - [x] Botón "Retirar" disponible en cualquier etapa posterior a aprobación del anteproyecto
+  - [x] Modal "Retirar integrante": campo de texto para justificación (obligatorio) + subida de archivo con aval del director (obligatorio)
+  - [x] Llama `PATCH /projects/{id}/members/{memberId}/remove` (multipart)
+  - [x] Si falta texto o archivo: botón "Confirmar" deshabilitado con mensaje explicativo
 - **Dependencias:** T-F09-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-13` — Implementar retiro de integrante y gestión de integrantes (Admin)
+**Próxima tarea:** `T-F09-14` — Implementar bandeja de mensajes (vista Admin)
 
 ---
 
@@ -125,6 +125,7 @@
 - `T-F09-10` — Implementar flujo de programación de sustentación (Admin) — 2026-03-31
 - `T-F09-11` — Implementar flujo de emisión de acta (Admin) — 2026-03-31
 - `T-F09-12` — Implementar reportes para Admin (vistas) — 2026-03-31
+- `T-F09-13` — Implementar retiro de integrante y gestión de integrantes (Admin) — 2026-04-01
 
 ---
 

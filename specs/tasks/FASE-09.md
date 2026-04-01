@@ -87,13 +87,13 @@
 - **Referencias:** RF-17-02, RF-17-03, RF-17-05
 - **Descripción:** Vista de inicio del Administrador con métricas clave y alertas del sistema.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/dashboard`
-  - [ ] Tarjetas de resumen: total de proyectos activos, pendientes de evaluación, correcciones sin respuesta, sustentaciones próximas
-  - [ ] Sección "Alertas de vencimiento": lista de jurados con plazo próximo a vencer (usando `GET /reports/jurors/expiring?days=N`)
-  - [ ] Sección "Pendientes de revisión": lista de proyectos con radicación sin jurados asignados
-  - [ ] Click en cualquier ítem navega a la ficha del proyecto
+  - [x] Ruta: `/admin/dashboard`
+  - [x] Tarjetas de resumen: total de proyectos activos, pendientes de evaluación, correcciones sin respuesta, sustentaciones próximas
+  - [x] Sección "Alertas de vencimiento": lista de jurados con plazo próximo a vencer (usando `GET /reports/jurors/expiring?days=N`)
+  - [x] Sección "Pendientes de revisión": lista de proyectos con radicación sin jurados asignados
+  - [x] Click en cualquier ítem navega a la ficha del proyecto
 - **Dependencias:** T-F09-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

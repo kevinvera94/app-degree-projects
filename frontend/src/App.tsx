@@ -7,6 +7,7 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import AdminConfiguracion from "./pages/admin/AdminConfiguracion";
+import AdminProyectos from "./pages/admin/AdminProyectos";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="usuarios" element={<AdminUsuarios />} />
                 <Route path="configuracion" element={<AdminConfiguracion />} />
+                <Route path="proyectos" element={<AdminProyectos />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>

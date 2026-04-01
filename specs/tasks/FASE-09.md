@@ -102,14 +102,14 @@
 - **Referencias:** RF-17-01, RF-17-08
 - **Descripción:** Vista de todos los proyectos con filtros múltiples y acceso a ficha detallada.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/proyectos`
-  - [ ] Tabla con: título, modalidad, programa, periodo, estado (badge con color según estado), integrantes
-  - [ ] Filtros: estado, modalidad, programa académico, periodo académico. Todos combinables
-  - [ ] Paginación (20 por página)
-  - [ ] Click en fila → navega a `/admin/proyectos/{id}`
-  - [ ] Botón "Exportar" (opcional MVP, puede ser pendiente)
+  - [x] Ruta: `/admin/proyectos`
+  - [x] Tabla con: título, modalidad, programa, periodo, estado (badge con color según estado)
+  - [x] Filtros: estado, modalidad, programa académico, periodo académico. Todos combinables
+  - [x] Paginación (20 por página)
+  - [x] Click en fila → navega a `/admin/proyectos/{id}`
+  - [x] Botón "Exportar" visible pero deshabilitado (pendiente MVP)
 - **Dependencias:** T-F09-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

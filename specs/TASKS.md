@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-06` — Implementar listado de proyectos con filtros (Admin)
+**Próxima tarea:** `T-F09-07` — Implementar ficha detalle de proyecto (Admin)
 
 ---
 
@@ -118,6 +118,7 @@
 - `T-F09-03` — Implementar gestión de usuarios (Admin) — 2026-03-31
 - `T-F09-04` — Implementar configuración del sistema (Admin) — 2026-03-31
 - `T-F09-05` — Implementar dashboard del Administrador — 2026-03-31
+- `T-F09-06` — Implementar listado de proyectos con filtros (Admin) — 2026-03-31
 
 ---
 

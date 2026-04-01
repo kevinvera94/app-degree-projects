@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-10
-**Próxima tarea:** `T-F10-08` — (ver FASE-10.md)
+**Próxima tarea:** `T-F10-09` — (ver FASE-10.md)
 
 ---
 
@@ -136,6 +136,7 @@
 - `T-F10-05` — Implementar entrega de correcciones (Estudiante) — 2026-04-01
 - `T-F10-06` — Implementar radicación de producto final (Estudiante) — 2026-04-01
 - `T-F10-07` — Implementar autorización de biblioteca y descarga de acta (Estudiante) — 2026-04-01
+- `T-F10-08` — Implementar historial del proyecto (vista Estudiante) — 2026-04-01
 
 ---
 

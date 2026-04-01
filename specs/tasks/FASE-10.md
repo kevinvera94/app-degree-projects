@@ -134,13 +134,13 @@
 - **Referencias:** RF-16-05
 - **Descripción:** El estudiante puede ver el historial cronológico de su trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] Pestaña "Historial" en la ficha del proyecto del estudiante
-  - [ ] Lista de eventos cronológicos: cambios de estado, documentos subidos, calificaciones (anónimas)
-  - [ ] Cada evento muestra fecha, tipo de evento y descripción
-  - [ ] Calificaciones sin identidad de jurado (solo "Jurado 1", "Jurado 2")
-  - [ ] Llama `GET /projects/{id}/history`
+  - [x] Pestaña "Historial" en la ficha del proyecto del estudiante
+  - [x] Lista de eventos cronológicos: cambios de estado, documentos subidos, calificaciones (anónimas)
+  - [x] Cada evento muestra fecha, tipo de evento y descripción
+  - [x] Calificaciones sin identidad de jurado (solo "Jurado 1", "Jurado 2")
+  - [x] Llama `GET /projects/{id}/history`
 - **Dependencias:** T-F10-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

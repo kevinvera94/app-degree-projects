@@ -9,6 +9,7 @@ import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import AdminConfiguracion from "./pages/admin/AdminConfiguracion";
 import AdminProyectos from "./pages/admin/AdminProyectos";
 import AdminProyectoDetalle from "./pages/admin/AdminProyectoDetalle";
+import AdminReportes from "./pages/admin/AdminReportes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 
@@ -32,6 +33,7 @@ export default function App() {
                 <Route path="configuracion" element={<AdminConfiguracion />} />
                 <Route path="proyectos" element={<AdminProyectos />} />
                 <Route path="proyectos/:id" element={<AdminProyectoDetalle />} />
+                <Route path="reportes" element={<AdminReportes />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>

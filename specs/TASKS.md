@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-15` — Implementar suspensión por plagio y cancelación (Admin)
+**Próxima tarea:** `T-F09-16` — Tests E2E básicos: flujos del Administrador
 
 ---
 
@@ -127,6 +127,7 @@
 - `T-F09-12` — Implementar reportes para Admin (vistas) — 2026-03-31
 - `T-F09-13` — Implementar retiro de integrante y gestión de integrantes (Admin) — 2026-04-01
 - `T-F09-14` — Implementar bandeja de mensajes (vista Admin) — 2026-04-01
+- `T-F09-15` — Implementar suspensión por plagio y cancelación (Admin) — 2026-04-01
 
 ---
 

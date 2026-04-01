@@ -1380,6 +1380,190 @@ function RetireMemberModal({
   );
 }
 
+// ── Modal: Suspender por plagio ────────────────────────────────────────────
+
+function SuspenderPlagioModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reason.trim()) {
+      setError("El motivo es obligatorio.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.patch(`/projects/${projectId}/status`, {
+        action: "suspender_plagio",
+        reason: reason.trim(),
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-red-700 mb-1">Suspender por plagio</h2>
+
+        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-5">
+          <p className="text-sm font-semibold text-red-700 mb-0.5">
+            ⚠ Esta acción es irreversible desde el sistema
+          </p>
+          <p className="text-sm text-red-600">
+            El trabajo quedará suspendido y el CTG deberá remitir el caso al
+            comité de ética y disciplina fuera del sistema.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Motivo de la suspensión <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              rows={4}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Describe la evidencia o motivo por el que se suspende el trabajo..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 resize-none"
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !reason.trim()}
+              className="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Suspendiendo..." : "Confirmar suspensión"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Modal: Cancelar / Archivar proyecto ────────────────────────────────────
+
+function CancelarProyectoModal({
+  projectId,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reason.trim()) {
+      setError("El motivo es obligatorio.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.patch(`/projects/${projectId}/status`, {
+        action: "cancelar",
+        reason: reason.trim(),
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">Cancelar / Archivar proyecto</h2>
+        <p className="text-sm text-gray-500 mb-5">
+          Úsate para trabajos abandonados. El motivo quedará registrado en el
+          historial del proyecto.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Motivo de la cancelación <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              required
+              rows={4}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Describe el motivo por el que se cancela o archiva el trabajo..."
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue resize-none"
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading || !reason.trim()}
+              className="px-4 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Cancelando..." : "Confirmar cancelación"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────
 
 export default function AdminProyectoDetalle() {
@@ -1397,6 +1581,8 @@ export default function AdminProyectoDetalle() {
 
   // Modales de acción
   const [approveOpen, setApproveOpen] = useState(false);
+  const [suspendPlagioOpen, setSuspendPlagioOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [assignJurorsOpen, setAssignJurorsOpen] = useState(false);
   const [assignJ3Open, setAssignJ3Open] = useState(false);
@@ -1456,17 +1642,6 @@ export default function AdminProyectoDetalle() {
       setActionError(apiError(err));
     } finally {
       setActionLoading(false);
-    }
-  }
-
-  async function confirmAndAct(action: string, confirmMsg: string, needsReason = false) {
-    if (needsReason) {
-      const reason = prompt("Ingresa el motivo (obligatorio):");
-      if (!reason?.trim()) return;
-      await handleStatusAction(action, reason.trim());
-    } else {
-      if (!confirm(confirmMsg)) return;
-      await handleStatusAction(action);
     }
   }
 
@@ -1569,7 +1744,7 @@ export default function AdminProyectoDetalle() {
                   Asignar jurados
                 </button>
               )}
-              {needsJ3 && (
+              {needsJ3 && !project.plagiarism_suspended && (
                 <button
                   onClick={() => setAssignJ3Open(true)}
                   className="px-3 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy transition-colors"
@@ -1596,20 +1771,22 @@ export default function AdminProyectoDetalle() {
               )}
               {!project.plagiarism_suspended && (
                 <button
-                  onClick={() => confirmAndAct("suspender_plagio", "", true)}
+                  onClick={() => setSuspendPlagioOpen(true)}
                   disabled={actionLoading}
                   className="px-3 py-2 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-60"
                 >
                   Suspender por plagio
                 </button>
               )}
-              <button
-                onClick={() => confirmAndAct("cancelar", "¿Cancelar este proyecto?", true)}
-                disabled={actionLoading}
-                className="px-3 py-2 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
-              >
-                Cancelar
-              </button>
+              {project.status !== "cancelado" && (
+                <button
+                  onClick={() => setCancelOpen(true)}
+                  disabled={actionLoading}
+                  className="px-3 py-2 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+                >
+                  Cancelar / Archivar
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -1960,6 +2137,30 @@ export default function AdminProyectoDetalle() {
           onClose={() => setRetireMember(null)}
           onSuccess={() => {
             setRetireMember(null);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Suspender por plagio */}
+      {suspendPlagioOpen && (
+        <SuspenderPlagioModal
+          projectId={project.id}
+          onClose={() => setSuspendPlagioOpen(false)}
+          onSuccess={() => {
+            setSuspendPlagioOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Cancelar / Archivar */}
+      {cancelOpen && (
+        <CancelarProyectoModal
+          projectId={project.id}
+          onClose={() => setCancelOpen(false)}
+          onSuccess={() => {
+            setCancelOpen(false);
             load();
           }}
         />

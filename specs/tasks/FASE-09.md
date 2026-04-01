@@ -247,14 +247,14 @@
 - **Referencias:** RF-14-01..RF-14-04, RF-07-05
 - **Descripción:** Acciones de administración de estados críticos: suspensión por plagio y cancelación de proyecto.
 - **Criterios de aceptación:**
-  - [ ] Botón "Suspender por plagio" visible en cualquier ficha de proyecto activo
-  - [ ] Modal: campo de motivo obligatorio, aviso "Esta acción es irreversible desde el sistema"
-  - [ ] Llama `PATCH /projects/{id}/status { action: "suspender_plagio", reason }`
-  - [ ] Al éxito: estado cambia a `suspendido_por_plagio`, todas las acciones de avance se ocultan/deshabilitan
-  - [ ] Botón "Cancelar/Archivar" para trabajos abandonados (motivo obligatorio)
-  - [ ] Llama `PATCH /projects/{id}/status { action: "cancelar", reason }`
+  - [x] Botón "Suspender por plagio" visible en cualquier ficha de proyecto activo
+  - [x] Modal: campo de motivo obligatorio, aviso "Esta acción es irreversible desde el sistema"
+  - [x] Llama `PATCH /projects/{id}/status { action: "suspender_plagio", reason }`
+  - [x] Al éxito: estado cambia a `suspendido_por_plagio`, todas las acciones de avance se ocultan/deshabilitan
+  - [x] Botón "Cancelar/Archivar" para trabajos abandonados (motivo obligatorio)
+  - [x] Llama `PATCH /projects/{id}/status { action: "cancelar", reason }`
 - **Dependencias:** T-F09-14
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

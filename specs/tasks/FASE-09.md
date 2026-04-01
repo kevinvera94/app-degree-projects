@@ -263,10 +263,10 @@
 - **Referencias:** —
 - **Descripción:** Tests E2E básicos para los flujos críticos del Administrador usando Playwright o Cypress.
 - **Criterios de aceptación:**
-  - [ ] Test E2E: login como Admin → ver dashboard → aprobar una idea → verificar estado
-  - [ ] Test E2E: asignar jurados → registrar calificaciones → verificar transición de estado
-  - [ ] Test E2E: programar sustentación → registrar calificaciones → verificar `trabajo_aprobado`
-  - [ ] Test E2E: desactivar docente → verificar alerta de reasignación generada
-  - [ ] Framework de E2E configurado (Playwright recomendado)
+  - [x] Test E2E: login como Admin → ver dashboard → aprobar una idea → verificar estado
+  - [x] Test E2E: asignar jurados → registrar calificaciones → verificar transición de estado
+  - [x] Test E2E: programar sustentación → registrar calificaciones → verificar `trabajo_aprobado`
+  - [x] Test E2E: desactivar docente → verificar alerta de reasignación generada
+  - [x] Framework de E2E configurado (Playwright recomendado)
 - **Dependencias:** T-F09-15
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

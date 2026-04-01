@@ -18,6 +18,7 @@ import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea"
 import EstudianteRadicarAnteproyecto from "./pages/estudiante/EstudianteRadicarAnteproyecto";
 import EstudianteEvaluaciones from "./pages/estudiante/EstudianteEvaluaciones";
 import EstudianteEntregarCorrecciones from "./pages/estudiante/EstudianteEntregarCorrecciones";
+import EstudianteRadicarProductoFinal from "./pages/estudiante/EstudianteRadicarProductoFinal";
 
 export default function App() {
   return (
@@ -75,6 +76,7 @@ export default function App() {
                 <Route path="proyectos/:id/radicar-anteproyecto" element={<EstudianteRadicarAnteproyecto />} />
                 <Route path="proyectos/:id/evaluaciones" element={<EstudianteEvaluaciones />} />
                 <Route path="proyectos/:id/entregar-correcciones" element={<EstudianteEntregarCorrecciones />} />
+                <Route path="proyectos/:id/radicar-producto-final" element={<EstudianteRadicarProductoFinal />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>

@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 VALID_RESEARCH_GROUPS = {"GIEIAM", "COMBA_ID"}
 
@@ -20,6 +20,17 @@ TERMINAL_STATUSES = frozenset(
 
 
 class ProjectCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+        "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+        "research_group": "GIEIAM",
+        "research_line": "Ingeniería de software y sistemas de información",
+        "suggested_director": "Dr. Carlos Rodríguez",
+        "member_ids": ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        "prerequisite_declaration": True,
+    }})
+
     title: str = Field(..., max_length=100)
     modality_id: UUID
     academic_program_id: UUID
@@ -57,6 +68,22 @@ class ProjectCreate(BaseModel):
 
 
 class ProjectResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+        "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+        "research_group": "GIEIAM",
+        "research_line": "Ingeniería de software y sistemas de información",
+        "suggested_director": "Dr. Carlos Rodríguez",
+        "period": "2026-1",
+        "status": "idea_inscrita",
+        "has_company_link": False,
+        "plagiarism_suspended": False,
+        "created_at": "2026-02-05T09:00:00Z",
+        "updated_at": "2026-02-05T09:00:00Z",
+    }})
+
     id: UUID
     title: str
     modality_id: UUID
@@ -73,6 +100,13 @@ class ProjectResponse(BaseModel):
 
 
 class PaginatedProjectsResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "items": [],
+        "total": 0,
+        "page": 1,
+        "size": 20,
+    }})
+
     items: list[ProjectResponse]
     total: int
     page: int
@@ -85,6 +119,15 @@ class PaginatedProjectsResponse(BaseModel):
 
 
 class ProjectMemberInfo(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "1a2b3c4d-1234-5678-9abc-def012345678",
+        "student_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Ana María Torres",
+        "email": "ana.torres@usc.edu.co",
+        "is_active": True,
+        "joined_at": "2026-02-05T09:00:00Z",
+    }})
+
     id: UUID
     student_id: UUID
     full_name: str
@@ -94,6 +137,15 @@ class ProjectMemberInfo(BaseModel):
 
 
 class ProjectDirectorInfo(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "e5f6a7b8-5678-9abc-ef01-234567890123",
+        "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Dr. Carlos Rodríguez",
+        "order": 1,
+        "is_active": True,
+        "assigned_at": "2026-02-10T10:00:00Z",
+    }})
+
     id: UUID
     docente_id: UUID
     full_name: str
@@ -107,6 +159,15 @@ class ProjectJurorInfo(BaseModel):
     Información de jurado. Los campos de identidad son None cuando
     el receptor es un estudiante (anonimato garantizado por el router).
     """
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "juror_number": 1,
+        "stage": "anteproyecto",
+        "is_active": True,
+        "id": "a7b8c9d0-7890-bcde-0123-456789012345",
+        "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Dra. Laura Martínez",
+        "assigned_at": "2026-02-15T11:00:00Z",
+    }})
 
     juror_number: int
     stage: str
@@ -118,6 +179,15 @@ class ProjectJurorInfo(BaseModel):
 
 
 class SubmissionBasicInfo(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "d0e1f2a3-0123-ef01-3456-789012345678",
+        "stage": "anteproyecto",
+        "submitted_at": "2026-02-20T16:00:00Z",
+        "status": "pendiente",
+        "revision_number": 1,
+        "is_extemporaneous": False,
+    }})
+
     id: UUID
     stage: str
     submitted_at: datetime
@@ -127,17 +197,48 @@ class SubmissionBasicInfo(BaseModel):
 
 
 class MemberAdd(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    }})
+
     user_id: UUID
 
 
 class SuggestedJurorInfo(BaseModel):
     """Jurado del anteproyecto sugerido para producto final (Admin/Docente solamente)."""
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "juror_number": 1,
+        "docente_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Dra. Laura Martínez",
+    }})
+
     juror_number: int
     docente_id: UUID
     full_name: str
 
 
 class ProjectDetailResponse(ProjectResponse):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "f6a7b8c9-6789-abcd-f012-345678901234",
+        "title": "Sistema de gestión de trabajos de grado USC",
+        "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+        "academic_program_id": "a1b2c3d4-1234-5678-abcd-ef0123456789",
+        "research_group": "GIEIAM",
+        "research_line": "Ingeniería de software y sistemas de información",
+        "suggested_director": "Dr. Carlos Rodríguez",
+        "period": "2026-1",
+        "status": "en_desarrollo",
+        "has_company_link": False,
+        "plagiarism_suspended": False,
+        "created_at": "2026-02-05T09:00:00Z",
+        "updated_at": "2026-03-01T10:00:00Z",
+        "members": [],
+        "directors": [],
+        "jurors": [],
+        "submissions": [],
+        "suggested_jurors": [],
+    }})
+
     members: list[ProjectMemberInfo] = []
     directors: list[ProjectDirectorInfo] = []
     jurors: list[ProjectJurorInfo] = []

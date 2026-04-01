@@ -12,12 +12,13 @@ from typing import List, Optional, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin
+from app.services.notifications import send_system_message
 
 router = APIRouter(prefix="/projects", tags=["sustentation"])
 
@@ -36,27 +37,56 @@ _SELECT_SE = (
 
 
 class SustentationCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "scheduled_date": "2026-04-25",
+        "scheduled_time": "09:30",
+        "location": "Sala de conferencias B, Edificio de Ingenierías",
+    }})
+
     scheduled_date: date_type
     scheduled_time: str  # "HH:MM"
     location: str
 
 
 class SustentationEvalCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {"score": 4.2}})
+
     score: float
 
 
 class SustentationEvalStudentResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"example": {
+            "id": "b1c2d3e4-bcde-2345-6789-0abcdef12345",
+            "sustentation_id": "c2d3e4f5-cdef-3456-789a-bcdef0123456",
+            "juror_number": 1,
+            "score": 4.2,
+            "submitted_at": "2026-04-25T11:15:00Z",
+        }},
+    )
+
     id: UUID
     sustentation_id: UUID
     juror_number: int
     score: float
     submitted_at: datetime
 
-    class Config:
-        from_attributes = True
-
 
 class SustentationEvalAdminResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"example": {
+            "id": "b1c2d3e4-bcde-2345-6789-0abcdef12345",
+            "sustentation_id": "c2d3e4f5-cdef-3456-789a-bcdef0123456",
+            "juror_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "juror_number": 1,
+            "score": 4.2,
+            "submitted_at": "2026-04-25T11:15:00Z",
+            "submitted_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        }},
+    )
+
     id: UUID
     sustentation_id: UUID
     juror_id: UUID
@@ -65,11 +95,23 @@ class SustentationEvalAdminResponse(BaseModel):
     submitted_at: datetime
     submitted_by: UUID
 
-    class Config:
-        from_attributes = True
-
 
 class SustentationResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"example": {
+            "id": "c2d3e4f5-cdef-3456-789a-bcdef0123456",
+            "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+            "scheduled_at": "2026-04-25T09:30:00Z",
+            "location": "Sala de conferencias B, Edificio de Ingenierías",
+            "final_score": 4.1,
+            "is_approved": True,
+            "registered_at": "2026-04-10T09:00:00Z",
+            "registered_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+            "evaluations": [],
+        }},
+    )
+
     id: UUID
     project_id: UUID
     scheduled_at: datetime
@@ -79,9 +121,6 @@ class SustentationResponse(BaseModel):
     registered_at: datetime
     registered_by: UUID
     evaluations: List[Union[SustentationEvalAdminResponse, SustentationEvalStudentResponse]] = []
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------
@@ -138,19 +177,6 @@ async def _get_project(project_id: UUID, db: AsyncSession) -> dict:
             detail="Trabajo de grado no encontrado",
         )
     return dict(row)
-
-
-async def _send_message(
-    project_id: UUID, sender_id: UUID, recipient_id, content: str, db: AsyncSession
-) -> None:
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-        ),
-        {"pid": project_id, "sid": sender_id, "rid": recipient_id, "content": content},
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -263,7 +289,7 @@ async def schedule_sustentation(
     )
 
     # Notificar a estudiantes (broadcast: recipient_id = NULL)
-    await _send_message(project_id, current_user.id, None, msg, db)
+    await send_system_message(db, project_id, current_user.id, None, msg)
 
     # Notificar a directores activos
     directors_result = await db.execute(
@@ -274,7 +300,7 @@ async def schedule_sustentation(
         {"pid": project_id},
     )
     for director in directors_result.mappings():
-        await _send_message(project_id, current_user.id, director["docente_id"], msg, db)
+        await send_system_message(db, project_id, current_user.id, director["docente_id"], msg)
 
     # Notificar a jurados de sustentación si ya están asignados
     jurors_result = await db.execute(
@@ -285,7 +311,7 @@ async def schedule_sustentation(
         {"pid": project_id},
     )
     for juror in jurors_result.mappings():
-        await _send_message(project_id, current_user.id, juror["docente_id"], msg, db)
+        await send_system_message(db, project_id, current_user.id, juror["docente_id"], msg)
 
     await db.commit()
     return SustentationResponse(**sut_row, evaluations=[])
@@ -545,7 +571,7 @@ async def submit_sustentation_evaluation(
                 },
             )
             # Notificar al estudiante (broadcast)
-            await _send_message(project_id, current_user.id, None, msg, db)
+            await send_system_message(db, project_id, current_user.id, None, msg)
 
     await db.commit()
     return SustentationEvalAdminResponse(**eval_row)

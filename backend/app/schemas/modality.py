@@ -2,12 +2,21 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.schemas.academic_program import VALID_LEVELS
 
 
 class ModalityCreate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "name": "Investigación",
+        "levels": ["profesional", "maestria_investigacion"],
+        "max_members": 2,
+        "requires_sustentation": True,
+        "requires_ethics_approval": True,
+        "requires_business_plan_cert": False,
+    }})
+
     name: str = Field(..., max_length=100)
     levels: list[str]
     max_members: int = Field(..., ge=1)
@@ -26,12 +35,30 @@ class ModalityCreate(BaseModel):
 
 
 class ModalityUpdate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "name": "Investigación Aplicada",
+        "max_members": 3,
+        "is_active": True,
+    }})
+
     name: Optional[str] = Field(None, max_length=100)
     max_members: Optional[int] = Field(None, ge=1)
     is_active: Optional[bool] = None
 
 
 class ModalityResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+        "name": "Investigación",
+        "levels": ["profesional", "maestria_investigacion"],
+        "max_members": 2,
+        "requires_sustentation": True,
+        "requires_ethics_approval": True,
+        "requires_business_plan_cert": False,
+        "is_active": True,
+        "created_at": "2026-01-10T08:00:00Z",
+    }})
+
     id: UUID
     name: str
     levels: list[str]
@@ -44,10 +71,22 @@ class ModalityResponse(BaseModel):
 
 
 class ModalityLimitUpsert(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "max_members": 3,
+    }})
+
     max_members: int = Field(..., ge=1)
 
 
 class ModalityLimitResponse(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "c3d4e5f6-3456-789a-cdef-012345678901",
+        "modality_id": "b2c3d4e5-2345-6789-bcde-f01234567890",
+        "level": "maestria_investigacion",
+        "max_members": 1,
+        "updated_at": "2026-01-12T10:00:00Z",
+    }})
+
     id: UUID
     modality_id: UUID
     level: str

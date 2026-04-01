@@ -18,6 +18,7 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.services.notifications import send_system_message
 from app.utils.business_days import add_business_days
 
 # UUID ficticio de "Sistema" para registros automáticos en historial
@@ -36,28 +37,6 @@ async def _get_active_member(project_id: UUID, db: AsyncSession) -> UUID:
     )
     row = result.mappings().first()
     return row["student_id"] if row else None
-
-
-async def _send_message(
-    project_id: UUID,
-    sender_id: UUID,
-    recipient_id,  # UUID | None
-    content: str,
-    db: AsyncSession,
-) -> None:
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-        ),
-        {
-            "pid": project_id,
-            "sid": sender_id,
-            "rid": recipient_id,
-            "content": content,
-        },
-    )
 
 
 async def _record_history(
@@ -169,10 +148,9 @@ async def evaluate_j3_result(
             db,
         )
         await _update_submission_status(project_id, "anteproyecto", revision_number, "aprobado", db)
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             "Tu anteproyecto fue aprobado. Estado: En desarrollo.",
-            db,
         )
     else:
         # J3 reprueba → anteproyecto_reprobado → idea_aprobada
@@ -191,10 +169,9 @@ async def evaluate_j3_result(
             db,
         )
         await _update_submission_status(project_id, "anteproyecto", revision_number, "reprobado", db)
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo.",
-            db,
         )
 
 
@@ -260,10 +237,9 @@ async def evaluate_anteproyecto_result(
         )
         await _update_submission_status(project_id, "anteproyecto", revision_number, "aprobado", db)
 
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             "Tu anteproyecto fue aprobado. Estado: En desarrollo.",
-            db,
         )
         return
 
@@ -287,10 +263,9 @@ async def evaluate_anteproyecto_result(
         )
         await _update_submission_status(project_id, "anteproyecto", revision_number, "reprobado", db)
 
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             "Tu anteproyecto fue reprobado. Puedes radicar uno nuevo.",
-            db,
         )
         return
 
@@ -300,14 +275,13 @@ async def evaluate_anteproyecto_result(
     if (s1 >= 4.0 and s2 < 3.0) or (s1 < 3.0 and s2 >= 4.0):
         # El proyecto permanece en anteproyecto_pendiente_evaluacion
         # Notificar al Administrador
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             (
                 f"Divergencia en evaluación del anteproyecto '{project['title']}'. "
                 f"Calificaciones: J1={s1}, J2={s2}. "
                 "Se requiere asignar Jurado 3."
             ),
-            db,
         )
         # Registrar nota en historial sin cambiar estado
         await _record_history(
@@ -339,10 +313,9 @@ async def evaluate_anteproyecto_result(
             db,
         )
         await _update_submission_status(project_id, "anteproyecto", revision_number, "reprobado", db)
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             "Tu anteproyecto fue reprobado en segunda revisión. Puedes radicar uno nuevo.",
-            db,
         )
         return
 
@@ -362,8 +335,7 @@ async def evaluate_anteproyecto_result(
     )
     await _update_submission_status(project_id, "anteproyecto", revision_number, "con_correcciones", db)
 
-    await _send_message(
-        project_id, triggered_by, None,
+    await send_system_message(
+        db, project_id, triggered_by, None,
         f"Tienes correcciones pendientes. Plazo: {due_str}. Ver evaluaciones.",
-        db,
     )

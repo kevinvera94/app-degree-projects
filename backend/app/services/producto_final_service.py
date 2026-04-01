@@ -23,24 +23,8 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.services.notifications import send_system_message
 from app.utils.business_days import add_business_days
-
-
-async def _send_message(
-    project_id: UUID,
-    sender_id: UUID,
-    recipient_id,
-    content: str,
-    db: AsyncSession,
-) -> None:
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-        ),
-        {"pid": project_id, "sid": sender_id, "rid": recipient_id, "content": content},
-    )
 
 
 async def _record_history(
@@ -133,7 +117,7 @@ async def _approved_transition(
 
     msg = "Tu producto final fue aprobado. "
     msg += "Trabajo aprobado (Diplomado)." if diplomado else "Procede a sustentación."
-    await _send_message(project_id, triggered_by, None, msg, db)
+    await send_system_message(db, project_id, triggered_by, None, msg)
 
 
 async def _reprobado_transition(
@@ -161,10 +145,9 @@ async def _reprobado_transition(
         db,
     )
     await _update_submission_status(project_id, stage, revision_number, "reprobado", db)
-    await _send_message(
-        project_id, triggered_by, None,
+    await send_system_message(
+        db, project_id, triggered_by, None,
         "Tu producto final fue reprobado. Puedes radicar uno nuevo en la siguiente ventana.",
-        db,
     )
 
 
@@ -279,13 +262,12 @@ async def evaluate_producto_final_result(
     # Caso 3: Una ≥ 4.0 y la otra < 3.0 → Divergencia → Jurado 3
     # -----------------------------------------------------------------------
     if (s1 >= 4.0 and s2 < 3.0) or (s1 < 3.0 and s2 >= 4.0):
-        await _send_message(
-            project_id, triggered_by, None,
+        await send_system_message(
+            db, project_id, triggered_by, None,
             (
                 f"Divergencia en evaluación del producto final '{project['title']}'. "
                 f"Calificaciones: J1={s1}, J2={s2}. Se requiere asignar Jurado 3."
             ),
-            db,
         )
         await _record_history(
             project_id, prev_status, prev_status, triggered_by,
@@ -317,8 +299,7 @@ async def evaluate_producto_final_result(
         db,
     )
     await _update_submission_status(project_id, stage, revision_number, "con_correcciones", db)
-    await _send_message(
-        project_id, triggered_by, None,
+    await send_system_message(
+        db, project_id, triggered_by, None,
         f"Tienes correcciones pendientes en el producto final. Plazo: {due_str}. Ver evaluaciones.",
-        db,
     )

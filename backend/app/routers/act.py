@@ -13,7 +13,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,6 +21,7 @@ from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin, require_estudiante
 from app.core.supabase_client import get_supabase_admin
+from app.services.notifications import send_system_message
 
 router = APIRouter(prefix="/projects", tags=["act"])
 
@@ -34,19 +35,30 @@ _MAX_FILE_BYTES = 20 * 1024 * 1024  # 20 MB
 
 
 class LibraryAuthorizationUpdate(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"example": {"library_authorization": True}})
+
     library_authorization: bool
 
 
 class ActResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        json_schema_extra={"example": {
+            "id": "a0b1c2d3-abcd-1234-5678-9abcdef01234",
+            "project_id": "f6a7b8c9-6789-abcd-f012-345678901234",
+            "issued_at": "2026-05-20T10:00:00Z",
+            "issued_by": "1a2b3c4d-1234-5678-9abc-def012345678",
+            "library_authorization": True,
+            "act_file_url": "https://storage.supabase.co/object/sign/acts/acta.pdf?token=eyJ...",
+        }},
+    )
+
     id: UUID
     project_id: UUID
     issued_at: Optional[datetime]
     issued_by: Optional[UUID]
     library_authorization: Optional[bool]
     act_file_url: Optional[str]
-
-    class Config:
-        from_attributes = True
 
 
 # ---------------------------------------------------------------------------
@@ -183,20 +195,12 @@ async def set_library_authorization(
     )
     student_name = student_result.scalar_one()
 
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
+    await send_system_message(
+        db, project_id, current_user.id, None,
+        (
+            f"El estudiante {student_name} ha diligenciado la autorización de biblioteca "
+            f"para '{project['title']}'. Valor: {'Autorizado' if body.library_authorization else 'No autorizado'}."
         ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "content": (
-                f"El estudiante {student_name} ha diligenciado la autorización de biblioteca "
-                f"para '{project['title']}'. Valor: {'Autorizado' if body.library_authorization else 'No autorizado'}."
-            ),
-        },
     )
 
     await db.commit()
@@ -325,17 +329,9 @@ async def issue_act(
         },
     )
     # Notificar al estudiante
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-        ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "content": "Tu acta ha sido emitida. Puedes descargarla desde el sistema.",
-        },
+    await send_system_message(
+        db, project_id, current_user.id, None,
+        "Tu acta ha sido emitida. Puedes descargarla desde el sistema.",
     )
 
     await db.commit()

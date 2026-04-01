@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_admin
 from app.schemas.juror import JurorCreate, JurorResponse, JurorStudentResponse
+from app.services.notifications import send_system_message
 from app.utils.business_days import add_business_days
 
 router = APIRouter(prefix="/projects", tags=["jurors"])
@@ -345,19 +346,7 @@ async def assign_juror(
     )
     if body.stage != "sustentacion":
         msg_content += f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"
-    await db.execute(
-        text(
-            "INSERT INTO public.messages"
-            " (project_id, sender_id, recipient_id, content, sender_display)"
-            " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-        ),
-        {
-            "pid": project_id,
-            "sid": current_user.id,
-            "rid": body.user_id,
-            "content": msg_content,
-        },
-    )
+    await send_system_message(db, project_id, current_user.id, body.user_id, msg_content)
 
     # Para producto_final: si J1 y J2 están ahora asignados → en_revision_jurados_producto_final
     if body.stage == "producto_final" and body.juror_number in (1, 2):

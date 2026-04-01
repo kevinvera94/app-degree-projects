@@ -50,6 +50,7 @@ from app.services.correction_service import (
     check_correction_window,
     check_producto_final_correction_window,
 )
+from app.services.notifications import send_system_message
 from app.utils.business_days import add_business_days
 
 router = APIRouter(prefix="/projects", tags=["submissions"])
@@ -947,21 +948,12 @@ async def confirm_submission(
                 },
             )
             # Mensaje individual a cada jurado
-            await db.execute(
-                text(
-                    "INSERT INTO public.messages"
-                    " (project_id, sender_id, recipient_id, content, sender_display)"
-                    " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+            await send_system_message(
+                db, project_id, current_user.id, j["docente_id"],
+                (
+                    f"El estudiante entregó correcciones del anteproyecto "
+                    f"'{project['title']}'. Plazo de evaluación: {due_str}"
                 ),
-                {
-                    "pid": project_id,
-                    "sid": current_user.id,
-                    "rid": j["docente_id"],
-                    "content": (
-                        f"El estudiante entregó correcciones del anteproyecto "
-                        f"'{project['title']}'. Plazo de evaluación: {due_str}"
-                    ),
-                },
             )
 
     elif is_correcciones_pf:
@@ -1029,21 +1021,12 @@ async def confirm_submission(
                     "due_date": new_due,
                 },
             )
-            await db.execute(
-                text(
-                    "INSERT INTO public.messages"
-                    " (project_id, sender_id, recipient_id, content, sender_display)"
-                    " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
+            await send_system_message(
+                db, project_id, current_user.id, j["docente_id"],
+                (
+                    f"El estudiante entregó correcciones del producto final "
+                    f"'{project['title']}'. Plazo de evaluación: {due_str}"
                 ),
-                {
-                    "pid": project_id,
-                    "sid": current_user.id,
-                    "rid": j["docente_id"],
-                    "content": (
-                        f"El estudiante entregó correcciones del producto final "
-                        f"'{project['title']}'. Plazo de evaluación: {due_str}"
-                    ),
-                },
             )
 
     elif is_producto_final:
@@ -1071,17 +1054,9 @@ async def confirm_submission(
                 "notes": "Producto final radicado y confirmado por el estudiante",
             },
         )
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": f"Producto final radicado: {project['title']}",
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Producto final radicado: {project['title']}",
         )
 
     else:
@@ -1109,17 +1084,9 @@ async def confirm_submission(
                 "notes": "Anteproyecto radicado y confirmado por el estudiante",
             },
         )
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": f"Nuevo anteproyecto radicado: {project['title']}",
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Nuevo anteproyecto radicado: {project['title']}",
         )
 
     await db.commit()

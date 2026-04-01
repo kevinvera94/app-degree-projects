@@ -35,6 +35,7 @@ from app.schemas.project import (
     TERMINAL_STATUSES,
 )
 from app.services.modality_service import get_max_members
+from app.services.notifications import send_system_message
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -479,17 +480,9 @@ async def create_project(
     )
 
     # 9. Mensaje automático a todos los integrantes
-    await db.execute(
-        text(
-            """
-            INSERT INTO public.messages
-                (project_id, sender_id, recipient_id, content, sender_display)
-            VALUES
-                (:project_id, :sender_id, NULL,
-                 'Tu idea ha sido inscrita. Estado: Pendiente de evaluación', 'Sistema')
-            """
-        ),
-        {"project_id": project_id, "sender_id": current_user.id},
+    await send_system_message(
+        db, project_id, current_user.id, None,
+        "Tu idea ha sido inscrita. Estado: Pendiente de evaluación",
     )
 
     await db.commit()
@@ -589,38 +582,15 @@ async def update_project_status(
         )
 
         # Mensaje a todos los integrantes
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": (
-                    f"Tu idea ha sido aprobada."
-                    f" Director asignado: {director['full_name']}"
-                ),
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Tu idea ha sido aprobada. Director asignado: {director['full_name']}",
         )
 
         # Mensaje al docente director
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, :rid, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "rid": director["docente_id"],
-                "content": (
-                    f"Has sido asignado como director"
-                    f" del trabajo '{project['title']}'"
-                ),
-            },
+        await send_system_message(
+            db, project_id, current_user.id, director["docente_id"],
+            f"Has sido asignado como director del trabajo '{project['title']}'",
         )
 
         await db.commit()
@@ -669,17 +639,9 @@ async def update_project_status(
             },
         )
 
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": f"Tu idea ha sido rechazada. Motivo: {body.reason.strip()}",
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Tu idea ha sido rechazada. Motivo: {body.reason.strip()}",
         )
 
         await db.commit()
@@ -724,17 +686,9 @@ async def update_project_status(
             },
         )
 
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",  # noqa: E501
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Tu trabajo ha sido archivado. Motivo: {body.reason.strip()}",
         )
 
         await db.commit()
@@ -781,17 +735,9 @@ async def update_project_status(
                 "notes": body.reason.strip(),
             },
         )
-        await db.execute(
-            text(
-                "INSERT INTO public.messages"
-                " (project_id, sender_id, recipient_id, content, sender_display)"
-                " VALUES (:pid, :sid, NULL, :content, 'Sistema')"
-            ),
-            {
-                "pid": project_id,
-                "sid": current_user.id,
-                "content": f"Tu trabajo ha sido suspendido por plagio. Motivo: {body.reason.strip()}",
-            },
+        await send_system_message(
+            db, project_id, current_user.id, None,
+            f"Tu trabajo ha sido suspendido por plagio. Motivo: {body.reason.strip()}",
         )
 
         await db.commit()

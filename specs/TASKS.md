@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-06
-**Próxima tarea:** `T-F08-04` — Implementar historial de cambios de estado
+**Fase activa:** FASE-09
+**Próxima tarea:** `T-F09-01` — Configurar proyecto React + Vite + estructura base
 
 ---
 
@@ -105,6 +105,14 @@
 - `T-F08-01` — Implementar bandeja de mensajes (`GET/POST /projects/{id}/messages`) — 2026-03-30
 - `T-F08-02` — Implementar marcar mensaje como leído — 2026-03-30
 - `T-F08-03` — Implementar conteo de mensajes no leídos para badge en UI — 2026-03-30
+- `T-F08-04` — Implementar historial de cambios de estado — 2026-03-30
+- `T-F08-05` — Implementar reportes principales de proyectos — 2026-03-30
+- `T-F08-06` — Implementar reporte de carga docente — 2026-03-30
+- `T-F08-07` — Implementar fichas individuales (estudiante y proyecto) — 2026-03-30
+- `T-F08-08` — Tests de integración: mensajería, historial y reportes — 2026-03-30
+- `T-F08-09` — Verificación final de la API: cobertura completa de endpoints — 2026-03-30
+- `T-F08-10` — Implementar servicio de mensajes automáticos del sistema — 2026-03-31
+- `T-F08-11` — Generar documentación OpenAPI y exportar colección — 2026-03-31
 
 ---
 

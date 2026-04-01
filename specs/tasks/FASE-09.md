@@ -55,15 +55,15 @@
 - **Referencias:** RF-01-01, RF-01-04, RF-01-05, RF-04-07
 - **Descripción:** CRUD de usuarios para el Administrador: listar, crear, editar, activar/desactivar.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/usuarios`
-  - [ ] Tabla con: nombre, email, rol, estado (activo/inactivo), acciones
-  - [ ] Filtros: por rol (`administrador | docente | estudiante`) y estado (`activo | inactivo`)
-  - [ ] Formulario de creación: nombre, email, contraseña temporal, rol → llama `POST /users`
-  - [ ] Formulario de edición: nombre, email, rol → llama `PATCH /users/{id}`
-  - [ ] Botón "Desactivar": confirma con modal → llama `PATCH /users/{id}/deactivate`. Si hay trabajos afectados, muestra lista de trabajos que requieren reasignación
-  - [ ] Botón "Activar": llama `PATCH /users/{id}` con `{ is_active: true }`
+  - [x] Ruta: `/admin/usuarios`
+  - [x] Tabla con: nombre, email, rol, estado (activo/inactivo), acciones
+  - [x] Filtros: por rol (`administrador | docente | estudiante`) y estado (`activo | inactivo`)
+  - [x] Formulario de creación: nombre, email, contraseña temporal, rol → llama `POST /users`
+  - [x] Formulario de edición: nombre, email, rol → llama `PATCH /users/{id}`
+  - [x] Botón "Desactivar": confirma con modal → llama `PATCH /users/{id}/deactivate`. Si hay trabajos afectados, muestra lista de trabajos que requieren reasignación
+  - [x] Botón "Activar": llama `PATCH /users/{id}` con `{ is_active: true }`
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

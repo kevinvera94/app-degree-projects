@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-04` — Implementar configuración del sistema (Admin)
+**Próxima tarea:** `T-F09-05` — Implementar dashboard del Administrador
 
 ---
 
@@ -116,6 +116,7 @@
 - `T-F09-01` — Implementar layout base y sistema de routing — 2026-03-31
 - `T-F09-02` — Implementar página de login y recuperación de contraseña — 2026-03-31
 - `T-F09-03` — Implementar gestión de usuarios (Admin) — 2026-03-31
+- `T-F09-04` — Implementar configuración del sistema (Admin) — 2026-03-31
 
 ---
 

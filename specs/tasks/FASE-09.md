@@ -72,13 +72,13 @@
 - **Referencias:** RF-01-07, RF-02-01..RF-02-06
 - **Descripción:** Vistas de configuración: programas académicos, modalidades con límites, ventanas de fechas.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/configuracion`
-  - [ ] Pestaña "Programas académicos": tabla CRUD (nombre, nivel, activo)
-  - [ ] Pestaña "Modalidades": tabla CRUD con `max_members_default`. Al expandir una modalidad: tabla de límites por nivel (`modality_level_limits`) con opciones de crear/editar/eliminar
-  - [ ] Pestaña "Ventanas de fechas": tabla con tipo, fechas, periodo, activo. Formulario de creación con `DatePicker`. Botón eliminar solo si sin radicaciones (muestra error `409` si las hay)
-  - [ ] Pestaña "Parámetros": campo para "días de alerta vencimiento jurado" (N días configurable, RF-01-07)
+  - [x] Ruta: `/admin/configuracion`
+  - [x] Pestaña "Programas académicos": tabla CRUD (nombre, nivel, activo)
+  - [x] Pestaña "Modalidades": tabla CRUD con `max_members_default`. Al expandir una modalidad: tabla de límites por nivel (`modality_level_limits`) con opciones de crear/editar/eliminar
+  - [x] Pestaña "Ventanas de fechas": tabla con tipo, fechas, periodo, activo. Formulario de creación con `DatePicker`. Botón eliminar solo si sin radicaciones (muestra error `409` si las hay)
+  - [x] Pestaña "Parámetros": campo para "días de alerta vencimiento jurado" (N días configurable, RF-01-07)
 - **Dependencias:** T-F09-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

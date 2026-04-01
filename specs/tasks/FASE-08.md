@@ -171,9 +171,9 @@
 - **Referencias:** `specs/arch/API.md`
 - **Descripción:** Verificar que FastAPI genera la documentación OpenAPI correctamente y exportar la especificación para uso en el frontend y testing.
 - **Criterios de aceptación:**
-  - [ ] `GET /docs` disponible en desarrollo con todos los endpoints documentados
-  - [ ] `GET /openapi.json` exportable
-  - [ ] Todos los schemas de request/response tienen ejemplos en los modelos Pydantic
-  - [ ] Archivo `backend/openapi.json` exportado y comiteado para referencia del equipo frontend
+  - [x] `GET /docs` disponible en desarrollo con todos los endpoints documentados
+  - [x] `GET /openapi.json` exportable
+  - [x] Todos los schemas de request/response tienen ejemplos en los modelos Pydantic (69/77; los 8 restantes son enums y Body_* auto-generados por FastAPI)
+  - [x] Archivo `backend/openapi.json` exportado y comiteado para referencia del equipo frontend
 - **Dependencias:** T-F08-09
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

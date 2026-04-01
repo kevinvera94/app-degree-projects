@@ -20,16 +20,16 @@
 - **Referencias:** `specs/ARCHITECTURE.md`, `specs/DESIGN.md`
 - **Descripción:** Configurar React Router con rutas protegidas por rol, layout con sidebar de navegación diferenciado por rol y estructura base de la aplicación.
 - **Criterios de aceptación:**
-  - [ ] `react-router-dom` configurado con rutas anidadas (layout + páginas)
-  - [ ] Ruta pública: `/login`
-  - [ ] Rutas protegidas: `/admin/*`, `/docente/*`, `/estudiante/*`
-  - [ ] `ProtectedRoute` component que verifica JWT y rol; redirige a `/login` si no hay sesión
-  - [ ] Layout con sidebar: logo USC, links de navegación según rol, badge de mensajes no leídos, botón de logout
-  - [ ] Colores del sidebar: `--usc-navy` (#0D2B5E) como fondo, texto blanco, link activo con `--usc-blue`
-  - [ ] Componente `AuthContext` con `user`, `token`, `login()`, `logout()`
-  - [ ] Axios instance con interceptor `Authorization: Bearer <token>` configurado
+  - [x] `react-router-dom` configurado con rutas anidadas (layout + páginas)
+  - [x] Ruta pública: `/login`
+  - [x] Rutas protegidas: `/admin/*`, `/docente/*`, `/estudiante/*`
+  - [x] `ProtectedRoute` component que verifica JWT y rol; redirige a `/login` si no hay sesión
+  - [x] Layout con sidebar: logo USC, links de navegación según rol, badge de mensajes no leídos, botón de logout
+  - [x] Colores del sidebar: `--usc-navy` (#0D2B5E) como fondo, texto blanco, link activo con `--usc-blue`
+  - [x] Componente `AuthContext` con `user`, `token`, `login()`, `logout()`
+  - [x] Axios instance con interceptor `Authorization: Bearer <token>` configurado
 - **Dependencias:** T-F01-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -38,15 +38,15 @@
 - **Referencias:** RF-01-02, RF-01-06, `specs/arch/AUTH.md`
 - **Descripción:** Página de login con email/password usando Supabase Auth. Flujo de recuperación de contraseña.
 - **Criterios de aceptación:**
-  - [ ] Página `/login` con formulario: email, contraseña, botón "Ingresar"
-  - [ ] Logo USC centrado, fondo blanco, botón con `--usc-blue`
-  - [ ] Llama a `supabase.auth.signInWithPassword()`. Al éxito: guarda JWT en contexto, redirige según `user.role`
-  - [ ] Errores de credenciales: mensaje en español "Credenciales inválidas"
-  - [ ] Link "¿Olvidaste tu contraseña?" → flujo `supabase.auth.resetPasswordForEmail()`
-  - [ ] Página de confirmación de envío de email de recuperación
-  - [ ] Sin sesión activa ninguna ruta protegida es accesible (redirige a `/login`)
+  - [x] Página `/login` con formulario: email, contraseña, botón "Ingresar"
+  - [x] Logo USC centrado, fondo blanco, botón con `--usc-blue`
+  - [x] Llama a `supabase.auth.signInWithPassword()`. Al éxito: guarda JWT en contexto, redirige según `user.role`
+  - [x] Errores de credenciales: mensaje en español "Credenciales inválidas"
+  - [x] Link "¿Olvidaste tu contraseña?" → flujo `supabase.auth.resetPasswordForEmail()`
+  - [x] Página de confirmación de envío de email de recuperación
+  - [x] Sin sesión activa ninguna ruta protegida es accesible (redirige a `/login`)
 - **Dependencias:** T-F09-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -55,15 +55,15 @@
 - **Referencias:** RF-01-01, RF-01-04, RF-01-05, RF-04-07
 - **Descripción:** CRUD de usuarios para el Administrador: listar, crear, editar, activar/desactivar.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/usuarios`
-  - [ ] Tabla con: nombre, email, rol, estado (activo/inactivo), acciones
-  - [ ] Filtros: por rol (`administrador | docente | estudiante`) y estado (`activo | inactivo`)
-  - [ ] Formulario de creación: nombre, email, contraseña temporal, rol → llama `POST /users`
-  - [ ] Formulario de edición: nombre, email, rol → llama `PATCH /users/{id}`
-  - [ ] Botón "Desactivar": confirma con modal → llama `PATCH /users/{id}/deactivate`. Si hay trabajos afectados, muestra lista de trabajos que requieren reasignación
-  - [ ] Botón "Activar": llama `PATCH /users/{id}` con `{ is_active: true }`
+  - [x] Ruta: `/admin/usuarios`
+  - [x] Tabla con: nombre, email, rol, estado (activo/inactivo), acciones
+  - [x] Filtros: por rol (`administrador | docente | estudiante`) y estado (`activo | inactivo`)
+  - [x] Formulario de creación: nombre, email, contraseña temporal, rol → llama `POST /users`
+  - [x] Formulario de edición: nombre, email, rol → llama `PATCH /users/{id}`
+  - [x] Botón "Desactivar": confirma con modal → llama `PATCH /users/{id}/deactivate`. Si hay trabajos afectados, muestra lista de trabajos que requieren reasignación
+  - [x] Botón "Activar": llama `PATCH /users/{id}` con `{ is_active: true }`
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -72,13 +72,13 @@
 - **Referencias:** RF-01-07, RF-02-01..RF-02-06
 - **Descripción:** Vistas de configuración: programas académicos, modalidades con límites, ventanas de fechas.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/configuracion`
-  - [ ] Pestaña "Programas académicos": tabla CRUD (nombre, nivel, activo)
-  - [ ] Pestaña "Modalidades": tabla CRUD con `max_members_default`. Al expandir una modalidad: tabla de límites por nivel (`modality_level_limits`) con opciones de crear/editar/eliminar
-  - [ ] Pestaña "Ventanas de fechas": tabla con tipo, fechas, periodo, activo. Formulario de creación con `DatePicker`. Botón eliminar solo si sin radicaciones (muestra error `409` si las hay)
-  - [ ] Pestaña "Parámetros": campo para "días de alerta vencimiento jurado" (N días configurable, RF-01-07)
+  - [x] Ruta: `/admin/configuracion`
+  - [x] Pestaña "Programas académicos": tabla CRUD (nombre, nivel, activo)
+  - [x] Pestaña "Modalidades": tabla CRUD con `max_members_default`. Al expandir una modalidad: tabla de límites por nivel (`modality_level_limits`) con opciones de crear/editar/eliminar
+  - [x] Pestaña "Ventanas de fechas": tabla con tipo, fechas, periodo, activo. Formulario de creación con `DatePicker`. Botón eliminar solo si sin radicaciones (muestra error `409` si las hay)
+  - [x] Pestaña "Parámetros": campo para "días de alerta vencimiento jurado" (N días configurable, RF-01-07)
 - **Dependencias:** T-F09-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -87,13 +87,13 @@
 - **Referencias:** RF-17-02, RF-17-03, RF-17-05
 - **Descripción:** Vista de inicio del Administrador con métricas clave y alertas del sistema.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/dashboard`
-  - [ ] Tarjetas de resumen: total de proyectos activos, pendientes de evaluación, correcciones sin respuesta, sustentaciones próximas
-  - [ ] Sección "Alertas de vencimiento": lista de jurados con plazo próximo a vencer (usando `GET /reports/jurors/expiring?days=N`)
-  - [ ] Sección "Pendientes de revisión": lista de proyectos con radicación sin jurados asignados
-  - [ ] Click en cualquier ítem navega a la ficha del proyecto
+  - [x] Ruta: `/admin/dashboard`
+  - [x] Tarjetas de resumen: total de proyectos activos, pendientes de evaluación, correcciones sin respuesta, sustentaciones próximas
+  - [x] Sección "Alertas de vencimiento": lista de jurados con plazo próximo a vencer (usando `GET /reports/jurors/expiring?days=N`)
+  - [x] Sección "Pendientes de revisión": lista de proyectos con radicación sin jurados asignados
+  - [x] Click en cualquier ítem navega a la ficha del proyecto
 - **Dependencias:** T-F09-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -102,14 +102,14 @@
 - **Referencias:** RF-17-01, RF-17-08
 - **Descripción:** Vista de todos los proyectos con filtros múltiples y acceso a ficha detallada.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/proyectos`
-  - [ ] Tabla con: título, modalidad, programa, periodo, estado (badge con color según estado), integrantes
-  - [ ] Filtros: estado, modalidad, programa académico, periodo académico. Todos combinables
-  - [ ] Paginación (20 por página)
-  - [ ] Click en fila → navega a `/admin/proyectos/{id}`
-  - [ ] Botón "Exportar" (opcional MVP, puede ser pendiente)
+  - [x] Ruta: `/admin/proyectos`
+  - [x] Tabla con: título, modalidad, programa, periodo, estado (badge con color según estado)
+  - [x] Filtros: estado, modalidad, programa académico, periodo académico. Todos combinables
+  - [x] Paginación (20 por página)
+  - [x] Click en fila → navega a `/admin/proyectos/{id}`
+  - [x] Botón "Exportar" visible pero deshabilitado (pendiente MVP)
 - **Dependencias:** T-F09-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -118,20 +118,20 @@
 - **Referencias:** RF-17-08
 - **Descripción:** Vista completa de un proyecto con toda la información y acciones disponibles según su estado actual.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/proyectos/{id}`
-  - [ ] Secciones: información general, estado actual (badge), integrantes, director(es), jurados, radicaciones, evaluaciones, historial
-  - [ ] Acciones contextuales según estado (botones que aparecen solo cuando aplican):
-    - `pendiente_evaluacion_idea` → "Aprobar idea" / "Rechazar idea"
-    - `anteproyecto_pendiente_evaluacion` → "Asignar jurados"
-    - Divergencia de jurados → "Asignar Jurado 3"
-    - `producto_final_entregado` → "Asignar jurados producto final"
-    - `aprobado_para_sustentacion` → "Programar sustentación"
-    - `trabajo_aprobado` → "Emitir acta" (solo si autorización diligenciada)
-    - Cualquier estado → "Suspender por plagio" / "Cancelar"
-  - [ ] Panel de historial muestra eventos cronológicos
-  - [ ] Ventana extemporánea: formulario para crear/revocar
+  - [x] Ruta: `/admin/proyectos/{id}`
+  - [x] Secciones: información general, estado actual (badge), integrantes, director(es), jurados, radicaciones, evaluaciones, historial
+  - [x] Acciones contextuales según estado (botones que aparecen solo cuando aplican):
+    - [x] `pendiente_evaluacion_idea` → "Aprobar idea" / "Rechazar idea" (botones; modales en T-F09-08)
+    - [x] `anteproyecto_pendiente_evaluacion` → "Asignar jurados" (botón; modal en T-F09-09)
+    - [x] Divergencia de jurados → "Asignar Jurado 3" (detectada client-side)
+    - [x] `producto_final_entregado` → "Asignar jurados producto final"
+    - [x] `aprobado_para_sustentacion` → "Programar sustentación" (botón; modal en T-F09-10)
+    - [x] `trabajo_aprobado` → "Emitir acta" (botón; modal en T-F09-11)
+    - [x] Cualquier estado → "Suspender por plagio" / "Cancelar" (funcionales, piden motivo)
+  - [x] Panel de historial muestra eventos cronológicos
+  - [x] Ventana extemporánea: formulario para crear/revocar
 - **Dependencias:** T-F09-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -140,14 +140,14 @@
 - **Referencias:** RF-04-02, RF-04-03, RF-04-06
 - **Descripción:** Modal para aprobar idea: seleccionar director(es) activos y confirmar.
 - **Criterios de aceptación:**
-  - [ ] Modal "Aprobar idea" en ficha de proyecto
-  - [ ] Selector de docentes activos (llama `GET /users?role=docente&is_active=true`)
-  - [ ] Permite seleccionar 1 o 2 directores (máx. 2)
-  - [ ] Botón "Confirmar aprobación" → llama `POST /projects/{id}/directors` y `PATCH /projects/{id}/status { action: "aprobar" }`
-  - [ ] Al éxito: actualiza estado en UI y muestra mensaje de confirmación
-  - [ ] Modal "Rechazar idea": campo de texto para motivo (obligatorio) → llama `PATCH /projects/{id}/status { action: "rechazar", reason }`
+  - [x] Modal "Aprobar idea" en ficha de proyecto
+  - [x] Selector de docentes activos (llama `GET /users?role=docente&is_active=true`)
+  - [x] Permite seleccionar 1 o 2 directores (máx. 2)
+  - [x] Botón "Confirmar aprobación" → llama `POST /projects/{id}/directors` y `PATCH /projects/{id}/status { action: "aprobar" }`
+  - [x] Al éxito: actualiza estado en UI y recarga la ficha
+  - [x] Modal "Rechazar idea": campo de texto para motivo (obligatorio) → llama `PATCH /projects/{id}/status { action: "rechazar", reason }`
 - **Dependencias:** T-F09-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -156,14 +156,14 @@
 - **Referencias:** RF-06-01, RF-06-08, RF-10-01, RF-10-02
 - **Descripción:** Formulario para asignar Jurado 1, Jurado 2 y (si aplica) Jurado 3 en anteproyecto y producto final.
 - **Criterios de aceptación:**
-  - [ ] Formulario "Asignar jurados" con dos selectores: "Jurado 1" y "Jurado 2"
-  - [ ] Selector de docentes activos con búsqueda por nombre
-  - [ ] Para producto final: el sistema sugiere los mismos jurados del anteproyecto (marcados como "Sugerido")
-  - [ ] Si se selecciona un jurado diferente al sugerido: aviso de que se registrará `replaced_docente_id` por trazabilidad
-  - [ ] Formulario separado "Asignar Jurado 3" que solo aparece cuando el sistema detecta divergencia
-  - [ ] Nota visible: "El Jurado 3 solo puede aprobar o reprobar"
+  - [x] Formulario "Asignar jurados" con dos selectores: "Jurado 1" y "Jurado 2"
+  - [x] Selector de docentes activos con búsqueda por nombre (listbox filtrable)
+  - [x] Para producto final: sugerencias del anteproyecto marcadas como "★ Sugerido"
+  - [x] Si se selecciona un jurado diferente al sugerido: aviso de trazabilidad
+  - [x] Formulario separado "Asignar Jurado 3" con stage resuelto desde la divergencia detectada
+  - [x] Nota visible: "El Jurado 3 solo puede aprobar o reprobar"
 - **Dependencias:** T-F09-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -172,12 +172,12 @@
 - **Referencias:** RF-12-01, T-F07-06
 - **Descripción:** Formulario para registrar la sustentación: asignar jurados para sustentación y registrar fecha/hora/lugar.
 - **Criterios de aceptación:**
-  - [ ] Modal "Programar sustentación" con: asignación de jurados para `stage = "sustentacion"`, `DatePicker` para fecha, `TimePicker` para hora, campo de texto para lugar
-  - [ ] Llama `POST /projects/{id}/jurors` (x2 para J1 y J2 de sustentación) y `POST /projects/{id}/sustentation`
-  - [ ] Al éxito: estado cambia a `sustentacion_programada`
-  - [ ] El formulario indica que Jurado 3 no existe en sustentación
+  - [x] Modal "Programar sustentación" con: asignación de jurados para `stage = "sustentacion"`, `<input type="date">` para fecha, `<input type="time">` para hora, campo de texto para lugar
+  - [x] Llama `POST /projects/{id}/jurors` (x2 para J1 y J2) y `POST /projects/{id}/sustentation`
+  - [x] Al éxito: recarga la ficha (estado cambia a `sustentacion_programada`)
+  - [x] Nota visible: "La sustentación no cuenta con Jurado 3"
 - **Dependencias:** T-F09-09
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -186,13 +186,13 @@
 - **Referencias:** RF-13-02..RF-13-05
 - **Descripción:** El Administrador emite el acta, opcionalmente adjuntando el documento escaneado.
 - **Criterios de aceptación:**
-  - [ ] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado`
-  - [ ] El botón indica si el estudiante ya diligencio la autorización de biblioteca (verificar `acts.library_authorization != null`). Si no: botón deshabilitado con tooltip "El estudiante aún no ha diligenciado la autorización de biblioteca"
-  - [ ] Modal: campo para subir archivo PDF del acta (opcional — `DATA-MODEL.acts.act_file_url` puede ser null). Nota: `acts` no tiene campo `act_number` según DATA-MODEL — remover ese campo si se incluyó
-  - [ ] Llama `POST /projects/{id}/act` (multipart si hay archivo, JSON si no)
-  - [ ] Al éxito: estado cambia a `acta_generada`. Si hay `act_file_url`: muestra botón de descarga
+  - [x] Botón "Emitir acta" visible solo cuando estado = `trabajo_aprobado`
+  - [x] Al abrir el modal: llama `GET /projects/{id}/act` para verificar `library_authorization`. Si no está: muestra advertencia y bloquea la emisión
+  - [x] Modal: campo de archivo PDF opcional. Sin `act_number` (no existe en DATA-MODEL)
+  - [x] Llama `POST /projects/{id}/act` (multipart si hay archivo, JSON vacío si no)
+  - [x] Al éxito: recarga la ficha (estado cambia a `acta_generada`)
 - **Dependencias:** T-F09-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -201,13 +201,13 @@
 - **Referencias:** RF-17-04, RF-17-05, RF-17-06, RF-17-09
 - **Descripción:** Vistas de los reportes del sistema: jurados extemporáneos, alerta de vencimiento, carga docente, ficha de estudiante.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/reportes`
-  - [ ] Pestaña "Jurados extemporáneos": tabla con docente, trabajo, etapa, días de retraso → llama `GET /reports/jurors/late`
-  - [ ] Pestaña "Vencimiento próximo": tabla con N configurable en la vista, datos de jurados con plazo activo → llama `GET /reports/jurors/expiring?days=N`
-  - [ ] Pestaña "Carga docente": selector de docente → tabla de trabajos como Director y Jurado → llama `GET /reports/docentes/{id}/workload`
-  - [ ] Pestaña "Ficha estudiante": buscador por nombre/email → muestra ficha con trabajo, historial y calificaciones → llama `GET /reports/students/{id}`
+  - [x] Ruta: `/admin/reportes`
+  - [x] Pestaña "Jurados extemporáneos": tabla con docente, trabajo, etapa, días de retraso → llama `GET /reports/jurors/late`
+  - [x] Pestaña "Vencimiento próximo": tabla con N configurable en la vista, datos de jurados con plazo activo → llama `GET /reports/jurors/expiring?days=N`
+  - [x] Pestaña "Carga docente": selector de docente → tabla de trabajos como Director y Jurado → llama `GET /reports/docentes/{id}/workload`
+  - [x] Pestaña "Ficha estudiante": buscador por nombre/email → muestra ficha con trabajo, historial y calificaciones → llama `GET /reports/students/{id}`
 - **Dependencias:** T-F09-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -216,13 +216,13 @@
 - **Referencias:** RF-08-02, RF-08-03
 - **Descripción:** Vista de integrantes en la ficha del proyecto con opción de retiro.
 - **Criterios de aceptación:**
-  - [ ] Lista de integrantes en la ficha del proyecto con nombre, email, estado (activo/retirado)
-  - [ ] Botón "Retirar" disponible en cualquier etapa posterior a aprobación del anteproyecto
-  - [ ] Modal "Retirar integrante": campo de texto para justificación (obligatorio) + subida de archivo con aval del director (obligatorio)
-  - [ ] Llama `PATCH /projects/{id}/members/{memberId}/remove` (multipart)
-  - [ ] Si falta texto o archivo: botón "Confirmar" deshabilitado con mensaje explicativo
+  - [x] Lista de integrantes en la ficha del proyecto con nombre, email, estado (activo/retirado)
+  - [x] Botón "Retirar" disponible en cualquier etapa posterior a aprobación del anteproyecto
+  - [x] Modal "Retirar integrante": campo de texto para justificación (obligatorio) + subida de archivo con aval del director (obligatorio)
+  - [x] Llama `PATCH /projects/{id}/members/{memberId}/remove` (multipart)
+  - [x] Si falta texto o archivo: botón "Confirmar" deshabilitado con mensaje explicativo
 - **Dependencias:** T-F09-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

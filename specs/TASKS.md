@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-01` — Configurar proyecto React + Vite + estructura base
+**Próxima tarea:** `T-F09-14` — Implementar bandeja de mensajes (vista Admin)
 
 ---
 
@@ -113,6 +113,19 @@
 - `T-F08-09` — Verificación final de la API: cobertura completa de endpoints — 2026-03-30
 - `T-F08-10` — Implementar servicio de mensajes automáticos del sistema — 2026-03-31
 - `T-F08-11` — Generar documentación OpenAPI y exportar colección — 2026-03-31
+- `T-F09-01` — Implementar layout base y sistema de routing — 2026-03-31
+- `T-F09-02` — Implementar página de login y recuperación de contraseña — 2026-03-31
+- `T-F09-03` — Implementar gestión de usuarios (Admin) — 2026-03-31
+- `T-F09-04` — Implementar configuración del sistema (Admin) — 2026-03-31
+- `T-F09-05` — Implementar dashboard del Administrador — 2026-03-31
+- `T-F09-06` — Implementar listado de proyectos con filtros (Admin) — 2026-03-31
+- `T-F09-07` — Implementar ficha detalle de proyecto (Admin) — 2026-03-31
+- `T-F09-08` — Implementar flujo de aprobación de idea (Admin) — 2026-03-31
+- `T-F09-09` — Implementar flujo de asignación de jurados (Admin) — 2026-03-31
+- `T-F09-10` — Implementar flujo de programación de sustentación (Admin) — 2026-03-31
+- `T-F09-11` — Implementar flujo de emisión de acta (Admin) — 2026-03-31
+- `T-F09-12` — Implementar reportes para Admin (vistas) — 2026-03-31
+- `T-F09-13` — Implementar retiro de integrante y gestión de integrantes (Admin) — 2026-04-01
 
 ---
 

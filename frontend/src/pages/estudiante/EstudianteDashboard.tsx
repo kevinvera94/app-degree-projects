@@ -552,7 +552,7 @@ export default function EstudianteDashboard() {
           {(() => {
             const action = getActionForStatus(project.status, project.id);
             const showEvals = ANTEPROYECTO_EVAL_STATUSES.has(project.status);
-            if (!action && !showEvals) return null;
+            const showHistory = project.status !== "cancelado";
             return (
               <div className="flex flex-wrap items-center gap-3">
                 {action && (
@@ -569,6 +569,14 @@ export default function EstudianteDashboard() {
                     className="inline-block text-sm font-semibold text-usc-blue border border-usc-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     Ver evaluaciones
+                  </Link>
+                )}
+                {showHistory && (
+                  <Link
+                    to={`/estudiante/proyectos/${project.id}/historial`}
+                    className="inline-block text-sm text-gray-500 hover:text-gray-700 px-3 py-2.5 transition-colors"
+                  >
+                    Ver historial
                   </Link>
                 )}
               </div>

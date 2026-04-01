@@ -118,20 +118,20 @@
 - **Referencias:** RF-17-08
 - **Descripción:** Vista completa de un proyecto con toda la información y acciones disponibles según su estado actual.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/admin/proyectos/{id}`
-  - [ ] Secciones: información general, estado actual (badge), integrantes, director(es), jurados, radicaciones, evaluaciones, historial
-  - [ ] Acciones contextuales según estado (botones que aparecen solo cuando aplican):
-    - `pendiente_evaluacion_idea` → "Aprobar idea" / "Rechazar idea"
-    - `anteproyecto_pendiente_evaluacion` → "Asignar jurados"
-    - Divergencia de jurados → "Asignar Jurado 3"
-    - `producto_final_entregado` → "Asignar jurados producto final"
-    - `aprobado_para_sustentacion` → "Programar sustentación"
-    - `trabajo_aprobado` → "Emitir acta" (solo si autorización diligenciada)
-    - Cualquier estado → "Suspender por plagio" / "Cancelar"
-  - [ ] Panel de historial muestra eventos cronológicos
-  - [ ] Ventana extemporánea: formulario para crear/revocar
+  - [x] Ruta: `/admin/proyectos/{id}`
+  - [x] Secciones: información general, estado actual (badge), integrantes, director(es), jurados, radicaciones, evaluaciones, historial
+  - [x] Acciones contextuales según estado (botones que aparecen solo cuando aplican):
+    - [x] `pendiente_evaluacion_idea` → "Aprobar idea" / "Rechazar idea" (botones; modales en T-F09-08)
+    - [x] `anteproyecto_pendiente_evaluacion` → "Asignar jurados" (botón; modal en T-F09-09)
+    - [x] Divergencia de jurados → "Asignar Jurado 3" (detectada client-side)
+    - [x] `producto_final_entregado` → "Asignar jurados producto final"
+    - [x] `aprobado_para_sustentacion` → "Programar sustentación" (botón; modal en T-F09-10)
+    - [x] `trabajo_aprobado` → "Emitir acta" (botón; modal en T-F09-11)
+    - [x] Cualquier estado → "Suspender por plagio" / "Cancelar" (funcionales, piden motivo)
+  - [x] Panel de historial muestra eventos cronológicos
+  - [x] Ventana extemporánea: formulario para crear/revocar
 - **Dependencias:** T-F09-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

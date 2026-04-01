@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsuarios from "./pages/admin/AdminUsuarios";
 import AdminConfiguracion from "./pages/admin/AdminConfiguracion";
 import AdminProyectos from "./pages/admin/AdminProyectos";
+import AdminProyectoDetalle from "./pages/admin/AdminProyectoDetalle";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="usuarios" element={<AdminUsuarios />} />
                 <Route path="configuracion" element={<AdminConfiguracion />} />
                 <Route path="proyectos" element={<AdminProyectos />} />
+                <Route path="proyectos/:id" element={<AdminProyectoDetalle />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>

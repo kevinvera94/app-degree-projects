@@ -118,14 +118,14 @@
 - **Referencias:** RF-13-01, RF-13-05
 - **Descripción:** El estudiante diligencia la autorización de publicación en biblioteca y puede descargar el acta una vez emitida.
 - **Criterios de aceptación:**
-  - [ ] Sección "Acta y biblioteca" visible en dashboard cuando `status = trabajo_aprobado` o `acta_generada`
-  - [ ] Formulario con pregunta clara: "¿Autoriza la publicación de su trabajo en la biblioteca de la USC?" con opciones Sí / No y descripción de implicaciones
-  - [ ] Llama `PATCH /projects/{id}/library-authorization { library_authorization: true|false }` (endpoint dedicado, distinto al `POST /act`)
-  - [ ] Muestra confirmación: "Tu autorización ha sido registrada. El Administrador emitirá el acta pronto."
-  - [ ] Cuando `status = acta_generada` y el acta tiene `act_file_url`: botón "Descargar acta" → `GET /projects/{id}/act` retorna URL firmada → abre en nueva pestaña
-  - [ ] Si el acta no tiene archivo adjunto (`act_file_url = null`): mostrar "El acta fue registrada pero no tiene archivo digital adjunto. Contacta a la secretaría."
+  - [x] Sección "Acta y biblioteca" visible en dashboard cuando `status = trabajo_aprobado` o `acta_generada`
+  - [x] Formulario con pregunta clara: "¿Autoriza la publicación de su trabajo en la biblioteca de la USC?" con opciones Sí / No y descripción de implicaciones
+  - [x] Llama `PATCH /projects/{id}/library-authorization { library_authorization: true|false }` (endpoint dedicado, distinto al `POST /act`)
+  - [x] Muestra confirmación: "Tu autorización ha sido registrada. El Administrador emitirá el acta pronto."
+  - [x] Cuando `status = acta_generada` y el acta tiene `act_file_url`: botón "Descargar acta" → `GET /projects/{id}/act` retorna URL firmada → abre en nueva pestaña
+  - [x] Si el acta no tiene archivo adjunto (`act_file_url = null`): mostrar "El acta fue registrada pero no tiene archivo digital adjunto. Contacta a la secretaría."
 - **Dependencias:** T-F10-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

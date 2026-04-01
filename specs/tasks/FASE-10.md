@@ -65,15 +65,15 @@
 - **Referencias:** RF-06-04, RF-06-05, RF-06-11, RF-16-05
 - **Descripción:** El estudiante puede ver las calificaciones y observaciones de los jurados (anónimas).
 - **Criterios de aceptación:**
-  - [ ] Sección "Evaluaciones" en la ficha del proyecto del estudiante
-  - [ ] Muestra calificaciones recibidas: "Jurado 1: [score]", "Jurado 2: [score]" (sin nombre real)
-  - [ ] Muestra observaciones/recomendaciones de cada jurado
-  - [ ] Si el resultado es "Correcciones solicitadas": muestra el plazo restante en días hábiles
-  - [ ] Si el resultado es "Reprobado": mensaje de orientación sobre el próximo paso
-  - [ ] Si el resultado es "Aprobado": mensaje de felicitación y enlace al estado "En desarrollo"
-  - [ ] Calificaciones de Jurado 3 (si aplica) mostradas de igual forma
+  - [x] Sección "Evaluaciones" en la ficha del proyecto del estudiante
+  - [x] Muestra calificaciones recibidas: "Jurado 1: [score]", "Jurado 2: [score]" (sin nombre real)
+  - [x] Muestra observaciones/recomendaciones de cada jurado
+  - [x] Si el resultado es "Correcciones solicitadas": muestra el plazo restante en días hábiles
+  - [x] Si el resultado es "Reprobado": mensaje de orientación sobre el próximo paso
+  - [x] Si el resultado es "Aprobado": mensaje de felicitación y enlace al estado "En desarrollo"
+  - [x] Calificaciones de Jurado 3 (si aplica) mostradas de igual forma
 - **Dependencias:** T-F10-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

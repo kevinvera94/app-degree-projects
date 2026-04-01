@@ -156,14 +156,14 @@
 - **Referencias:** RF-06-01, RF-06-08, RF-10-01, RF-10-02
 - **Descripción:** Formulario para asignar Jurado 1, Jurado 2 y (si aplica) Jurado 3 en anteproyecto y producto final.
 - **Criterios de aceptación:**
-  - [ ] Formulario "Asignar jurados" con dos selectores: "Jurado 1" y "Jurado 2"
-  - [ ] Selector de docentes activos con búsqueda por nombre
-  - [ ] Para producto final: el sistema sugiere los mismos jurados del anteproyecto (marcados como "Sugerido")
-  - [ ] Si se selecciona un jurado diferente al sugerido: aviso de que se registrará `replaced_docente_id` por trazabilidad
-  - [ ] Formulario separado "Asignar Jurado 3" que solo aparece cuando el sistema detecta divergencia
-  - [ ] Nota visible: "El Jurado 3 solo puede aprobar o reprobar"
+  - [x] Formulario "Asignar jurados" con dos selectores: "Jurado 1" y "Jurado 2"
+  - [x] Selector de docentes activos con búsqueda por nombre (listbox filtrable)
+  - [x] Para producto final: sugerencias del anteproyecto marcadas como "★ Sugerido"
+  - [x] Si se selecciona un jurado diferente al sugerido: aviso de trazabilidad
+  - [x] Formulario separado "Asignar Jurado 3" con stage resuelto desde la divergencia detectada
+  - [x] Nota visible: "El Jurado 3 solo puede aprobar o reprobar"
 - **Dependencias:** T-F09-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

@@ -95,6 +95,7 @@ interface ProjectDetail {
   directors: Director[];
   jurors: Juror[];
   submissions: Submission[];
+  suggested_jurors: { juror_number: number; docente_id: string; full_name: string }[];
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -333,6 +334,339 @@ function HistoryEventRow({ event }: { event: HistoryEvent }) {
     );
   }
   return null;
+}
+
+// ── Modal: Asignar Jurado 1 y 2 ───────────────────────────────────────────
+
+function AssignJurorsModal({
+  projectId,
+  stage,
+  suggestedJurors,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  stage: string;
+  suggestedJurors: { juror_number: number; docente_id: string; full_name: string }[];
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const suggested1 = suggestedJurors.find((j) => j.juror_number === 1);
+  const suggested2 = suggestedJurors.find((j) => j.juror_number === 2);
+
+  const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [juror1, setJuror1] = useState(suggested1?.docente_id ?? "");
+  const [juror2, setJuror2] = useState(suggested2?.docente_id ?? "");
+  const [search1, setSearch1] = useState("");
+  const [search2, setSearch2] = useState("");
+  const [loadingDocentes, setLoadingDocentes] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const stageLabel = stage === "anteproyecto" ? "Anteproyecto" : "Producto final";
+  const isProductoFinal = stage === "producto_final";
+
+  useEffect(() => {
+    api
+      .get<{ items: Docente[] }>("/users", {
+        params: { role: "docente", is_active: "true", size: 200 },
+      })
+      .then((res) => setDocentes(res.data.items))
+      .finally(() => setLoadingDocentes(false));
+  }, []);
+
+  const filtered1 = docentes.filter(
+    (d) =>
+      d.id !== juror2 &&
+      (search1 === "" || d.full_name.toLowerCase().includes(search1.toLowerCase()))
+  );
+  const filtered2 = docentes.filter(
+    (d) =>
+      d.id !== juror1 &&
+      (search2 === "" || d.full_name.toLowerCase().includes(search2.toLowerCase()))
+  );
+
+  const changed1 = isProductoFinal && suggested1 && juror1 !== suggested1.docente_id;
+  const changed2 = isProductoFinal && suggested2 && juror2 !== suggested2.docente_id;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!juror1 || !juror2) {
+      setError("Debes seleccionar ambos jurados.");
+      return;
+    }
+    if (juror1 === juror2) {
+      setError("El Jurado 1 y el Jurado 2 deben ser distintos.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.post(`/projects/${projectId}/jurors`, {
+        user_id: juror1,
+        juror_number: 1,
+        stage,
+      });
+      await api.post(`/projects/${projectId}/jurors`, {
+        user_id: juror2,
+        juror_number: 2,
+        stage,
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function DocenteSelect({
+    label,
+    value,
+    onChange,
+    search,
+    onSearch,
+    filtered,
+    suggested,
+    changed,
+  }: {
+    label: string;
+    value: string;
+    onChange: (v: string) => void;
+    search: string;
+    onSearch: (v: string) => void;
+    filtered: Docente[];
+    suggested?: { docente_id: string; full_name: string };
+    changed?: boolean;
+  }) {
+    return (
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {label} <span className="text-red-500">*</span>
+        </label>
+        {suggested && (
+          <p className="text-xs text-blue-600 mb-1">
+            Sugerido: <strong>{suggested.full_name}</strong>
+          </p>
+        )}
+        <input
+          type="text"
+          placeholder="Buscar por nombre..."
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+        />
+        <select
+          size={5}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+        >
+          <option value="">— Seleccionar —</option>
+          {filtered.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.full_name}
+              {isProductoFinal && suggested?.docente_id === d.id ? " ★ Sugerido" : ""}
+            </option>
+          ))}
+        </select>
+        {changed && (
+          <p className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded px-2 py-1 mt-1">
+            Se registrará el cambio respecto al jurado del anteproyecto para trazabilidad.
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">
+          Asignar jurados — {stageLabel}
+        </h2>
+        <p className="text-sm text-gray-500 mb-5">
+          Selecciona Jurado 1 y Jurado 2 para esta etapa.
+        </p>
+
+        {loadingDocentes ? (
+          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <DocenteSelect
+              label="Jurado 1"
+              value={juror1}
+              onChange={setJuror1}
+              search={search1}
+              onSearch={setSearch1}
+              filtered={filtered1}
+              suggested={suggested1}
+              changed={changed1 || false}
+            />
+            <DocenteSelect
+              label="Jurado 2"
+              value={juror2}
+              onChange={setJuror2}
+              search={search2}
+              onSearch={setSearch2}
+              filtered={filtered2}
+              suggested={suggested2}
+              changed={changed2 || false}
+            />
+
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+              >
+                {loading ? "Asignando..." : "Asignar jurados"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Modal: Asignar Jurado 3 ────────────────────────────────────────────────
+
+function AssignJuror3Modal({
+  projectId,
+  stage,
+  onClose,
+  onSuccess,
+}: {
+  projectId: string;
+  stage: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [docentes, setDocentes] = useState<Docente[]>([]);
+  const [juror3, setJuror3] = useState("");
+  const [search, setSearch] = useState("");
+  const [loadingDocentes, setLoadingDocentes] = useState(true);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    api
+      .get<{ items: Docente[] }>("/users", {
+        params: { role: "docente", is_active: "true", size: 200 },
+      })
+      .then((res) => setDocentes(res.data.items))
+      .finally(() => setLoadingDocentes(false));
+  }, []);
+
+  const filtered = docentes.filter(
+    (d) => search === "" || d.full_name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!juror3) {
+      setError("Selecciona un docente para el Jurado 3.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await api.post(`/projects/${projectId}/jurors`, {
+        user_id: juror3,
+        juror_number: 3,
+        stage,
+      });
+      onSuccess();
+    } catch (err) {
+      setError(apiError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+        <h2 className="text-lg font-bold text-usc-navy mb-1">Asignar Jurado 3</h2>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2 mb-5">
+          <p className="text-xs text-yellow-700 font-medium">
+            Los jurados J1 y J2 presentaron decisiones divergentes (uno aprobó y el otro
+            reprobó). El Jurado 3 actúa como desempate y solo puede <strong>aprobar</strong> o{" "}
+            <strong>reprobar</strong> — no emite nota numérica.
+          </p>
+        </div>
+
+        {loadingDocentes ? (
+          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Jurado 3 <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              />
+              <select
+                size={5}
+                value={juror3}
+                onChange={(e) => setJuror3(e.target.value)}
+                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              >
+                <option value="">— Seleccionar —</option>
+                {filtered.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+              >
+                {loading ? "Asignando..." : "Asignar Jurado 3"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
 }
 
 // ── Modal: Aprobar idea ────────────────────────────────────────────────────
@@ -587,7 +921,8 @@ export default function AdminProyectoDetalle() {
   // Modales de acción
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
-  const [_assignJurorsOpen, setAssignJurorsOpen] = useState(false);
+  const [assignJurorsOpen, setAssignJurorsOpen] = useState(false);
+  const [assignJ3Open, setAssignJ3Open] = useState(false);
   const [_scheduleOpen, setScheduleOpen] = useState(false);
   const [_actOpen, setActOpen] = useState(false);
 
@@ -684,7 +1019,7 @@ export default function AdminProyectoDetalle() {
   );
 
   // Detectar divergencia: J1 y J2 calificaron en la misma etapa y no hay J3
-  const needsJ3 = (() => {
+  const divergentStage = (() => {
     for (const stage of ["anteproyecto", "producto_final"]) {
       const stageEvals = evaluations.filter((e) => e.stage === stage && e.score !== null);
       const j1 = stageEvals.find((e) => e.juror_number === 1);
@@ -695,11 +1030,12 @@ export default function AdminProyectoDetalle() {
         const hasJ3 = project.jurors.some(
           (j) => j.juror_number === 3 && j.stage === stage && j.is_active
         );
-        if (!hasJ3) return true;
+        if (!hasJ3) return stage;
       }
     }
-    return false;
+    return null;
   })();
+  const needsJ3 = divergentStage !== null;
 
   return (
     <div className="p-8 space-y-6 max-w-5xl">
@@ -757,7 +1093,7 @@ export default function AdminProyectoDetalle() {
               )}
               {needsJ3 && (
                 <button
-                  onClick={() => setAssignJurorsOpen(true)}
+                  onClick={() => setAssignJ3Open(true)}
                   className="px-3 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy transition-colors"
                 >
                   Asignar Jurado 3
@@ -1070,7 +1406,38 @@ export default function AdminProyectoDetalle() {
         />
       )}
 
-      {/* Placeholders T-F09-09 a T-F09-11: assignJurorsOpen, scheduleOpen, actOpen */}
+      {/* Modal: Asignar jurados J1/J2 */}
+      {assignJurorsOpen && (
+        <AssignJurorsModal
+          projectId={project.id}
+          stage={
+            project.status === "producto_final_entregado"
+              ? "producto_final"
+              : "anteproyecto"
+          }
+          suggestedJurors={project.suggested_jurors ?? []}
+          onClose={() => setAssignJurorsOpen(false)}
+          onSuccess={() => {
+            setAssignJurorsOpen(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Modal: Asignar Jurado 3 */}
+      {assignJ3Open && divergentStage && (
+        <AssignJuror3Modal
+          projectId={project.id}
+          stage={divergentStage}
+          onClose={() => setAssignJ3Open(false)}
+          onSuccess={() => {
+            setAssignJ3Open(false);
+            load();
+          }}
+        />
+      )}
+
+      {/* Placeholders T-F09-10 a T-F09-11: scheduleOpen, actOpen */}
     </div>
   );
 }

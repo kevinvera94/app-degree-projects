@@ -216,7 +216,7 @@ Aplicar al entorno **Production** (y Preview si se desea).
 
 | Servicio | URL |
 |---|---|
-| **Backend (Render)** | `https://usc-degree-projects-api.onrender.com` *(actualizar tras primer deploy)* |
+| **Backend (Render)** | `https://app-degree-projects.onrender.com` |
 | **Frontend (Vercel)** | *(pendiente — T-F11-07)* |
 
 ### Pasos de deploy en Render

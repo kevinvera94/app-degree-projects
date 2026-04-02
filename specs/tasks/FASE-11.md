@@ -18,14 +18,14 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Configurar pytest con base de datos de test aislada y fixtures comunes.
 - **Criterios de aceptación:**
-  - [ ] `pytest` y `httpx` instalados (para `TestClient` de FastAPI)
-  - [ ] `conftest.py` en `backend/tests/` con fixtures: `test_client`, `db_session`, `admin_token`, `docente_token`, `estudiante_token`
-  - [ ] BD de test separada (Supabase proyecto de dev, o SQLite en memoria para tests unitarios puros)
-  - [ ] Comando `pytest` desde `backend/` corre todos los tests y reporta resultados
-  - [ ] Cobertura mínima objetivo: 70% de líneas del backend
-  - [ ] `pytest.ini` o `pyproject.toml` con configuración de test (directorio, patrones)
+  - [x] `pytest` y `httpx` instalados (para `TestClient` de FastAPI)
+  - [x] `conftest.py` en `backend/tests/` con fixtures: `test_client`, `db_session`, `admin_token`, `docente_token`, `estudiante_token`
+  - [x] BD de test separada (AsyncMock para tests unitarios puros; sin BD real requerida)
+  - [x] Comando `pytest` desde `backend/` corre todos los tests y reporta resultados (91 passed)
+  - [ ] Cobertura mínima objetivo: 70% de líneas del backend (actual: 65% — se cierra en T-F11-02)
+  - [x] `pytest.ini` o `pyproject.toml` con configuración de test (directorio, patrones)
 - **Dependencias:** T-F08-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

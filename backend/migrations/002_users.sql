@@ -44,11 +44,11 @@ BEGIN
         NEW.id,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
-        COALESCE(NEW.raw_user_meta_data->>'role', 'estudiante')::user_role
+        COALESCE(NEW.raw_user_meta_data->>'role', 'estudiante')::public.user_role
     );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users

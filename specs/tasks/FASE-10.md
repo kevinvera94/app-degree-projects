@@ -149,13 +149,13 @@
 - **Referencias:** RF-17-06, RF-17-07
 - **Descripción:** Vista de inicio del Docente con sus trabajos asignados como Director y como Jurado.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/docente/dashboard`
-  - [ ] Sección "Mis trabajos como Director": tabla con título, programa, estado, acciones
-  - [ ] Sección "Mis trabajos como Jurado": tabla con título, programa, estado, calificación pendiente (indicador visual si tiene plazo activo)
-  - [ ] Badge de alerta en trabajos de Jurado con plazo próximo a vencer
-  - [ ] Llama `GET /projects/my`
+  - [x] Ruta: `/docente/dashboard`
+  - [x] Sección "Mis trabajos como Director": tabla con título, programa, estado, acciones
+  - [x] Sección "Mis trabajos como Jurado": tabla con título, programa, estado, calificación pendiente (indicador visual si tiene plazo activo)
+  - [x] Badge de alerta en trabajos de Jurado con plazo próximo a vencer
+  - [x] Llama `GET /projects/my`
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

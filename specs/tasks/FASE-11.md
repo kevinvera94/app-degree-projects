@@ -111,16 +111,16 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Desplegar el frontend React en Vercel y verificar el flujo de autenticación en producción.
 - **Criterios de aceptación:**
-  - [ ] Proyecto creado en Vercel conectado al repositorio de GitHub
-  - [ ] Framework preset: Vite
-  - [ ] Build command: `npm run build`
-  - [ ] Output directory: `dist`
-  - [ ] Variables de entorno de producción configuradas en Vercel (T-F11-05)
-  - [ ] `https://<vercel-url>` carga la pantalla de login sin errores en consola
-  - [ ] Login con usuario administrador funciona correctamente en producción
-  - [ ] URL del frontend documentada en `specs/arch/INFRA.md`
+  - [x] Proyecto creado en Vercel conectado al repositorio de GitHub
+  - [x] Framework preset: Vite
+  - [x] Build command: `npm run build`
+  - [x] Output directory: `dist`
+  - [x] Variables de entorno de producción configuradas en Vercel (T-F11-05)
+  - [x] `https://app-degree-projects.vercel.app` carga correctamente (título "USC — Gestión de Trabajos de Grado" verificado)
+  - [x] Login con usuario administrador funciona correctamente en producción
+  - [x] URL del frontend documentada en `specs/arch/INFRA.md`
 - **Dependencias:** T-F11-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

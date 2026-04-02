@@ -217,7 +217,7 @@ Aplicar al entorno **Production** (y Preview si se desea).
 | Servicio | URL |
 |---|---|
 | **Backend (Render)** | `https://app-degree-projects.onrender.com` |
-| **Frontend (Vercel)** | *(pendiente — T-F11-07)* |
+| **Frontend (Vercel)** | `https://app-degree-projects.vercel.app` |
 
 ### Pasos de deploy en Render
 

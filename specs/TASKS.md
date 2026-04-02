@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-11
-**Próxima tarea:** `T-F11-07` — Deploy del frontend en Vercel (ver FASE-11.md)
+**Próxima tarea:** `T-F11-08` — Smoke test en producción (ver FASE-11.md)
 
 ---
 
@@ -148,6 +148,7 @@
 - `T-F11-04` — Ejecutar y corregir todos los tests E2E — 2026-04-02
 - `T-F11-05` — Preparar variables de entorno de producción — 2026-04-02
 - `T-F11-06` — Deploy del backend en Render — 2026-04-02
+- `T-F11-07` — Deploy del frontend en Vercel — 2026-04-02
 
 ---
 

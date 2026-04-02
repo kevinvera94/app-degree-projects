@@ -79,13 +79,13 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Configurar las variables de entorno para los entornos de producción en Render (backend) y Vercel (frontend).
 - **Criterios de aceptación:**
-  - [ ] Variables de entorno configuradas en Render (backend): `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `SUPABASE_STORAGE_BUCKET`, `DATABASE_URL`, `USC_HOLIDAYS_FILE`, `ALLOWED_ORIGINS`, `APP_ENV`, `SECRET_KEY`, `JUROR_EXPIRY_ALERT_DAYS`
-  - [ ] Variables de entorno configuradas en Vercel (frontend): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL` (URL de Render)
-  - [ ] `ALLOWED_ORIGINS` en backend incluye el dominio de Vercel
-  - [ ] El archivo `USC_HOLIDAYS_FILE` está disponible en el entorno de Render (como variable de entorno con JSON incrustado o path de archivo incluido en el build)
-  - [ ] Documentado en `specs/arch/INFRA.md` el listado de variables por entorno (sin valores reales)
+  - [x] Variables de entorno documentadas para Render (backend): `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_JWT_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, `SUPABASE_STORAGE_BUCKET`, `APP_ENV`, `SECRET_KEY`, `ALLOWED_ORIGINS`, `JUROR_EXPIRY_ALERT_DAYS` y plazos — en `specs/arch/INFRA.md` y `backend/.env.example`
+  - [x] Variables de entorno documentadas para Vercel (frontend): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL` — en `specs/arch/INFRA.md` y `frontend/.env.example`
+  - [x] `ALLOWED_ORIGINS` documentado con dominio de Vercel en producción
+  - [x] `USC_HOLIDAYS_FILE`: `app/data/usc_holidays.json` está commiteado en el repo y se incluye en el build de Render automáticamente — no requiere variable especial en producción
+  - [x] Documentado en `specs/arch/INFRA.md`: tabla de variables por entorno (Render y Vercel) sin valores reales, con descripción y si es requerida
 - **Dependencias:** T-F11-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

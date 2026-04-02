@@ -147,6 +147,50 @@ frontend/
 
 ---
 
+## Variables de entorno por entorno de despliegue
+
+### Backend — Render
+
+Configurar en el dashboard de Render → servicio → **Environment**.
+
+| Variable | Requerida | Descripción |
+|---|:---:|---|
+| `DATABASE_URL` | ✅ | Connection string PostgreSQL (Supabase pooler, puerto 6543) |
+| `SUPABASE_URL` | ✅ | URL del proyecto Supabase |
+| `SUPABASE_ANON_KEY` | ✅ | Clave pública anon |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Clave de servicio (solo backend, nunca exponer) |
+| `SUPABASE_JWT_SECRET` | ✅ | Secreto JWT de Supabase (Settings → API → JWT Secret) |
+| `SUPABASE_STORAGE_BUCKET` | ✅ | Nombre del bucket: `degree-projects-docs` |
+| `APP_ENV` | ✅ | `production` |
+| `SECRET_KEY` | ✅ | Mínimo 32 chars, generado con `secrets.token_hex(32)` |
+| `ALLOWED_ORIGINS` | ✅ | Dominio de Vercel: `https://<proyecto>.vercel.app` |
+| `JUROR_EXPIRY_ALERT_DAYS` | — | Días hábiles de alerta antes del vencimiento (default: 3) |
+| `JUROR_EVALUATION_DEADLINE_DAYS` | — | Plazo primera evaluación (default: 15) |
+| `JUROR_SECOND_REVIEW_DEADLINE_DAYS` | — | Plazo segunda revisión (default: 10) |
+| `STUDENT_CORRECTION_DEADLINE_DAYS` | — | Plazo correcciones estudiante (default: 10) |
+| `USC_HOLIDAYS_FILE` | — | Ruta al JSON de festivos (default: `app/data/usc_holidays.json`) |
+
+> **`USC_HOLIDAYS_FILE` en Render:** el archivo `backend/app/data/usc_holidays.json`
+> está commiteado en el repositorio y se incluye automáticamente en el build de Render.
+> No requiere configuración adicional — la variable puede omitirse o mantener el valor
+> por defecto. Para actualizar festivos basta con editar el archivo y hacer push.
+
+### Frontend — Vercel
+
+Configurar en el dashboard de Vercel → proyecto → **Settings → Environment Variables**.
+Aplicar al entorno **Production** (y Preview si se desea).
+
+| Variable | Requerida | Descripción |
+|---|:---:|---|
+| `VITE_API_BASE_URL` | ✅ | URL del backend en Render: `https://<servicio>.onrender.com/api/v1` |
+| `VITE_SUPABASE_URL` | ✅ | URL del proyecto Supabase (mismo valor que el backend) |
+| `VITE_SUPABASE_ANON_KEY` | ✅ | Clave pública anon (nunca la `service_role_key`) |
+
+> ⚠️ Las variables `VITE_*` son embebidas en el bundle en build time — no incluir
+> ninguna clave secreta (`SERVICE_ROLE_KEY`, `JWT_SECRET`, etc.).
+
+---
+
 ## Despliegue — Vercel (Frontend)
 
 - **Trigger:** push a `main`

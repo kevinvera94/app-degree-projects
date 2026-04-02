@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-10
-**Próxima tarea:** `T-F10-13` — (ver FASE-10.md)
+**Fase activa:** FASE-11
+**Próxima tarea:** `T-F11-01` — (ver FASE-11.md)
 
 ---
 
@@ -26,7 +26,7 @@
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ✅ |
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ✅ |
 | FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ✅ |
-| FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | 🔄 |
+| FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ✅ |
 | FASE-11 | [FASE-11.md](tasks/FASE-11.md) | Testing, integración y deploy | 9 | ⬜ |
 
 **Total tareas:** 116
@@ -141,6 +141,7 @@
 - `T-F10-10` — Implementar ficha de proyecto para Docente — 2026-04-01
 - `T-F10-11` — Implementar formulario de calificación del Jurado — 2026-04-01
 - `T-F10-12` — Implementar mensajería para Estudiante y Docente — 2026-04-01
+- `T-F10-13` — Tests E2E básicos: flujos de Estudiante y Docente — 2026-04-01
 
 ---
 

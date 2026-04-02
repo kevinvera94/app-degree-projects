@@ -217,11 +217,11 @@
 - **Referencias:** —
 - **Descripción:** Tests E2E básicos para los flujos críticos del Estudiante y el Docente.
 - **Criterios de aceptación:**
-  - [ ] Test E2E: Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto
-  - [ ] Test E2E: Jurado registra calificación → resultado Correcciones → Estudiante entrega correcciones
-  - [ ] Test E2E: Flujo completo hasta Acta generada (happy path)
-  - [ ] Test E2E: Estudiante ve jurados como "Jurado N" (nunca nombre real)
-  - [ ] Test E2E: Estudiante envía mensaje a Jurado → Jurado responde → Estudiante ve "Jurado N" como remitente
-  - [ ] Test E2E: Docente Jurado registra calificación fuera del plazo → marcada como extemporánea
+  - [x] Test E2E: Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto
+  - [x] Test E2E: Jurado registra calificación → resultado Correcciones → Estudiante entrega correcciones
+  - [x] Test E2E: Flujo completo hasta Acta generada (happy path)
+  - [x] Test E2E: Estudiante ve jurados como "Jurado N" (nunca nombre real)
+  - [x] Test E2E: Estudiante envía mensaje a Jurado → Jurado responde → Estudiante ve "Jurado N" como remitente
+  - [x] Test E2E: Docente Jurado registra calificación fuera del plazo → marcada como extemporánea
 - **Dependencias:** T-F10-12, T-F09-16
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

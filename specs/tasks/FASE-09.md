@@ -231,14 +231,14 @@
 - **Referencias:** RF-15-07
 - **Descripción:** Vista de mensajería del Administrador: ver mensajes por proyecto y enviar mensajes a cualquier usuario.
 - **Criterios de aceptación:**
-  - [ ] Badge de mensajes no leídos en el sidebar (llama `GET /messages/unread-count` periódicamente o al cargar)
-  - [ ] Ruta: `/admin/mensajes` con listado de proyectos con mensajes, o acceso desde ficha del proyecto
-  - [ ] Hilo de mensajes por proyecto (ordenados cronológicamente)
-  - [ ] Formulario de nuevo mensaje: selector de destinatario (integrante, director, jurado o grupo)
-  - [ ] Mensajes leídos/no leídos diferenciados visualmente
-  - [ ] Al abrir un mensaje no leído: llama `PATCH /projects/{id}/messages/{msgId}/read`
+  - [x] Badge de mensajes no leídos en el sidebar (llama `GET /messages/unread-count` periódicamente o al cargar)
+  - [x] Ruta: `/admin/mensajes` con listado de proyectos con mensajes, o acceso desde ficha del proyecto
+  - [x] Hilo de mensajes por proyecto (ordenados cronológicamente)
+  - [x] Formulario de nuevo mensaje: selector de destinatario (integrante, director, jurado o grupo)
+  - [x] Mensajes leídos/no leídos diferenciados visualmente
+  - [x] Al abrir un mensaje no leído: llama `PATCH /projects/{id}/messages/{msgId}/read`
 - **Dependencias:** T-F09-12
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -247,14 +247,14 @@
 - **Referencias:** RF-14-01..RF-14-04, RF-07-05
 - **Descripción:** Acciones de administración de estados críticos: suspensión por plagio y cancelación de proyecto.
 - **Criterios de aceptación:**
-  - [ ] Botón "Suspender por plagio" visible en cualquier ficha de proyecto activo
-  - [ ] Modal: campo de motivo obligatorio, aviso "Esta acción es irreversible desde el sistema"
-  - [ ] Llama `PATCH /projects/{id}/status { action: "suspender_plagio", reason }`
-  - [ ] Al éxito: estado cambia a `suspendido_por_plagio`, todas las acciones de avance se ocultan/deshabilitan
-  - [ ] Botón "Cancelar/Archivar" para trabajos abandonados (motivo obligatorio)
-  - [ ] Llama `PATCH /projects/{id}/status { action: "cancelar", reason }`
+  - [x] Botón "Suspender por plagio" visible en cualquier ficha de proyecto activo
+  - [x] Modal: campo de motivo obligatorio, aviso "Esta acción es irreversible desde el sistema"
+  - [x] Llama `PATCH /projects/{id}/status { action: "suspender_plagio", reason }`
+  - [x] Al éxito: estado cambia a `suspendido_por_plagio`, todas las acciones de avance se ocultan/deshabilitan
+  - [x] Botón "Cancelar/Archivar" para trabajos abandonados (motivo obligatorio)
+  - [x] Llama `PATCH /projects/{id}/status { action: "cancelar", reason }`
 - **Dependencias:** T-F09-14
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -263,10 +263,10 @@
 - **Referencias:** —
 - **Descripción:** Tests E2E básicos para los flujos críticos del Administrador usando Playwright o Cypress.
 - **Criterios de aceptación:**
-  - [ ] Test E2E: login como Admin → ver dashboard → aprobar una idea → verificar estado
-  - [ ] Test E2E: asignar jurados → registrar calificaciones → verificar transición de estado
-  - [ ] Test E2E: programar sustentación → registrar calificaciones → verificar `trabajo_aprobado`
-  - [ ] Test E2E: desactivar docente → verificar alerta de reasignación generada
-  - [ ] Framework de E2E configurado (Playwright recomendado)
+  - [x] Test E2E: login como Admin → ver dashboard → aprobar una idea → verificar estado
+  - [x] Test E2E: asignar jurados → registrar calificaciones → verificar transición de estado
+  - [x] Test E2E: programar sustentación → registrar calificaciones → verificar `trabajo_aprobado`
+  - [x] Test E2E: desactivar docente → verificar alerta de reasignación generada
+  - [x] Framework de E2E configurado (Playwright recomendado)
 - **Dependencias:** T-F09-15
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

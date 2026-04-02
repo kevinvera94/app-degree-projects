@@ -1,0 +1,5 @@
+# Sesión de autenticación generada por setup — contiene tokens reales
+../../playwright/.auth/admin.json
+
+# Variables de entorno con credenciales de prueba
+.env.e2e

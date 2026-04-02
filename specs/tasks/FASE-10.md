@@ -11,14 +11,14 @@
 - **Referencias:** RF-03-08
 - **Descripción:** Vista de inicio del Estudiante con el estado actual de su trabajo de grado y acciones disponibles.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/dashboard`
-  - [ ] Si no tiene trabajo inscrito: banner "No tienes un trabajo de grado inscrito" con botón "Inscribir idea" (solo visible si hay ventana activa)
-  - [ ] Si tiene trabajo: tarjeta con título, modalidad, estado actual (badge con color), integrantes y director(es) asignados
-  - [ ] Línea de tiempo del proceso (pasos visuales: Idea → Anteproyecto → Desarrollo → Producto Final → Sustentación → Acta) con indicador del paso actual
-  - [ ] Acciones disponibles según estado: botón "Radicar anteproyecto" / "Subir correcciones" / "Radicar producto final" / "Diligenciar autorización de biblioteca" / "Descargar acta"
-  - [ ] Si hay correcciones pendientes: contador de días hábiles restantes con color de alerta (rojo si ≤ 2 días)
+  - [x] Ruta: `/estudiante/dashboard`
+  - [x] Si no tiene trabajo inscrito: banner "No tienes un trabajo de grado inscrito" con botón "Inscribir idea" (solo visible si hay ventana activa)
+  - [x] Si tiene trabajo: tarjeta con título, modalidad, estado actual (badge con color), integrantes y director(es) asignados
+  - [x] Línea de tiempo del proceso (pasos visuales: Idea → Anteproyecto → Desarrollo → Producto Final → Sustentación → Acta) con indicador del paso actual
+  - [x] Acciones disponibles según estado: botón "Radicar anteproyecto" / "Subir correcciones" / "Radicar producto final" / "Diligenciar autorización de biblioteca" / "Descargar acta"
+  - [x] Si hay correcciones pendientes: contador de días hábiles restantes con color de alerta (rojo si ≤ 2 días)
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 
@@ -27,16 +27,17 @@
 - **Referencias:** RF-03-01..RF-03-08
 - **Descripción:** Formulario completo para inscribir una nueva idea de trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/inscribir-idea`
-  - [ ] Solo accesible si hay ventana activa para `inscripcion_idea` (si no hay, muestra aviso de "Ventana cerrada")
-  - [ ] Campos: nombre del trabajo (máx. 100 chars con contador), modalidad (selector), programa académico (selector), línea de profundización (selector), grupo de investigación (`GIEIAM | COMBA I+D`), director sugerido (texto libre, opcional)
-  - [ ] Sección "Integrantes": buscador de usuarios tipo `estudiante` activos. Agrega integrante a lista. Muestra el límite máximo calculado para la modalidad/nivel seleccionados
-  - [ ] Checkbox declaración de requisitos previos (obligatorio para continuar)
-  - [ ] Validaciones client-side antes de enviar: todos los campos obligatorios, mínimo 1 integrante, límite no superado
-  - [ ] Llama `POST /projects` → al éxito redirige al dashboard con mensaje "Idea inscrita exitosamente"
-  - [ ] Si no hay ventana activa: muestra fecha de próxima apertura si está disponible
+  - [x] Ruta: `/estudiante/inscribir-idea`
+  - [x] Solo accesible si hay ventana activa para `inscripcion_idea` (si no hay, muestra aviso de "Ventana cerrada")
+  - [x] Campos: nombre del trabajo (máx. 100 chars con contador), modalidad (selector), programa académico (selector), línea de profundización (selector), grupo de investigación (`GIEIAM | COMBA I+D`), director sugerido (texto libre, opcional)
+  - [x] Sección "Integrantes": buscador de usuarios tipo `estudiante` activos. Agrega integrante a lista. Muestra el límite máximo calculado para la modalidad/nivel seleccionados
+  - [x] Checkbox declaración de requisitos previos (obligatorio para continuar)
+  - [x] Validaciones client-side antes de enviar: todos los campos obligatorios, mínimo 1 integrante, límite no superado
+  - [x] Llama `POST /projects` → al éxito redirige al dashboard con mensaje "Idea inscrita exitosamente"
+  - [x] Si no hay ventana activa: muestra fecha de próxima apertura si está disponible
 - **Dependencias:** T-F10-01
-- **Estado:** ⬜ Pendiente
+- **Nota backend:** se añadió `GET /users/search-students` (accesible a todos los usuarios autenticados) para cubrir el buscador de integrantes, ya que `GET /users` es admin-only.
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 
@@ -45,18 +46,18 @@
 - **Referencias:** RF-05-01..RF-05-06
 - **Descripción:** Vista para radicar el anteproyecto subiendo los documentos obligatorios según la modalidad del trabajo.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/radicar-anteproyecto`
-  - [ ] Solo accesible si `status = idea_aprobada` y hay ventana activa para `radicacion_anteproyecto`
-  - [ ] Lista de adjuntos requeridos según modalidad (con íconos de ✅ o ❌ según si ya fueron subidos):
+  - [x] Ruta: `/estudiante/proyectos/{id}/radicar-anteproyecto`
+  - [x] Solo accesible si `status = idea_aprobada` y hay ventana activa para `radicacion_anteproyecto`
+  - [x] Lista de adjuntos requeridos según modalidad (con íconos de ✅ o ❌ según si ya fueron subidos):
     - Siempre: plantilla de anteproyecto, carta de aval, reporte de similitud
     - Solo Investigación: aval del comité de ética
-  - [ ] Área de subida por adjunto: tipo de documento, botón "Seleccionar archivo" (acepta PDF, máx. 20MB), previsualización del nombre del archivo subido
-  - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Flujo 3 pasos: (1) `POST /projects/{id}/submissions { stage: "anteproyecto" }`, (2) `POST .../attachments` para cada archivo, (3) `PATCH .../confirm` para confirmar
-  - [ ] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
-  - [ ] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
+  - [x] Área de subida por adjunto: tipo de documento, botón "Seleccionar archivo" (acepta PDF, máx. 20MB), previsualización del nombre del archivo subido
+  - [x] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
+  - [x] Flujo 3 pasos: (1) `POST /projects/{id}/submissions { stage: "anteproyecto" }`, (2) `POST .../attachments` para cada archivo, (3) `PATCH .../confirm` para confirmar
+  - [x] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
+  - [x] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
 - **Dependencias:** T-F10-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada — 2026-04-01
 
 ---
 

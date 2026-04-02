@@ -10,8 +10,21 @@ import AdminConfiguracion from "./pages/admin/AdminConfiguracion";
 import AdminProyectos from "./pages/admin/AdminProyectos";
 import AdminProyectoDetalle from "./pages/admin/AdminProyectoDetalle";
 import AdminReportes from "./pages/admin/AdminReportes";
+import AdminMensajes from "./pages/admin/AdminMensajes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
+import DocenteDashboard from "./pages/docente/DocenteDashboard";
+import DocenteProyectoDetalle from "./pages/docente/DocenteProyectoDetalle";
+import DocenteMensajes from "./pages/docente/DocenteMensajes";
+import EstudianteMensajes from "./pages/estudiante/EstudianteMensajes";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
+import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
+import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea";
+import EstudianteRadicarAnteproyecto from "./pages/estudiante/EstudianteRadicarAnteproyecto";
+import EstudianteEvaluaciones from "./pages/estudiante/EstudianteEvaluaciones";
+import EstudianteEntregarCorrecciones from "./pages/estudiante/EstudianteEntregarCorrecciones";
+import EstudianteRadicarProductoFinal from "./pages/estudiante/EstudianteRadicarProductoFinal";
+import EstudianteBiblioteca from "./pages/estudiante/EstudianteBiblioteca";
+import EstudianteHistorial from "./pages/estudiante/EstudianteHistorial";
 
 export default function App() {
   return (
@@ -34,6 +47,7 @@ export default function App() {
                 <Route path="proyectos" element={<AdminProyectos />} />
                 <Route path="proyectos/:id" element={<AdminProyectoDetalle />} />
                 <Route path="reportes" element={<AdminReportes />} />
+                <Route path="mensajes" element={<AdminMensajes />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
@@ -48,8 +62,11 @@ export default function App() {
           <ProtectedRoute role="docente">
             <AppLayout>
               <Routes>
+                <Route path="dashboard" element={<DocenteDashboard />} />
                 <Route path="proyectos" element={<DocenteProyectos />} />
-                <Route index element={<Navigate to="proyectos" replace />} />
+                <Route path="proyectos/:id" element={<DocenteProyectoDetalle />} />
+                <Route path="mensajes" element={<DocenteMensajes />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
           </ProtectedRoute>
@@ -63,8 +80,17 @@ export default function App() {
           <ProtectedRoute role="estudiante">
             <AppLayout>
               <Routes>
+                <Route path="dashboard" element={<EstudianteDashboard />} />
+                <Route path="inscribir-idea" element={<EstudianteInscribirIdea />} />
+                <Route path="proyectos/:id/radicar-anteproyecto" element={<EstudianteRadicarAnteproyecto />} />
+                <Route path="proyectos/:id/evaluaciones" element={<EstudianteEvaluaciones />} />
+                <Route path="proyectos/:id/entregar-correcciones" element={<EstudianteEntregarCorrecciones />} />
+                <Route path="proyectos/:id/radicar-producto-final" element={<EstudianteRadicarProductoFinal />} />
+                <Route path="proyectos/:id/biblioteca" element={<EstudianteBiblioteca />} />
+                <Route path="proyectos/:id/historial" element={<EstudianteHistorial />} />
+                <Route path="mensajes" element={<EstudianteMensajes />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
-                <Route index element={<Navigate to="proyecto" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
           </ProtectedRoute>

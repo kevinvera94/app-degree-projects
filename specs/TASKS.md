@@ -7,9 +7,9 @@
 
 ## Estado actual
 
+**Fase activa:** FASE-10
 **Tarea activa:** —
-**Fase activa:** FASE-09
-**Próxima tarea:** `T-F09-14` — Implementar bandeja de mensajes (vista Admin)
+**Próxima tarea:** `T-F10-04` — (ver FASE-10.md)
 
 ---
 
@@ -126,6 +126,12 @@
 - `T-F09-11` — Implementar flujo de emisión de acta (Admin) — 2026-03-31
 - `T-F09-12` — Implementar reportes para Admin (vistas) — 2026-03-31
 - `T-F09-13` — Implementar retiro de integrante y gestión de integrantes (Admin) — 2026-04-01
+- `T-F09-14` — Implementar bandeja de mensajes (vista Admin) — 2026-04-01
+- `T-F09-15` — Implementar suspensión por plagio y cancelación (Admin) — 2026-04-01
+- `T-F09-16` — Tests E2E básicos: flujos del Administrador — 2026-04-01
+- `T-F10-01` — Implementar dashboard del Estudiante — 2026-04-01
+- `T-F10-02` — Implementar formulario de inscripción de idea (Estudiante) — 2026-04-01
+- `T-F10-03` — Implementar radicación de anteproyecto (Estudiante) — 2026-04-01
 
 ---
 

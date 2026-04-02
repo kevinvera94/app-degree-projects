@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import api from "../../services/api";
 import type { UserRole } from "../../types/auth";
 
 interface NavItem {
@@ -17,11 +19,11 @@ const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: "Mensajes", path: "/admin/mensajes" },
   ],
   docente: [
-    { label: "Mis proyectos", path: "/docente/proyectos" },
+    { label: "Dashboard", path: "/docente/dashboard" },
     { label: "Mensajes", path: "/docente/mensajes" },
   ],
   estudiante: [
-    { label: "Mi proyecto", path: "/estudiante/proyecto" },
+    { label: "Dashboard", path: "/estudiante/dashboard" },
     { label: "Mensajes", path: "/estudiante/mensajes" },
   ],
 };
@@ -29,6 +31,28 @@ const NAV_ITEMS: Record<UserRole, NavItem[]> = {
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+
+    async function fetchCount() {
+      try {
+        const { data } = await api.get<{ unread: number }>("/messages/unread-count");
+        if (!cancelled) setUnreadCount(data.unread);
+      } catch {
+        // silencioso — no interrumpir navegación por fallo de badge
+      }
+    }
+
+    fetchCount();
+    const id = setInterval(fetchCount, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [user]);
 
   if (!user) return null;
 
@@ -53,22 +77,30 @@ export default function Sidebar() {
 
       {/* Navegación */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              [
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
-                isActive
-                  ? "bg-usc-blue text-white font-medium"
-                  : "text-white/70 hover:bg-white/10 hover:text-white",
-              ].join(" ")
-            }
-          >
-            {item.label}
-          </NavLink>
-        ))}
+        {navItems.map((item) => {
+          const isMensajes = item.path.includes("mensajes");
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                [
+                  "flex items-center justify-between gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  isActive
+                    ? "bg-usc-blue text-white font-medium"
+                    : "text-white/70 hover:bg-white/10 hover:text-white",
+                ].join(" ")
+              }
+            >
+              <span>{item.label}</span>
+              {isMensajes && unreadCount > 0 && (
+                <span className="bg-usc-gold text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* Usuario + logout */}

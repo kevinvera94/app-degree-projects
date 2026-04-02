@@ -49,6 +49,12 @@ env/
 dist/
 .pytest_cache/
 
+# Playwright
+frontend/playwright/.auth/
+frontend/playwright-report/
+frontend/test-results/
+frontend/e2e/.env.e2e
+
 # Coverage
 coverage/
 .nyc_output/

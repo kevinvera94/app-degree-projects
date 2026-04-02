@@ -31,7 +31,7 @@ const projectJuradoId = process.env.E2E_PROJECT_JURADO_CALIFICACION_ID ?? "";
 // TEST 1: Docente Jurado registra calificación desde la UI
 // =============================================================================
 test.describe("01 — Jurado registra calificación del anteproyecto", () => {
-  test.beforeEach(async ({}, testInfo) => {
+  test.beforeEach(async (_fixtures, testInfo) => {
     if (!projectJuradoId || !docente1Email) {
       testInfo.skip(
         true,
@@ -99,7 +99,6 @@ test.describe("01 — Jurado registra calificación del anteproyecto", () => {
     // ── Verificar si hay evaluación pendiente vía API ──
     const docenteClient = await apiAs(docente1Email, docente1Password);
 
-    let pendingEvalId = "";
     try {
       const { data: evals } = await docenteClient.get(
         `/projects/${projectJuradoId}/evaluations`
@@ -112,7 +111,6 @@ test.describe("01 — Jurado registra calificación del anteproyecto", () => {
         test.skip(); // Ya fue calificado en una ejecución anterior
         return;
       }
-      pendingEvalId = pending.id;
     } catch {
       test.skip();
       return;
@@ -212,7 +210,7 @@ test.describe("01 — Jurado registra calificación del anteproyecto", () => {
 // TEST 2: Docente Jurado registra calificación fuera del plazo (extemporánea)
 // =============================================================================
 test.describe("02 — Calificación extemporánea del jurado", () => {
-  test.beforeEach(async ({}, testInfo) => {
+  test.beforeEach(async (_fixtures, testInfo) => {
     if (!projectJuradoId || !docente1Email || !adminEmail) {
       testInfo.skip(
         true,
@@ -226,7 +224,6 @@ test.describe("02 — Calificación extemporánea del jurado", () => {
   }) => {
     // ── Obtener estado actual del proyecto vía API ──
     const adminClient = await apiAs(adminEmail, adminPassword);
-    let evalId = "";
 
     try {
       const { data: evals } = await adminClient.get(
@@ -281,7 +278,6 @@ test.describe("02 — Calificación extemporánea del jurado", () => {
 
           // La calificación se registró — verificar que is_extemporaneous es false
           expect(result.is_extemporaneous ?? false).toBe(false);
-          evalId = pending.id;
         } else {
           // La ventana ya expiró — registrar la calificación y verificar que es extemporánea
           const docenteClient = await apiAs(docente1Email, docente1Password);
@@ -295,11 +291,9 @@ test.describe("02 — Calificación extemporánea del jurado", () => {
 
           // El backend debe marcar la evaluación como extemporánea
           expect(result.is_extemporaneous).toBe(true);
-          evalId = pending.id;
         }
       } else {
         // La calificación ya existe — verificar el campo is_extemporaneous
-        evalId = submitted.id;
         // Solo verificamos que el campo existe y es booleano
         expect(typeof submitted.is_extemporaneous).toBe("boolean");
       }

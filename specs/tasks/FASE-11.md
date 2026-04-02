@@ -21,8 +21,8 @@
   - [x] `pytest` y `httpx` instalados (para `TestClient` de FastAPI)
   - [x] `conftest.py` en `backend/tests/` con fixtures: `test_client`, `db_session`, `admin_token`, `docente_token`, `estudiante_token`
   - [x] BD de test separada (AsyncMock para tests unitarios puros; sin BD real requerida)
-  - [x] Comando `pytest` desde `backend/` corre todos los tests y reporta resultados (91 passed)
-  - [ ] Cobertura mínima objetivo: 70% de líneas del backend (actual: 65% — se cierra en T-F11-02)
+  - [x] Comando `pytest` desde `backend/` corre todos los tests y reporta resultados
+  - [x] Cobertura mínima objetivo: 70% de líneas del backend (cerrado en T-F11-02)
   - [x] `pytest.ini` o `pyproject.toml` con configuración de test (directorio, patrones)
 - **Dependencias:** T-F08-11
 - **Estado:** ✅ Completada
@@ -34,12 +34,13 @@
 - **Referencias:** —
 - **Descripción:** Ejecutar la suite completa de tests del backend y corregir los fallos encontrados antes de pasar al deploy.
 - **Criterios de aceptación:**
-  - [ ] `pytest` pasa al 100% (0 fallos, 0 errores)
-  - [ ] Tests cubiertos (de fases anteriores): `test_config.py`, `test_ideas.py`, `test_anteproyecto.py`, `test_producto_final.py`, `test_sustentacion.py`, `test_messaging_reports.py`
-  - [ ] Reporte de cobertura generado con `pytest --cov`
-  - [ ] Cobertura ≥ 70% en servicios de negocio críticos: `business_days.py`, servicios de evaluación, servicios de notificaciones
+  - [x] `pytest` pasa al 100% (129 passed, 0 fallos, 0 errores)
+  - [x] Tests cubiertos (de fases anteriores): `test_config.py`, `test_ideas.py`, `test_anteproyecto.py`, `test_producto_final.py`, `test_sustentacion.py`, `test_messaging_reports.py`
+  - [x] Reporte de cobertura generado con `pytest --cov` (HTML en `backend/htmlcov/`)
+  - [x] Cobertura ≥ 70% en servicios de negocio críticos: `business_days.py` (94%), `evaluation_service.py` (82%), `notifications.py` (100%)
+  - [x] Cobertura total: 70% (2521 stmts, 759 miss) — alcanzada con `test_jurors.py` y `test_catalog.py`
 - **Dependencias:** T-F11-01
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

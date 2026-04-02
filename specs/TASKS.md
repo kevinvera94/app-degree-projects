@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-11
-**Próxima tarea:** `T-F11-02` — Ejecutar y corregir todos los tests del backend (ver FASE-11.md)
+**Próxima tarea:** `T-F11-03` — Configurar entorno de tests E2E (Playwright) (ver FASE-11.md)
 
 ---
 
@@ -143,6 +143,7 @@
 - `T-F10-12` — Implementar mensajería para Estudiante y Docente — 2026-04-01
 - `T-F10-13` — Tests E2E básicos: flujos de Estudiante y Docente — 2026-04-01
 - `T-F11-01` — Configurar entorno de tests del backend (pytest) — 2026-04-02
+- `T-F11-02` — Ejecutar y corregir todos los tests del backend — 2026-04-02
 
 ---
 

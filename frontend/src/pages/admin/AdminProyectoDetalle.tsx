@@ -1631,20 +1631,6 @@ export default function AdminProyectoDetalle() {
     load();
   }, [load]);
 
-  async function handleStatusAction(action: string, reason?: string) {
-    if (!id) return;
-    setActionError("");
-    setActionLoading(true);
-    try {
-      await api.patch(`/projects/${id}/status`, { action, reason });
-      await load();
-    } catch (err) {
-      setActionError(apiError(err));
-    } finally {
-      setActionLoading(false);
-    }
-  }
-
   if (loading) {
     return (
       <div className="p-8">

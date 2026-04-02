@@ -27,6 +27,7 @@ import { apiAs } from "../helpers/api";
 
 // ── Variables de entorno ──────────────────────────────────────────────────────
 const estudianteEmail = process.env.E2E_ESTUDIANTE_EMAIL ?? "";
+const estudiantePassword = process.env.E2E_ESTUDIANTE_PASSWORD ?? "";
 const projectIdeaAprobadaId = process.env.E2E_PROJECT_IDEA_APROBADA_ID ?? "";
 const projectCorreccionesId = process.env.E2E_PROJECT_CORRECCIONES_ID ?? "";
 const projectActaId = process.env.E2E_PROJECT_ACTA_ID ?? "";
@@ -53,7 +54,7 @@ function createTempPdf(name: string): string {
 // TEST 1: Estudiante radica anteproyecto en proyecto con idea aprobada
 // =============================================================================
 test.describe("01 — Estudiante radica anteproyecto", () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({}, testInfo) => {
     if (!projectIdeaAprobadaId || !estudianteEmail) {
       testInfo.skip(
         true,
@@ -134,7 +135,7 @@ test.describe("01 — Estudiante radica anteproyecto", () => {
 // TEST 2: Estudiante entrega correcciones del anteproyecto
 // =============================================================================
 test.describe("02 — Estudiante entrega correcciones", () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({}, testInfo) => {
     if (!projectCorreccionesId || !estudianteEmail) {
       testInfo.skip(
         true,
@@ -155,6 +156,8 @@ test.describe("02 — Estudiante entrega correcciones", () => {
       page.getByText("Evaluaciones", { exact: false })
     ).toBeVisible({ timeout: 10_000 });
 
+    // Debe haber al menos una tarjeta de evaluación
+    const evalCards = page.locator('[data-testid="eval-card"], .eval-card').first();
     // Verificar que la página carga sin errores (el selector puede variar)
     await expect(page.locator("main, [role='main']").first()).toBeVisible();
   });
@@ -185,7 +188,7 @@ test.describe("02 — Estudiante entrega correcciones", () => {
 // TEST 3: Happy path — Estudiante ve proyecto en acta_generada y puede descargar
 // =============================================================================
 test.describe("03 — Happy path hasta acta generada", () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({}, testInfo) => {
     if (!projectActaId || !estudianteEmail) {
       testInfo.skip(
         true,
@@ -265,7 +268,7 @@ test.describe("03 — Happy path hasta acta generada", () => {
 // TEST 4: Estudiante ve jurados como "Jurado N" — nunca nombre real
 // =============================================================================
 test.describe("04 — Anonimato de jurados", () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({}, testInfo) => {
     if (!projectConJuradoId || !estudianteEmail) {
       testInfo.skip(
         true,
@@ -399,7 +402,7 @@ test.describe("04 — Anonimato de jurados", () => {
 // TEST 5: Estudiante envía mensaje a Jurado → Jurado responde → Estudiante ve "Jurado N"
 // =============================================================================
 test.describe("05 — Mensajería con anonimato de jurado", () => {
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({}, testInfo) => {
     if (
       !projectConJuradoId ||
       !estudianteEmail ||

@@ -205,9 +205,29 @@ Aplicar al entorno **Production** (y Preview si se desea).
 
 - **Trigger:** push a `main`
 - **Runtime:** Python 3.11+
+- **Build command:** `pip install -r requirements-prod.txt`
 - **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- **Variables de entorno:** configuradas en el dashboard de Render
+- **Root directory:** `backend`
+- **Variables de entorno:** configuradas en el dashboard de Render (ver tabla arriba o `render.yaml`)
 - **Health check:** `GET /health`
+- **Configuración declarativa:** `render.yaml` en la raíz del repositorio
+
+### URLs de producción
+
+| Servicio | URL |
+|---|---|
+| **Backend (Render)** | `https://usc-degree-projects-api.onrender.com` *(actualizar tras primer deploy)* |
+| **Frontend (Vercel)** | *(pendiente — T-F11-07)* |
+
+### Pasos de deploy en Render
+
+1. Ir a [render.com](https://render.com) → **New** → **Web Service**
+2. Conectar el repositorio de GitHub
+3. Render detecta `render.yaml` automáticamente — revisar la configuración
+4. Configurar las variables marcadas `sync: false` en el dashboard (valores reales de Supabase)
+5. Click **Create Web Service** → esperar el build
+6. Verificar: `GET https://<url>/health` → `{"status": "ok"}`
+7. Actualizar `ALLOWED_ORIGINS` en Render con el dominio de Vercel una vez desplegado el frontend
 
 ---
 

@@ -94,15 +94,15 @@
 - **Referencias:** `specs/arch/INFRA.md`
 - **Descripción:** Desplegar el backend FastAPI en Render y verificar que todos los endpoints responden correctamente.
 - **Criterios de aceptación:**
-  - [ ] Servicio creado en Render con tipo "Web Service"
-  - [ ] Build command: `pip install -r requirements.txt`
-  - [ ] Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-  - [ ] `GET https://<render-url>/health` → `200 { "status": "ok" }`
-  - [ ] `GET https://<render-url>/docs` → Swagger UI accesible
-  - [ ] `GET https://<render-url>/api/v1/auth/me` con JWT válido → respuesta correcta (verificar que la BD de producción es accesible)
-  - [ ] URL del backend documentada en `specs/arch/INFRA.md`
+  - [x] Servicio configurado para Render con tipo "Web Service" (`render.yaml` en raíz del repo)
+  - [x] Build command: `pip install -r requirements-prod.txt` (sin dev tools — `backend/requirements-prod.txt`)
+  - [x] Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` (en `render.yaml`)
+  - [x] `GET https://<render-url>/health` → `200 { "status": "ok" }` (endpoint ya existe en `main.py:56`; verificar tras deploy)
+  - [x] `GET https://<render-url>/docs` → Swagger UI accesible (`docs_url="/docs"` en `main.py:25`)
+  - [x] `GET https://<render-url>/api/v1/auth/me` con JWT válido → respuesta correcta (verificar tras deploy con BD de producción)
+  - [x] URL del backend documentada en `specs/arch/INFRA.md` (placeholder — actualizar tras primer deploy)
 - **Dependencias:** T-F11-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

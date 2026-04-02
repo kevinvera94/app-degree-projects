@@ -1590,10 +1590,6 @@ export default function AdminProyectoDetalle() {
   const [actOpen, setActOpen] = useState(false);
   const [retireMember, setRetireMember] = useState<{ id: string; name: string } | null>(null);
 
-  // Acciones simples
-  const [actionError, setActionError] = useState("");
-  const [actionLoading, setActionLoading] = useState(false);
-
   const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
@@ -1758,8 +1754,7 @@ export default function AdminProyectoDetalle() {
               {!project.plagiarism_suspended && (
                 <button
                   onClick={() => setSuspendPlagioOpen(true)}
-                  disabled={actionLoading}
-                  className="px-3 py-2 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-60"
+                  className="px-3 py-2 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
                 >
                   Suspender por plagio
                 </button>
@@ -1767,8 +1762,7 @@ export default function AdminProyectoDetalle() {
               {project.status !== "cancelado" && (
                 <button
                   onClick={() => setCancelOpen(true)}
-                  disabled={actionLoading}
-                  className="px-3 py-2 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+                  className="px-3 py-2 text-sm border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   Cancelar / Archivar
                 </button>
@@ -1776,11 +1770,6 @@ export default function AdminProyectoDetalle() {
             </div>
           )}
         </div>
-        {actionError && (
-          <p className="mt-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-            {actionError}
-          </p>
-        )}
       </div>
 
       {/* Información general */}

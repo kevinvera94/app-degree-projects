@@ -7,9 +7,9 @@
 
 ## Estado actual
 
-**Fase activa:** FASE-10
 **Tarea activa:** —
-**Próxima tarea:** `T-F10-04` — (ver FASE-10.md)
+**Fase activa:** FASE-11
+**Próxima tarea:** `T-F11-01` — (ver FASE-11.md)
 
 ---
 
@@ -24,9 +24,9 @@
 | FASE-05 | [FASE-05.md](tasks/FASE-05.md) | Backend: Anteproyecto (radicación, evaluación, correcciones) | 10 | ✅ |
 | FASE-06 | [FASE-06.md](tasks/FASE-06.md) | Backend: Producto final y evaluación | 11 | ✅ |
 | FASE-07 | [FASE-07.md](tasks/FASE-07.md) | Backend: Sustentación, acta y plagio | 9 | ✅ |
-| FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | 🔄 |
-| FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ⬜ |
-| FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ⬜ |
+| FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ✅ |
+| FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ✅ |
+| FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ✅ |
 | FASE-11 | [FASE-11.md](tasks/FASE-11.md) | Testing, integración y deploy | 9 | ⬜ |
 
 **Total tareas:** 116
@@ -132,6 +132,16 @@
 - `T-F10-01` — Implementar dashboard del Estudiante — 2026-04-01
 - `T-F10-02` — Implementar formulario de inscripción de idea (Estudiante) — 2026-04-01
 - `T-F10-03` — Implementar radicación de anteproyecto (Estudiante) — 2026-04-01
+- `T-F10-04` — Implementar vista de evaluaciones del anteproyecto (Estudiante) — 2026-04-01
+- `T-F10-05` — Implementar entrega de correcciones (Estudiante) — 2026-04-01
+- `T-F10-06` — Implementar radicación de producto final (Estudiante) — 2026-04-01
+- `T-F10-07` — Implementar autorización de biblioteca y descarga de acta (Estudiante) — 2026-04-01
+- `T-F10-08` — Implementar historial del proyecto (vista Estudiante) — 2026-04-01
+- `T-F10-09` — Implementar dashboard del Docente — 2026-04-01
+- `T-F10-10` — Implementar ficha de proyecto para Docente — 2026-04-01
+- `T-F10-11` — Implementar formulario de calificación del Jurado — 2026-04-01
+- `T-F10-12` — Implementar mensajería para Estudiante y Docente — 2026-04-01
+- `T-F10-13` — Tests E2E básicos: flujos de Estudiante y Docente — 2026-04-01
 
 ---
 

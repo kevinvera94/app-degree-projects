@@ -18,7 +18,7 @@
   - [x] Acciones disponibles según estado: botón "Radicar anteproyecto" / "Subir correcciones" / "Radicar producto final" / "Diligenciar autorización de biblioteca" / "Descargar acta"
   - [x] Si hay correcciones pendientes: contador de días hábiles restantes con color de alerta (rojo si ≤ 2 días)
 - **Dependencias:** T-F09-02
-- **Estado:** ✅ Completada — 2026-04-01
+- **Estado:** ✅ Completada
 
 ---
 
@@ -36,8 +36,7 @@
   - [x] Llama `POST /projects` → al éxito redirige al dashboard con mensaje "Idea inscrita exitosamente"
   - [x] Si no hay ventana activa: muestra fecha de próxima apertura si está disponible
 - **Dependencias:** T-F10-01
-- **Nota backend:** se añadió `GET /users/search-students` (accesible a todos los usuarios autenticados) para cubrir el buscador de integrantes, ya que `GET /users` es admin-only.
-- **Estado:** ✅ Completada — 2026-04-01
+- **Estado:** ✅ Completada
 
 ---
 
@@ -57,7 +56,7 @@
   - [x] El botón "Confirmar radicación" llama `PATCH /projects/{id}/submissions/{subId}/confirm` → al éxito: estado cambia, redirige al dashboard
   - [x] Aviso: "La carta de aval debe indicar explícitamente que el reporte de similitud es ≤ 20%"
 - **Dependencias:** T-F10-02
-- **Estado:** ✅ Completada — 2026-04-01
+- **Estado:** ✅ Completada
 
 ---
 
@@ -66,15 +65,15 @@
 - **Referencias:** RF-06-04, RF-06-05, RF-06-11, RF-16-05
 - **Descripción:** El estudiante puede ver las calificaciones y observaciones de los jurados (anónimas).
 - **Criterios de aceptación:**
-  - [ ] Sección "Evaluaciones" en la ficha del proyecto del estudiante
-  - [ ] Muestra calificaciones recibidas: "Jurado 1: [score]", "Jurado 2: [score]" (sin nombre real)
-  - [ ] Muestra observaciones/recomendaciones de cada jurado
-  - [ ] Si el resultado es "Correcciones solicitadas": muestra el plazo restante en días hábiles
-  - [ ] Si el resultado es "Reprobado": mensaje de orientación sobre el próximo paso
-  - [ ] Si el resultado es "Aprobado": mensaje de felicitación y enlace al estado "En desarrollo"
-  - [ ] Calificaciones de Jurado 3 (si aplica) mostradas de igual forma
+  - [x] Sección "Evaluaciones" en la ficha del proyecto del estudiante
+  - [x] Muestra calificaciones recibidas: "Jurado 1: [score]", "Jurado 2: [score]" (sin nombre real)
+  - [x] Muestra observaciones/recomendaciones de cada jurado
+  - [x] Si el resultado es "Correcciones solicitadas": muestra el plazo restante en días hábiles
+  - [x] Si el resultado es "Reprobado": mensaje de orientación sobre el próximo paso
+  - [x] Si el resultado es "Aprobado": mensaje de felicitación y enlace al estado "En desarrollo"
+  - [x] Calificaciones de Jurado 3 (si aplica) mostradas de igual forma
 - **Dependencias:** T-F10-03
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -83,16 +82,16 @@
 - **Referencias:** RF-07-01..RF-07-06, RF-11-01..RF-11-02
 - **Descripción:** Vista unificada para entregar correcciones de anteproyecto o producto final.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/entregar-correcciones`
-  - [ ] Muestra el tipo de corrección pendiente (anteproyecto o producto final) y el plazo restante
-  - [ ] Si el plazo venció y no hay ventana activa: muestra aviso "El plazo venció. La entrega estará disponible cuando se abra la siguiente ventana de radicación"
-  - [ ] Misma interfaz de subida de documentos que radicación inicial
-  - [ ] Los mismos adjuntos obligatorios de la radicación original son requeridos en la corrección
-  - [ ] Flujo de 3 pasos: (1) `POST /submissions { stage }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
-  - [ ] El `stage` correcto es `"correcciones_anteproyecto"` o `"correcciones_producto_final"` (valores del DATA-MODEL, no enviar `is_correction`)
-  - [ ] Al confirmar: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
+  - [x] Ruta: `/estudiante/proyectos/{id}/entregar-correcciones`
+  - [x] Muestra el tipo de corrección pendiente (anteproyecto o producto final) y el plazo restante
+  - [x] Si el plazo venció y no hay ventana activa: muestra aviso "El plazo venció. La entrega estará disponible cuando se abra la siguiente ventana de radicación"
+  - [x] Misma interfaz de subida de documentos que radicación inicial
+  - [x] Los mismos adjuntos obligatorios de la radicación original son requeridos en la corrección
+  - [x] Flujo de 3 pasos: (1) `POST /submissions { stage }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
+  - [x] El `stage` correcto es `"correcciones_anteproyecto"` o `"correcciones_producto_final"` (valores del DATA-MODEL, no enviar `is_correction`)
+  - [x] Al confirmar: estado cambia a `anteproyecto_corregido_entregado` o `producto_final_corregido_entregado`
 - **Dependencias:** T-F10-04
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -101,16 +100,16 @@
 - **Referencias:** RF-09-01..RF-09-06
 - **Descripción:** Vista para radicar el producto final. Análoga a la del anteproyecto con adjuntos adicionales.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/estudiante/proyectos/{id}/radicar-producto-final`
-  - [ ] Solo accesible si `status = en_desarrollo` y hay ventana activa para `radicacion_producto_final`
-  - [ ] Lista de adjuntos requeridos:
+  - [x] Ruta: `/estudiante/proyectos/{id}/radicar-producto-final`
+  - [x] Solo accesible si `status = en_desarrollo` y hay ventana activa para `radicacion_producto_final`
+  - [x] Lista de adjuntos requeridos:
     - Siempre: plantilla, carta de aval, reporte de similitud
     - Solo Innovación y Emprendimiento: certificación de inscripción del Plan de Negocio
     - Opcional (si vinculado a empresa): carta de impacto (con aviso de que el Admin la validará)
-  - [ ] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
-  - [ ] Flujo 3 pasos: (1) `POST /submissions { stage: "producto_final" }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
+  - [x] Botón "Confirmar radicación" deshabilitado hasta que todos los obligatorios estén subidos
+  - [x] Flujo 3 pasos: (1) `POST /submissions { stage: "producto_final" }`, (2) subir adjuntos, (3) `PATCH /submissions/{id}/confirm`
 - **Dependencias:** T-F10-05
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -119,14 +118,14 @@
 - **Referencias:** RF-13-01, RF-13-05
 - **Descripción:** El estudiante diligencia la autorización de publicación en biblioteca y puede descargar el acta una vez emitida.
 - **Criterios de aceptación:**
-  - [ ] Sección "Acta y biblioteca" visible en dashboard cuando `status = trabajo_aprobado` o `acta_generada`
-  - [ ] Formulario con pregunta clara: "¿Autoriza la publicación de su trabajo en la biblioteca de la USC?" con opciones Sí / No y descripción de implicaciones
-  - [ ] Llama `PATCH /projects/{id}/library-authorization { library_authorization: true|false }` (endpoint dedicado, distinto al `POST /act`)
-  - [ ] Muestra confirmación: "Tu autorización ha sido registrada. El Administrador emitirá el acta pronto."
-  - [ ] Cuando `status = acta_generada` y el acta tiene `act_file_url`: botón "Descargar acta" → `GET /projects/{id}/act` retorna URL firmada → abre en nueva pestaña
-  - [ ] Si el acta no tiene archivo adjunto (`act_file_url = null`): mostrar "El acta fue registrada pero no tiene archivo digital adjunto. Contacta a la secretaría."
+  - [x] Sección "Acta y biblioteca" visible en dashboard cuando `status = trabajo_aprobado` o `acta_generada`
+  - [x] Formulario con pregunta clara: "¿Autoriza la publicación de su trabajo en la biblioteca de la USC?" con opciones Sí / No y descripción de implicaciones
+  - [x] Llama `PATCH /projects/{id}/library-authorization { library_authorization: true|false }` (endpoint dedicado, distinto al `POST /act`)
+  - [x] Muestra confirmación: "Tu autorización ha sido registrada. El Administrador emitirá el acta pronto."
+  - [x] Cuando `status = acta_generada` y el acta tiene `act_file_url`: botón "Descargar acta" → `GET /projects/{id}/act` retorna URL firmada → abre en nueva pestaña
+  - [x] Si el acta no tiene archivo adjunto (`act_file_url = null`): mostrar "El acta fue registrada pero no tiene archivo digital adjunto. Contacta a la secretaría."
 - **Dependencias:** T-F10-06
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -135,13 +134,13 @@
 - **Referencias:** RF-16-05
 - **Descripción:** El estudiante puede ver el historial cronológico de su trabajo de grado.
 - **Criterios de aceptación:**
-  - [ ] Pestaña "Historial" en la ficha del proyecto del estudiante
-  - [ ] Lista de eventos cronológicos: cambios de estado, documentos subidos, calificaciones (anónimas)
-  - [ ] Cada evento muestra fecha, tipo de evento y descripción
-  - [ ] Calificaciones sin identidad de jurado (solo "Jurado 1", "Jurado 2")
-  - [ ] Llama `GET /projects/{id}/history`
+  - [x] Pestaña "Historial" en la ficha del proyecto del estudiante
+  - [x] Lista de eventos cronológicos: cambios de estado, documentos subidos, calificaciones (anónimas)
+  - [x] Cada evento muestra fecha, tipo de evento y descripción
+  - [x] Calificaciones sin identidad de jurado (solo "Jurado 1", "Jurado 2")
+  - [x] Llama `GET /projects/{id}/history`
 - **Dependencias:** T-F10-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -150,13 +149,13 @@
 - **Referencias:** RF-17-06, RF-17-07
 - **Descripción:** Vista de inicio del Docente con sus trabajos asignados como Director y como Jurado.
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/docente/dashboard`
-  - [ ] Sección "Mis trabajos como Director": tabla con título, programa, estado, acciones
-  - [ ] Sección "Mis trabajos como Jurado": tabla con título, programa, estado, calificación pendiente (indicador visual si tiene plazo activo)
-  - [ ] Badge de alerta en trabajos de Jurado con plazo próximo a vencer
-  - [ ] Llama `GET /projects/my`
+  - [x] Ruta: `/docente/dashboard`
+  - [x] Sección "Mis trabajos como Director": tabla con título, programa, estado, acciones
+  - [x] Sección "Mis trabajos como Jurado": tabla con título, programa, estado, calificación pendiente (indicador visual si tiene plazo activo)
+  - [x] Badge de alerta en trabajos de Jurado con plazo próximo a vencer
+  - [x] Llama `GET /projects/my`
 - **Dependencias:** T-F09-02
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -165,13 +164,13 @@
 - **Referencias:** RF-16-06
 - **Descripción:** Vista detallada del proyecto para el Docente, diferenciada según su función (Director o Jurado).
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/docente/proyectos/{id}`
-  - [ ] Información general: título, modalidad, estado, integrantes
-  - [ ] Si es Director: ve los documentos radicados, puede ver la identidad de los jurados (RF-AUTH.md), ve el historial completo
-  - [ ] Si es Jurado: ve el documento de anteproyecto/producto final (URL firmada), formulario de calificación, plazo restante. No ve la calificación del otro jurado hasta haber registrado la suya (o hasta que ambos hayan calificado)
-  - [ ] Llama `GET /projects/{id}` y `GET /projects/{id}/evaluations`
+  - [x] Ruta: `/docente/proyectos/{id}`
+  - [x] Información general: título, modalidad, estado, integrantes
+  - [x] Si es Director: ve los documentos radicados, puede ver la identidad de los jurados (RF-AUTH.md), ve el historial completo
+  - [x] Si es Jurado: ve el documento de anteproyecto/producto final (URL firmada), formulario de calificación, plazo restante. No ve la calificación del otro jurado hasta haber registrado la suya (o hasta que ambos hayan calificado)
+  - [x] Llama `GET /projects/{id}` y `GET /projects/{id}/evaluations`
 - **Dependencias:** T-F10-09
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -180,17 +179,17 @@
 - **Referencias:** RF-06-05, RF-10-03, RF-12-03
 - **Descripción:** Formulario para que el Jurado registre su calificación numérica y observaciones.
 - **Criterios de aceptación:**
-  - [ ] Formulario visible en la ficha del proyecto cuando el Jurado tiene evaluación pendiente
-  - [ ] Campo: calificación numérica (0.0 a 5.0, con decimales, validación client-side)
-  - [ ] Campo: observaciones (texto, obligatorio si `score < 4.0` como buena práctica — no es restricción técnica del sistema)
-  - [ ] Para **segunda revisión** y **Jurado 3**: solo permite calificaciones ≥ 4.0 (Aprobado) o < 3.0 (Reprobado). Si `3.0 <= score < 4.0`: muestra error "En esta etapa solo puede Aprobar (≥ 4.0) o Reprobar (< 3.0)"
-  - [ ] Para **sustentación**: acepta cualquier valor 0.0–5.0 (el sistema promedia)
-  - [ ] Indicador de plazo: "[N] días hábiles restantes" con color de alerta
-  - [ ] Si el plazo venció: aviso en naranja "El plazo ha vencido. Su calificación quedará marcada como extemporánea"
-  - [ ] Llama `POST /projects/{id}/evaluations` o `POST /projects/{id}/sustentation/evaluations`
-  - [ ] Botón "Registrar calificación" con confirmación modal
+  - [x] Formulario visible en la ficha del proyecto cuando el Jurado tiene evaluación pendiente
+  - [x] Campo: calificación numérica (0.0 a 5.0, con decimales, validación client-side)
+  - [x] Campo: observaciones (texto, obligatorio si `score < 4.0` como buena práctica — no es restricción técnica del sistema)
+  - [x] Para **segunda revisión** y **Jurado 3**: solo permite calificaciones ≥ 4.0 (Aprobado) o < 3.0 (Reprobado). Si `3.0 <= score < 4.0`: muestra error "En esta etapa solo puede Aprobar (≥ 4.0) o Reprobar (< 3.0)"
+  - [x] Para **sustentación**: acepta cualquier valor 0.0–5.0 (el sistema promedia)
+  - [x] Indicador de plazo: "[N] días hábiles restantes" con color de alerta
+  - [x] Si el plazo venció: aviso en naranja "El plazo ha vencido. Su calificación quedará marcada como extemporánea"
+  - [x] Llama `POST /projects/{id}/evaluations` o `POST /projects/{id}/sustentation/evaluations`
+  - [x] Botón "Registrar calificación" con confirmación modal
 - **Dependencias:** T-F10-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -199,17 +198,17 @@
 - **Referencias:** RF-15-01..RF-15-09
 - **Descripción:** Vista de bandeja de mensajes y composición de mensajes para Estudiante y Docente.
 - **Criterios de aceptación:**
-  - [ ] Badge de mensajes no leídos en sidebar para Estudiante y Docente
-  - [ ] Ruta: `/estudiante/mensajes` y `/docente/mensajes`
-  - [ ] Lista de conversaciones por proyecto (muestra el último mensaje y si hay no leídos)
-  - [ ] Hilo de mensajes: lista cronológica con remitente (`sender_display`), contenido y fecha
-  - [ ] Jurados mostrados como "Jurado 1" / "Jurado 2" (nunca el nombre real para el Estudiante)
-  - [ ] Formulario de respuesta al pie del hilo
-  - [ ] Estudiante puede iniciar mensaje a Director o Jurado (selector con opciones anónimas para jurados)
-  - [ ] Docente como Director puede enviar mensaje a Estudiante o Admin
-  - [ ] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /projects/{id}/messages/{msgId}/read`)
+  - [x] Badge de mensajes no leídos en sidebar para Estudiante y Docente
+  - [x] Ruta: `/estudiante/mensajes` y `/docente/mensajes`
+  - [x] Lista de conversaciones por proyecto (muestra el último mensaje y si hay no leídos)
+  - [x] Hilo de mensajes: lista cronológica con remitente (`sender_display`), contenido y fecha
+  - [x] Jurados mostrados como "Jurado 1" / "Jurado 2" (nunca el nombre real para el Estudiante)
+  - [x] Formulario de respuesta al pie del hilo
+  - [x] Estudiante puede iniciar mensaje a Director o Jurado (selector con opciones anónimas para jurados)
+  - [x] Docente como Director puede enviar mensaje a Estudiante o Admin
+  - [x] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /projects/{id}/messages/{msgId}/read`)
 - **Dependencias:** T-F10-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -218,11 +217,11 @@
 - **Referencias:** —
 - **Descripción:** Tests E2E básicos para los flujos críticos del Estudiante y el Docente.
 - **Criterios de aceptación:**
-  - [ ] Test E2E: Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto
-  - [ ] Test E2E: Jurado registra calificación → resultado Correcciones → Estudiante entrega correcciones
-  - [ ] Test E2E: Flujo completo hasta Acta generada (happy path)
-  - [ ] Test E2E: Estudiante ve jurados como "Jurado N" (nunca nombre real)
-  - [ ] Test E2E: Estudiante envía mensaje a Jurado → Jurado responde → Estudiante ve "Jurado N" como remitente
-  - [ ] Test E2E: Docente Jurado registra calificación fuera del plazo → marcada como extemporánea
+  - [x] Test E2E: Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto
+  - [x] Test E2E: Jurado registra calificación → resultado Correcciones → Estudiante entrega correcciones
+  - [x] Test E2E: Flujo completo hasta Acta generada (happy path)
+  - [x] Test E2E: Estudiante ve jurados como "Jurado N" (nunca nombre real)
+  - [x] Test E2E: Estudiante envía mensaje a Jurado → Jurado responde → Estudiante ve "Jurado N" como remitente
+  - [x] Test E2E: Docente Jurado registra calificación fuera del plazo → marcada como extemporánea
 - **Dependencias:** T-F10-12, T-F09-16
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

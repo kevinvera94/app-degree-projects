@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-10
-**Próxima tarea:** `T-F10-12` — (ver FASE-10.md)
+**Próxima tarea:** `T-F10-13` — (ver FASE-10.md)
 
 ---
 
@@ -140,6 +140,7 @@
 - `T-F10-09` — Implementar dashboard del Docente — 2026-04-01
 - `T-F10-10` — Implementar ficha de proyecto para Docente — 2026-04-01
 - `T-F10-11` — Implementar formulario de calificación del Jurado — 2026-04-01
+- `T-F10-12` — Implementar mensajería para Estudiante y Docente — 2026-04-01
 
 ---
 

@@ -198,17 +198,17 @@
 - **Referencias:** RF-15-01..RF-15-09
 - **Descripción:** Vista de bandeja de mensajes y composición de mensajes para Estudiante y Docente.
 - **Criterios de aceptación:**
-  - [ ] Badge de mensajes no leídos en sidebar para Estudiante y Docente
-  - [ ] Ruta: `/estudiante/mensajes` y `/docente/mensajes`
-  - [ ] Lista de conversaciones por proyecto (muestra el último mensaje y si hay no leídos)
-  - [ ] Hilo de mensajes: lista cronológica con remitente (`sender_display`), contenido y fecha
-  - [ ] Jurados mostrados como "Jurado 1" / "Jurado 2" (nunca el nombre real para el Estudiante)
-  - [ ] Formulario de respuesta al pie del hilo
-  - [ ] Estudiante puede iniciar mensaje a Director o Jurado (selector con opciones anónimas para jurados)
-  - [ ] Docente como Director puede enviar mensaje a Estudiante o Admin
-  - [ ] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /projects/{id}/messages/{msgId}/read`)
+  - [x] Badge de mensajes no leídos en sidebar para Estudiante y Docente
+  - [x] Ruta: `/estudiante/mensajes` y `/docente/mensajes`
+  - [x] Lista de conversaciones por proyecto (muestra el último mensaje y si hay no leídos)
+  - [x] Hilo de mensajes: lista cronológica con remitente (`sender_display`), contenido y fecha
+  - [x] Jurados mostrados como "Jurado 1" / "Jurado 2" (nunca el nombre real para el Estudiante)
+  - [x] Formulario de respuesta al pie del hilo
+  - [x] Estudiante puede iniciar mensaje a Director o Jurado (selector con opciones anónimas para jurados)
+  - [x] Docente como Director puede enviar mensaje a Estudiante o Admin
+  - [x] Al abrir hilo: marca mensajes no leídos como leídos (`PATCH /projects/{id}/messages/{msgId}/read`)
 - **Dependencias:** T-F10-11
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

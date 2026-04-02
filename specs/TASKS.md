@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-10
-**Próxima tarea:** `T-F10-10` — (ver FASE-10.md)
+**Próxima tarea:** `T-F10-12` — (ver FASE-10.md)
 
 ---
 
@@ -138,6 +138,8 @@
 - `T-F10-07` — Implementar autorización de biblioteca y descarga de acta (Estudiante) — 2026-04-01
 - `T-F10-08` — Implementar historial del proyecto (vista Estudiante) — 2026-04-01
 - `T-F10-09` — Implementar dashboard del Docente — 2026-04-01
+- `T-F10-10` — Implementar ficha de proyecto para Docente — 2026-04-01
+- `T-F10-11` — Implementar formulario de calificación del Jurado — 2026-04-01
 
 ---
 

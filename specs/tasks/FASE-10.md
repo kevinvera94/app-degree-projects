@@ -164,13 +164,13 @@
 - **Referencias:** RF-16-06
 - **Descripción:** Vista detallada del proyecto para el Docente, diferenciada según su función (Director o Jurado).
 - **Criterios de aceptación:**
-  - [ ] Ruta: `/docente/proyectos/{id}`
-  - [ ] Información general: título, modalidad, estado, integrantes
-  - [ ] Si es Director: ve los documentos radicados, puede ver la identidad de los jurados (RF-AUTH.md), ve el historial completo
-  - [ ] Si es Jurado: ve el documento de anteproyecto/producto final (URL firmada), formulario de calificación, plazo restante. No ve la calificación del otro jurado hasta haber registrado la suya (o hasta que ambos hayan calificado)
-  - [ ] Llama `GET /projects/{id}` y `GET /projects/{id}/evaluations`
+  - [x] Ruta: `/docente/proyectos/{id}`
+  - [x] Información general: título, modalidad, estado, integrantes
+  - [x] Si es Director: ve los documentos radicados, puede ver la identidad de los jurados (RF-AUTH.md), ve el historial completo
+  - [x] Si es Jurado: ve el documento de anteproyecto/producto final (URL firmada), formulario de calificación, plazo restante. No ve la calificación del otro jurado hasta haber registrado la suya (o hasta que ambos hayan calificado)
+  - [x] Llama `GET /projects/{id}` y `GET /projects/{id}/evaluations`
 - **Dependencias:** T-F10-09
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 
@@ -179,17 +179,17 @@
 - **Referencias:** RF-06-05, RF-10-03, RF-12-03
 - **Descripción:** Formulario para que el Jurado registre su calificación numérica y observaciones.
 - **Criterios de aceptación:**
-  - [ ] Formulario visible en la ficha del proyecto cuando el Jurado tiene evaluación pendiente
-  - [ ] Campo: calificación numérica (0.0 a 5.0, con decimales, validación client-side)
-  - [ ] Campo: observaciones (texto, obligatorio si `score < 4.0` como buena práctica — no es restricción técnica del sistema)
-  - [ ] Para **segunda revisión** y **Jurado 3**: solo permite calificaciones ≥ 4.0 (Aprobado) o < 3.0 (Reprobado). Si `3.0 <= score < 4.0`: muestra error "En esta etapa solo puede Aprobar (≥ 4.0) o Reprobar (< 3.0)"
-  - [ ] Para **sustentación**: acepta cualquier valor 0.0–5.0 (el sistema promedia)
-  - [ ] Indicador de plazo: "[N] días hábiles restantes" con color de alerta
-  - [ ] Si el plazo venció: aviso en naranja "El plazo ha vencido. Su calificación quedará marcada como extemporánea"
-  - [ ] Llama `POST /projects/{id}/evaluations` o `POST /projects/{id}/sustentation/evaluations`
-  - [ ] Botón "Registrar calificación" con confirmación modal
+  - [x] Formulario visible en la ficha del proyecto cuando el Jurado tiene evaluación pendiente
+  - [x] Campo: calificación numérica (0.0 a 5.0, con decimales, validación client-side)
+  - [x] Campo: observaciones (texto, obligatorio si `score < 4.0` como buena práctica — no es restricción técnica del sistema)
+  - [x] Para **segunda revisión** y **Jurado 3**: solo permite calificaciones ≥ 4.0 (Aprobado) o < 3.0 (Reprobado). Si `3.0 <= score < 4.0`: muestra error "En esta etapa solo puede Aprobar (≥ 4.0) o Reprobar (< 3.0)"
+  - [x] Para **sustentación**: acepta cualquier valor 0.0–5.0 (el sistema promedia)
+  - [x] Indicador de plazo: "[N] días hábiles restantes" con color de alerta
+  - [x] Si el plazo venció: aviso en naranja "El plazo ha vencido. Su calificación quedará marcada como extemporánea"
+  - [x] Llama `POST /projects/{id}/evaluations` o `POST /projects/{id}/sustentation/evaluations`
+  - [x] Botón "Registrar calificación" con confirmación modal
 - **Dependencias:** T-F10-10
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

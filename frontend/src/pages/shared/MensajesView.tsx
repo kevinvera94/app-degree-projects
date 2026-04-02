@@ -10,7 +10,6 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -89,13 +88,11 @@ function apiError(err: unknown): string {
 
 function MessageThread({
   projectId,
-  userId,
   recipients,
   userRole,
   onUnreadChange,
 }: {
   projectId: string;
-  userId: string;
   recipients: Recipient[];
   userRole: "estudiante" | "docente";
   onUnreadChange: () => void;
@@ -198,8 +195,6 @@ function MessageThread({
           </p>
         )}
         {messages.map((msg) => {
-          const isOwn = msg.sender_display === userId; // aproximación — usamos display
-          // Mejor heurística: detectar por nombre del usuario actual
           return (
             <div key={msg.id} className="flex flex-col">
               <div className="flex items-baseline gap-2">
@@ -274,15 +269,11 @@ function MessageThread({
 // ── Componente principal ───────────────────────────────────────────────────
 
 export default function MensajesView({ userRole }: { userRole: "estudiante" | "docente" }) {
-  const { user } = useAuth();
 
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [projectDetail, setProjectDetail] = useState<ProjectDetail | null>(null);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  const [unreadRefresh, setUnreadRefresh] = useState(0);
-
-  const userId = user?.id ?? "";
 
   // Cargar lista de proyectos del usuario
   useEffect(() => {
@@ -336,7 +327,7 @@ export default function MensajesView({ userRole }: { userRole: "estudiante" | "d
   })();
 
   function handleUnreadChange() {
-    setUnreadRefresh((n) => n + 1);
+    // Callback para propagar el cambio de mensajes no leídos al proyecto padre
   }
 
   if (loadingProjects) {
@@ -421,7 +412,6 @@ export default function MensajesView({ userRole }: { userRole: "estudiante" | "d
             <MessageThread
               key={selectedId}
               projectId={selectedId}
-              userId={userId}
               recipients={recipients}
               userRole={userRole}
               onUnreadChange={handleUnreadChange}

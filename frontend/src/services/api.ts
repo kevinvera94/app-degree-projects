@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL as string,
+  baseURL: import.meta.env.VITE_API_BASE_URL as string,
 });
 
 // El token se inyecta desde AuthContext al inicializar la sesión.

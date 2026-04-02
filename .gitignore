@@ -58,6 +58,8 @@ frontend/e2e/.env.e2e
 # Coverage
 coverage/
 .nyc_output/
+backend/.coverage
+backend/htmlcov/
 
 # OS
 Thumbs.db

@@ -1,5 +1,8 @@
-# Sesión de autenticación generada por setup — contiene tokens reales
+# Sesiones de autenticación generadas por setup — contienen tokens reales
+# (también cubiertos por el .gitignore raíz: frontend/playwright/.auth/)
 ../../playwright/.auth/admin.json
+../../playwright/.auth/docente.json
+../../playwright/.auth/estudiante.json
 
 # Variables de entorno con credenciales de prueba
 .env.e2e

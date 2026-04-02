@@ -49,13 +49,13 @@
 - **Referencias:** —
 - **Descripción:** Configurar Playwright para tests E2E contra el entorno de desarrollo local.
 - **Criterios de aceptación:**
-  - [ ] `@playwright/test` instalado en `frontend/`
-  - [ ] `playwright.config.ts` configurado para correr contra `localhost:5173` (backend en `localhost:8000`)
-  - [ ] Fixtures de autenticación por rol: `adminPage`, `docentePage`, `estudiantePage`
-  - [ ] Comando `npx playwright test` desde `frontend/` corre la suite
-  - [ ] CI-ready: tests pueden ejecutarse en modo headless
+  - [x] `@playwright/test` instalado en `frontend/` (v^1.59.0 en devDependencies)
+  - [x] `playwright.config.ts` configurado para correr contra `localhost:5173` (backend en `localhost:8000`)
+  - [x] Fixtures de autenticación por rol: `adminPage`, `docentePage`, `estudiantePage` (`e2e/fixtures.ts`)
+  - [x] Comando `npx playwright test` desde `frontend/` corre la suite (32 tests listados, 0 errores de config)
+  - [x] CI-ready: Playwright corre headless por defecto; `forbidOnly: !!process.env.CI` y `retries: 1` en CI
 - **Dependencias:** T-F10-13
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

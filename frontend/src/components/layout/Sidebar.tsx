@@ -19,7 +19,7 @@ const NAV_ITEMS: Record<UserRole, NavItem[]> = {
     { label: "Mensajes", path: "/admin/mensajes" },
   ],
   docente: [
-    { label: "Mis proyectos", path: "/docente/proyectos" },
+    { label: "Dashboard", path: "/docente/dashboard" },
     { label: "Mensajes", path: "/docente/mensajes" },
   ],
   estudiante: [

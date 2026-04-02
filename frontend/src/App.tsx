@@ -12,6 +12,7 @@ import AdminProyectoDetalle from "./pages/admin/AdminProyectoDetalle";
 import AdminReportes from "./pages/admin/AdminReportes";
 import AdminMensajes from "./pages/admin/AdminMensajes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
+import DocenteDashboard from "./pages/docente/DocenteDashboard";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
 import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea";
@@ -58,8 +59,9 @@ export default function App() {
           <ProtectedRoute role="docente">
             <AppLayout>
               <Routes>
+                <Route path="dashboard" element={<DocenteDashboard />} />
                 <Route path="proyectos" element={<DocenteProyectos />} />
-                <Route index element={<Navigate to="proyectos" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
           </ProtectedRoute>

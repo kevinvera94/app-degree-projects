@@ -14,6 +14,8 @@ import AdminMensajes from "./pages/admin/AdminMensajes";
 import DocenteProyectos from "./pages/docente/DocenteProyectos";
 import DocenteDashboard from "./pages/docente/DocenteDashboard";
 import DocenteProyectoDetalle from "./pages/docente/DocenteProyectoDetalle";
+import DocenteMensajes from "./pages/docente/DocenteMensajes";
+import EstudianteMensajes from "./pages/estudiante/EstudianteMensajes";
 import EstudianteProyecto from "./pages/estudiante/EstudianteProyecto";
 import EstudianteDashboard from "./pages/estudiante/EstudianteDashboard";
 import EstudianteInscribirIdea from "./pages/estudiante/EstudianteInscribirIdea";
@@ -63,6 +65,7 @@ export default function App() {
                 <Route path="dashboard" element={<DocenteDashboard />} />
                 <Route path="proyectos" element={<DocenteProyectos />} />
                 <Route path="proyectos/:id" element={<DocenteProyectoDetalle />} />
+                <Route path="mensajes" element={<DocenteMensajes />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>
             </AppLayout>
@@ -85,6 +88,7 @@ export default function App() {
                 <Route path="proyectos/:id/radicar-producto-final" element={<EstudianteRadicarProductoFinal />} />
                 <Route path="proyectos/:id/biblioteca" element={<EstudianteBiblioteca />} />
                 <Route path="proyectos/:id/historial" element={<EstudianteHistorial />} />
+                <Route path="mensajes" element={<EstudianteMensajes />} />
                 <Route path="proyecto" element={<EstudianteProyecto />} />
                 <Route index element={<Navigate to="dashboard" replace />} />
               </Routes>

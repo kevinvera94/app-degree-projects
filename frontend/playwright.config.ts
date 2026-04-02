@@ -66,7 +66,7 @@ export default defineConfig({
         storageState: ADMIN_AUTH_FILE,
       },
       dependencies: ["setup-admin"],
-      testMatch: "**/specs/0[1-5]-*.spec.ts",
+      testMatch: "**/specs/0[1-58]-*.spec.ts",
     },
 
     /* ── Tests del Estudiante ── */

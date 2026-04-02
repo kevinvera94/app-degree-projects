@@ -300,8 +300,7 @@ test.describe("04 — Anonimato de jurados", () => {
       const { data: docenteData } = await adminClient.get(
         `/users/${jurors[0].docente_id}`
       );
-      realJurorName =
-        `${docenteData.first_name ?? ""} ${docenteData.last_name ?? ""}`.trim();
+      realJurorName = (docenteData.full_name ?? "").trim();
     } catch {
       // Si no se puede obtener el nombre, skip
       test.skip();
@@ -347,8 +346,7 @@ test.describe("04 — Anonimato de jurados", () => {
       const { data: docenteData } = await adminClient.get(
         `/users/${jurors[0].docente_id}`
       );
-      realJurorName =
-        `${docenteData.first_name ?? ""} ${docenteData.last_name ?? ""}`.trim();
+      realJurorName = (docenteData.full_name ?? "").trim();
 
       // Enviar un mensaje como jurado vía API para que haya contenido en el hilo
       const jurado1Client = await apiAs(docente1Email, docente1Password);
@@ -477,8 +475,7 @@ test.describe("05 — Mensajería con anonimato de jurado", () => {
       const { data: docenteData } = await adminClient.get(
         `/users/${jurors[0].docente_id}`
       );
-      const realName =
-        `${docenteData.first_name ?? ""} ${docenteData.last_name ?? ""}`.trim();
+      const realName = (docenteData.full_name ?? "").trim();
       if (realName) {
         expect(pageContent).not.toContain(realName);
       }

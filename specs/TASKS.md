@@ -9,7 +9,7 @@
 
 **Tarea activa:** —
 **Fase activa:** FASE-11
-**Próxima tarea:** `T-F11-04` — Ejecutar y corregir todos los tests E2E (ver FASE-11.md)
+**Próxima tarea:** `T-F11-05` — Preparar variables de entorno de producción (ver FASE-11.md)
 
 ---
 
@@ -145,6 +145,7 @@
 - `T-F11-01` — Configurar entorno de tests del backend (pytest) — 2026-04-02
 - `T-F11-02` — Ejecutar y corregir todos los tests del backend — 2026-04-02
 - `T-F11-03` — Configurar entorno de tests E2E (Playwright) — 2026-04-02
+- `T-F11-04` — Ejecutar y corregir todos los tests E2E — 2026-04-02
 
 ---
 

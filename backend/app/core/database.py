@@ -8,6 +8,8 @@ engine = create_async_engine(
     settings.database_url,
     echo=settings.app_env == "development",
     pool_pre_ping=True,
+    # El transaction pooler de Supabase (puerto 6543) no soporta prepared statements.
+    connect_args={"statement_cache_size": 0},
 )
 
 AsyncSessionLocal = async_sessionmaker(

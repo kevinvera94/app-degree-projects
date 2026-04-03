@@ -31,7 +31,10 @@ async def get_current_user(
         payload = decode_jwt(token)
         user_id: Optional[str] = payload.get("sub")
         email: Optional[str] = payload.get("email")
-        role: Optional[str] = payload.get("role")
+        # Supabase firma JWTs con role="authenticated" (rol Postgres).
+        # El rol de aplicación está en user_metadata.role (establecido al crear el usuario).
+        user_metadata: dict = payload.get("user_metadata") or {}
+        role: Optional[str] = user_metadata.get("role")
         if not user_id or not email or not role:
             raise credentials_exception
     except JWTError:

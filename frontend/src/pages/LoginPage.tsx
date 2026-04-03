@@ -5,8 +5,8 @@ import type { UserRole } from "../types/auth";
 
 const ROLE_HOME: Record<UserRole, string> = {
   administrador: "/admin/dashboard",
-  docente: "/docente/proyectos",
-  estudiante: "/estudiante/proyecto",
+  docente: "/docente/dashboard",
+  estudiante: "/estudiante/dashboard",
 };
 
 export default function LoginPage() {

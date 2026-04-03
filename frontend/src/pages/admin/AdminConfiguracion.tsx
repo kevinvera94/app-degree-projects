@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -236,22 +237,29 @@ function ProgramFormModal({
 function ProgramasTab() {
   const [items, setItems] = useState<AcademicProgram[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [modalProg, setModalProg] = useState<AcademicProgram | "new" | null>(
     null
   );
 
-  const fetch = useCallback(async () => {
+  const fetch = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
+    setFetchError(null);
     try {
-      const res = await api.get<AcademicProgram[]>("/academic-programs");
+      const res = await api.get<AcademicProgram[]>("/academic-programs", { signal });
       setItems(res.data);
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      setFetchError(apiError(err));
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetch();
+    const controller = new AbortController();
+    fetch(controller.signal);
+    return () => controller.abort();
   }, [fetch]);
 
   return (
@@ -264,6 +272,11 @@ function ProgramasTab() {
           + Nuevo programa
         </button>
       </div>
+      {fetchError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {fetchError}
+        </p>
+      )}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
           <p className="p-5 text-sm text-gray-500">Cargando...</p>
@@ -310,7 +323,7 @@ function ProgramasTab() {
           onClose={() => setModalProg(null)}
           onSaved={() => {
             setModalProg(null);
-            fetch();
+            fetch(); // sin signal: el usuario sigue en el tab
           }}
         />
       )}
@@ -515,20 +528,26 @@ function ModalityLimitsRow({ modality }: { modality: Modality }) {
   const [limitValue, setLimitValue] = useState(1);
   const [savingLevel, setSavingLevel] = useState<string | null>(null);
 
-  const fetchLimits = useCallback(async () => {
+  const fetchLimits = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
     try {
       const res = await api.get<ModalityLimit[]>(
-        `/modalities/${modality.id}/limits`
+        `/modalities/${modality.id}/limits`,
+        { signal }
       );
       setLimits(res.data);
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      // error silencioso: la fila simplemente no mostrará límites
     } finally {
       setLoading(false);
     }
   }, [modality.id]);
 
   useEffect(() => {
-    fetchLimits();
+    const controller = new AbortController();
+    fetchLimits(controller.signal);
+    return () => controller.abort();
   }, [fetchLimits]);
 
   async function handleUpsert(level: string, value: number) {
@@ -656,21 +675,28 @@ function ModalityLimitsRow({ modality }: { modality: Modality }) {
 function ModalidadesTab() {
   const [items, setItems] = useState<Modality[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [modalMod, setModalMod] = useState<Modality | "new" | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
+  const fetch = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
+    setFetchError(null);
     try {
-      const res = await api.get<Modality[]>("/modalities");
+      const res = await api.get<Modality[]>("/modalities", { signal });
       setItems(res.data);
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      setFetchError(apiError(err));
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetch();
+    const controller = new AbortController();
+    fetch(controller.signal);
+    return () => controller.abort();
   }, [fetch]);
 
   return (
@@ -683,6 +709,11 @@ function ModalidadesTab() {
           + Nueva modalidad
         </button>
       </div>
+      {fetchError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {fetchError}
+        </p>
+      )}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
           <p className="p-5 text-sm text-gray-500">Cargando...</p>
@@ -915,22 +946,29 @@ function VentanaFormModal({
 function VentanasTab() {
   const [items, setItems] = useState<DateWindow[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [modal, setModal] = useState<DateWindow | "new" | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
+  const fetch = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
+    setFetchError(null);
     try {
-      const res = await api.get<DateWindow[]>("/date-windows");
+      const res = await api.get<DateWindow[]>("/date-windows", { signal });
       setItems(res.data);
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      setFetchError(apiError(err));
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetch();
+    const controller = new AbortController();
+    fetch(controller.signal);
+    return () => controller.abort();
   }, [fetch]);
 
   async function handleDelete(id: string) {
@@ -965,6 +1003,11 @@ function VentanasTab() {
         </button>
       </div>
 
+      {fetchError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {fetchError}
+        </p>
+      )}
       {deleteError && (
         <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
           {deleteError}

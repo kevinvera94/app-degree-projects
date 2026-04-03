@@ -180,7 +180,7 @@ async def get_pending_review(
                             SELECT h.changed_at
                             FROM public.project_status_history h
                             WHERE h.project_id = p.id
-                              AND h.new_status = p.status
+                              AND h.new_status = p.status::text
                             ORDER BY h.changed_at DESC
                             LIMIT 1
                         )
@@ -188,7 +188,7 @@ async def get_pending_review(
                     0
                 ) AS days_elapsed
             FROM public.thesis_projects p
-            WHERE p.status IN (
+            WHERE p.status::text IN (
                 'anteproyecto_pendiente_evaluacion',
                 'producto_final_entregado',
                 'en_revision_jurados_producto_final'
@@ -232,12 +232,12 @@ async def get_pending_corrections(
                     SELECT h.changed_at
                     FROM public.project_status_history h
                     WHERE h.project_id = p.id
-                      AND h.new_status = p.status
+                      AND h.new_status = p.status::text
                     ORDER BY h.changed_at DESC
                     LIMIT 1
                 ) AS correction_requested_at
             FROM public.thesis_projects p
-            WHERE p.status IN (
+            WHERE p.status::text IN (
                 'correcciones_anteproyecto_solicitadas',
                 'correcciones_producto_final_solicitadas'
             )

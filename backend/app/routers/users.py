@@ -12,6 +12,7 @@ from app.core.supabase_client import get_supabase_admin
 from app.services.notifications import send_system_message
 from app.schemas.user import (
     DeactivateUserResponse,
+    DocenteSearchResult,
     PaginatedUsersResponse,
     StudentSearchResult,
     UserCreate,
@@ -131,6 +132,29 @@ async def search_students(
         {"q": f"%{q}%"},
     )
     return [StudentSearchResult(**row) for row in result.mappings()]
+
+
+@router.get("/search-docentes", response_model=list[DocenteSearchResult])
+async def search_docentes(
+    q: str = Query(..., min_length=2, max_length=100),
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> list[DocenteSearchResult]:
+    """
+    Busca docentes activos por nombre o email (coincidencia parcial).
+    Solo accesible para administradores. Usado en modales de asignación
+    de directores y jurados.
+    """
+    result = await db.execute(
+        text(
+            "SELECT id, full_name, email FROM public.users"
+            " WHERE role = 'docente' AND is_active = true"
+            " AND (full_name ILIKE :q OR email ILIKE :q)"
+            " ORDER BY full_name ASC LIMIT 20"
+        ),
+        {"q": f"%{q}%"},
+    )
+    return [DocenteSearchResult(**row) for row in result.mappings()]
 
 
 @router.get("/{user_id}", response_model=UserResponse)

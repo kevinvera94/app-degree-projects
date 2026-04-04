@@ -114,6 +114,21 @@ class StudentSearchResult(BaseModel):
     email: str
 
 
+class DocenteSearchResult(BaseModel):
+    """Resultado mínimo para el buscador de docentes activos.
+    Usado en modales de asignación de directores y jurados."""
+
+    model_config = ConfigDict(json_schema_extra={"example": {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "full_name": "Carlos Rodríguez Gómez",
+        "email": "carlos.rodriguez@usc.edu.co",
+    }})
+
+    id: UUID
+    full_name: str
+    email: str
+
+
 class DeactivateUserResponse(BaseModel):
     model_config = ConfigDict(json_schema_extra={"example": {
         "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",

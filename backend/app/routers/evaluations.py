@@ -227,7 +227,7 @@ async def submit_evaluation(
     # Actualizar el registro de evaluations
     updated = await db.execute(
         text(
-            f"UPDATE public.evaluations"
+            f"UPDATE public.evaluations AS e"
             f" SET score = :score, observations = :obs,"
             f"     submitted_at = :submitted_at, is_extemporaneous = :is_ext"
             f" WHERE id = :eid"

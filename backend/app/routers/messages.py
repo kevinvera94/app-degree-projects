@@ -210,24 +210,47 @@ async def list_messages(
     db: AsyncSession = Depends(get_db),
 ) -> List[MessageResponse]:
     """
-    Retorna todos los mensajes del trabajo de grado, ordenados por sent_at DESC.
+    Retorna los mensajes del trabajo de grado visibles para el usuario actual.
     Requiere pertenencia activa (Admin, Director, Jurado o Estudiante del proyecto).
-    El campo sender_display ya incorpora el anonimato del jurado desde el momento
-    en que se guardó el mensaje.
+
+    Reglas de visibilidad:
+      - Administrador → ve todos los mensajes (monitoreo)
+      - Estudiante    → ve mensajes dirigidos a él + broadcasts (recipient_id IS NULL)
+      - Docente       → ve solo mensajes dirigidos a él específicamente
     """
     await _check_membership_and_get_role(project_id, current_user, db)
 
-    result = await db.execute(
-        text(
-            """
+    if current_user.role == "administrador":
+        # Admin ve toda la bandeja del proyecto
+        sql = """
             SELECT id, sender_display, content, is_read, sent_at
             FROM public.messages
             WHERE project_id = :pid
             ORDER BY sent_at DESC
-            """
-        ),
-        {"pid": project_id},
-    )
+        """
+        params: dict = {"pid": project_id}
+    elif current_user.role == "estudiante":
+        # Estudiante ve mensajes dirigidos a él y broadcasts del sistema
+        sql = """
+            SELECT id, sender_display, content, is_read, sent_at
+            FROM public.messages
+            WHERE project_id = :pid
+              AND (recipient_id = :uid OR recipient_id IS NULL)
+            ORDER BY sent_at DESC
+        """
+        params = {"pid": project_id, "uid": current_user.id}
+    else:
+        # Docente (director o jurado) ve solo mensajes dirigidos a él
+        sql = """
+            SELECT id, sender_display, content, is_read, sent_at
+            FROM public.messages
+            WHERE project_id = :pid
+              AND recipient_id = :uid
+            ORDER BY sent_at DESC
+        """
+        params = {"pid": project_id, "uid": current_user.id}
+
+    result = await db.execute(text(sql), params)
     rows = list(result.mappings())
     return [MessageResponse(**row) for row in rows]
 

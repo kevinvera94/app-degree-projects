@@ -53,6 +53,7 @@ CREATE TABLE public.project_jurors (
     assigned_by         UUID REFERENCES public.users(id),
     assigned_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
     is_active           BOOLEAN NOT NULL DEFAULT true,
-    replaced_docente_id UUID REFERENCES public.users(id),
-    UNIQUE (project_id, juror_number, stage)
+    replaced_docente_id UUID REFERENCES public.users(id)
+    -- Nota: la unicidad se garantiza con índice parcial (ver 013_fix_project_jurors_partial_unique.sql)
+    -- UNIQUE (project_id, juror_number, stage) WHERE is_active = true
 );

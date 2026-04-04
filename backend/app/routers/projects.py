@@ -536,16 +536,16 @@ async def update_project_status(
         # Verificar que existe al menos un director activo asignado
         dir_result = await db.execute(
             text(
-                "SELECT pd.id, pd.docente_id, u.full_name"
+                "SELECT pd.docente_id, u.full_name, pd.order"
                 " FROM public.project_directors pd"
                 " JOIN public.users u ON u.id = pd.docente_id"
                 " WHERE pd.project_id = :pid AND pd.is_active = true"
-                " ORDER BY pd.order LIMIT 1"
+                " ORDER BY pd.order"
             ),
             {"pid": project_id},
         )
-        director = dir_result.mappings().first()
-        if director is None:
+        directors = dir_result.mappings().all()
+        if not directors:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Debe asignar al menos un director antes de aprobar la idea",
@@ -581,17 +581,21 @@ async def update_project_status(
             },
         )
 
-        # Mensaje a todos los integrantes
+        # Broadcast a todos los integrantes — menciona todos los directores asignados
+        director_names = " / ".join(d["full_name"] for d in directors)
         await send_system_message(
             db, project_id, current_user.id, None,
-            f"Tu idea ha sido aprobada. Director asignado: {director['full_name']}",
+            f"Tu idea ha sido aprobada. Director(es) asignado(s): {director_names}",
         )
 
-        # Mensaje al docente director
-        await send_system_message(
-            db, project_id, current_user.id, director["docente_id"],
-            f"Has sido asignado como director del trabajo '{project['title']}'",
-        )
+        # Mensaje individual a cada director (principal y co-director si existe)
+        role_labels = {1: "director", 2: "co-director"}
+        for d in directors:
+            role = role_labels.get(d["order"], "director")
+            await send_system_message(
+                db, project_id, current_user.id, d["docente_id"],
+                f"Has sido asignado como {role} del trabajo '{project['title']}'",
+            )
 
         await db.commit()
         return ProjectResponse(**updated_row)

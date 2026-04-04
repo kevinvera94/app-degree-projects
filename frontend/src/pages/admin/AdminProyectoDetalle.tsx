@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import DocenteSearchInput from "../../components/DocenteSearchInput";
 import api from "../../services/api";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
@@ -354,37 +355,13 @@ function AssignJurorsModal({
   const suggested1 = suggestedJurors.find((j) => j.juror_number === 1);
   const suggested2 = suggestedJurors.find((j) => j.juror_number === 2);
 
-  const [docentes, setDocentes] = useState<Docente[]>([]);
   const [juror1, setJuror1] = useState(suggested1?.docente_id ?? "");
   const [juror2, setJuror2] = useState(suggested2?.docente_id ?? "");
-  const [search1, setSearch1] = useState("");
-  const [search2, setSearch2] = useState("");
-  const [loadingDocentes, setLoadingDocentes] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const stageLabel = stage === "anteproyecto" ? "Anteproyecto" : "Producto final";
   const isProductoFinal = stage === "producto_final";
-
-  useEffect(() => {
-    api
-      .get<{ items: Docente[] }>("/users", {
-        params: { role: "docente", is_active: "true", size: 200 },
-      })
-      .then((res) => setDocentes(res.data.items))
-      .finally(() => setLoadingDocentes(false));
-  }, []);
-
-  const filtered1 = docentes.filter(
-    (d) =>
-      d.id !== juror2 &&
-      (search1 === "" || d.full_name.toLowerCase().includes(search1.toLowerCase()))
-  );
-  const filtered2 = docentes.filter(
-    (d) =>
-      d.id !== juror1 &&
-      (search2 === "" || d.full_name.toLowerCase().includes(search2.toLowerCase()))
-  );
 
   const changed1 = isProductoFinal && suggested1 && juror1 !== suggested1.docente_id;
   const changed2 = isProductoFinal && suggested2 && juror2 !== suggested2.docente_id;
@@ -420,65 +397,6 @@ function AssignJurorsModal({
     }
   }
 
-  function DocenteSelect({
-    label,
-    value,
-    onChange,
-    search,
-    onSearch,
-    filtered,
-    suggested,
-    changed,
-  }: {
-    label: string;
-    value: string;
-    onChange: (v: string) => void;
-    search: string;
-    onSearch: (v: string) => void;
-    filtered: Docente[];
-    suggested?: { docente_id: string; full_name: string };
-    changed?: boolean;
-  }) {
-    return (
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {label} <span className="text-red-500">*</span>
-        </label>
-        {suggested && (
-          <p className="text-xs text-blue-600 mb-1">
-            Sugerido: <strong>{suggested.full_name}</strong>
-          </p>
-        )}
-        <input
-          type="text"
-          placeholder="Buscar por nombre..."
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-          className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-        />
-        <select
-          size={5}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-        >
-          <option value="">— Seleccionar —</option>
-          {filtered.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.full_name}
-              {isProductoFinal && suggested?.docente_id === d.id ? " ★ Sugerido" : ""}
-            </option>
-          ))}
-        </select>
-        {changed && (
-          <p className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded px-2 py-1 mt-1">
-            Se registrará el cambio respecto al jurado del anteproyecto para trazabilidad.
-          </p>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
@@ -489,55 +407,49 @@ function AssignJurorsModal({
           Selecciona Jurado 1 y Jurado 2 para esta etapa.
         </p>
 
-        {loadingDocentes ? (
-          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <DocenteSelect
-              label="Jurado 1"
-              value={juror1}
-              onChange={setJuror1}
-              search={search1}
-              onSearch={setSearch1}
-              filtered={filtered1}
-              suggested={suggested1}
-              changed={changed1 || false}
-            />
-            <DocenteSelect
-              label="Jurado 2"
-              value={juror2}
-              onChange={setJuror2}
-              search={search2}
-              onSearch={setSearch2}
-              filtered={filtered2}
-              suggested={suggested2}
-              changed={changed2 || false}
-            />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <DocenteSearchInput
+            label="Jurado 1"
+            required
+            value={juror1}
+            onChange={(id) => setJuror1(id)}
+            excludeIds={juror2 ? [juror2] : []}
+            suggested={suggested1 ? { id: suggested1.docente_id, full_name: suggested1.full_name } : undefined}
+            changedWarning={changed1 || false}
+          />
+          <DocenteSearchInput
+            label="Jurado 2"
+            required
+            value={juror2}
+            onChange={(id) => setJuror2(id)}
+            excludeIds={juror1 ? [juror1] : []}
+            suggested={suggested2 ? { id: suggested2.docente_id, full_name: suggested2.full_name } : undefined}
+            changedWarning={changed2 || false}
+          />
 
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
 
-            <div className="flex justify-end gap-3 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
-              >
-                {loading ? "Asignando..." : "Asignar jurados"}
-              </button>
-            </div>
-          </form>
-        )}
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+            >
+              {loading ? "Asignando..." : "Asignar jurados"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -556,25 +468,9 @@ function AssignJuror3Modal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [docentes, setDocentes] = useState<Docente[]>([]);
   const [juror3, setJuror3] = useState("");
-  const [search, setSearch] = useState("");
-  const [loadingDocentes, setLoadingDocentes] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    api
-      .get<{ items: Docente[] }>("/users", {
-        params: { role: "docente", is_active: "true", size: 200 },
-      })
-      .then((res) => setDocentes(res.data.items))
-      .finally(() => setLoadingDocentes(false));
-  }, []);
-
-  const filtered = docentes.filter(
-    (d) => search === "" || d.full_name.toLowerCase().includes(search.toLowerCase())
-  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -610,60 +506,37 @@ function AssignJuror3Modal({
           </p>
         </div>
 
-        {loadingDocentes ? (
-          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Jurado 3 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Buscar por nombre..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              />
-              <select
-                size={5}
-                value={juror3}
-                onChange={(e) => setJuror3(e.target.value)}
-                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              >
-                <option value="">— Seleccionar —</option>
-                {filtered.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.full_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DocenteSearchInput
+            label="Jurado 3"
+            required
+            value={juror3}
+            onChange={(id) => setJuror3(id)}
+          />
 
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
 
-            <div className="flex justify-end gap-3 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
-              >
-                {loading ? "Asignando..." : "Asignar Jurado 3"}
-              </button>
-            </div>
-          </form>
-        )}
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+            >
+              {loading ? "Asignando..." : "Asignar Jurado 3"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -680,37 +553,13 @@ function ScheduleSustentationModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [docentes, setDocentes] = useState<Docente[]>([]);
   const [juror1, setJuror1] = useState("");
   const [juror2, setJuror2] = useState("");
-  const [search1, setSearch1] = useState("");
-  const [search2, setSearch2] = useState("");
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
   const [location, setLocation] = useState("");
-  const [loadingDocentes, setLoadingDocentes] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    api
-      .get<{ items: Docente[] }>("/users", {
-        params: { role: "docente", is_active: "true", size: 200 },
-      })
-      .then((res) => setDocentes(res.data.items))
-      .finally(() => setLoadingDocentes(false));
-  }, []);
-
-  const filtered1 = docentes.filter(
-    (d) =>
-      d.id !== juror2 &&
-      (search1 === "" || d.full_name.toLowerCase().includes(search1.toLowerCase()))
-  );
-  const filtered2 = docentes.filter(
-    (d) =>
-      d.id !== juror1 &&
-      (search2 === "" || d.full_name.toLowerCase().includes(search2.toLowerCase()))
-  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -764,131 +613,88 @@ function ScheduleSustentationModal({
           La sustentación no cuenta con Jurado 3. Solo se asignan J1 y J2.
         </p>
 
-        {loadingDocentes ? (
-          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Jurado 1 */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <DocenteSearchInput
+            label="Jurado 1"
+            required
+            value={juror1}
+            onChange={(id) => setJuror1(id)}
+            excludeIds={juror2 ? [juror2] : []}
+          />
+          <DocenteSearchInput
+            label="Jurado 2"
+            required
+            value={juror2}
+            onChange={(id) => setJuror2(id)}
+            excludeIds={juror1 ? [juror1] : []}
+          />
+
+          {/* Fecha y hora */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Jurado 1 <span className="text-red-500">*</span>
+                Fecha <span className="text-red-500">*</span>
               </label>
               <input
-                type="text"
-                placeholder="Buscar por nombre..."
-                value={search1}
-                onChange={(e) => setSearch1(e.target.value)}
-                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              />
-              <select
-                size={4}
-                value={juror1}
-                onChange={(e) => setJuror1(e.target.value)}
-                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              >
-                <option value="">— Seleccionar —</option>
-                {filtered1.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.full_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Jurado 2 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Jurado 2 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Buscar por nombre..."
-                value={search2}
-                onChange={(e) => setSearch2(e.target.value)}
-                className="w-full border border-gray-200 rounded-t-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              />
-              <select
-                size={4}
-                value={juror2}
-                onChange={(e) => setJuror2(e.target.value)}
-                className="w-full border border-l-gray-200 border-r-gray-200 border-b-gray-200 rounded-b-lg px-1 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              >
-                <option value="">— Seleccionar —</option>
-                {filtered2.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.full_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Fecha y hora */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fecha <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Hora <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="time"
-                  required
-                  value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-                />
-              </div>
-            </div>
-
-            {/* Lugar */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Lugar <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
+                type="date"
                 required
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Ej. Sala de conferencias B, Edificio de Ingenierías"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
               />
             </div>
-
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
-
-            <div className="flex justify-end gap-3 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
-              >
-                {loading ? "Registrando..." : "Programar sustentación"}
-              </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Hora <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="time"
+                required
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+              />
             </div>
-          </form>
-        )}
+          </div>
+
+          {/* Lugar */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Lugar <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Ej. Sala de conferencias B, Edificio de Ingenierías"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm bg-usc-blue text-white rounded-lg hover:bg-usc-navy disabled:opacity-60"
+            >
+              {loading ? "Registrando..." : "Programar sustentación"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -1021,12 +827,6 @@ function EmitActModal({
 
 // ── Modal: Aprobar idea ────────────────────────────────────────────────────
 
-interface Docente {
-  id: string;
-  full_name: string;
-  email: string;
-}
-
 function ApproveIdeaModal({
   projectId,
   onClose,
@@ -1036,21 +836,10 @@ function ApproveIdeaModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [docentes, setDocentes] = useState<Docente[]>([]);
   const [director1, setDirector1] = useState("");
   const [director2, setDirector2] = useState("");
-  const [loadingDocentes, setLoadingDocentes] = useState(true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    api
-      .get<{ items: Docente[] }>("/users", {
-        params: { role: "docente", is_active: "true", size: 200 },
-      })
-      .then((res) => setDocentes(res.data.items))
-      .finally(() => setLoadingDocentes(false));
-  }, []);
 
   async function handleConfirm(e: React.FormEvent) {
     e.preventDefault();
@@ -1094,73 +883,46 @@ function ApproveIdeaModal({
           Selecciona el director principal (obligatorio) y opcionalmente un co-director.
         </p>
 
-        {loadingDocentes ? (
-          <p className="text-sm text-gray-400 py-4">Cargando docentes...</p>
-        ) : (
-          <form onSubmit={handleConfirm} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Director principal <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={director1}
-                onChange={(e) => setDirector1(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              >
-                <option value="">— Seleccionar docente —</option>
-                {docentes.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.full_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <form onSubmit={handleConfirm} className="space-y-4">
+          <DocenteSearchInput
+            label="Director principal"
+            required
+            value={director1}
+            onChange={(id) => setDirector1(id)}
+            excludeIds={director2 ? [director2] : []}
+          />
+          <DocenteSearchInput
+            label="Co-director"
+            optional
+            value={director2}
+            onChange={(id) => setDirector2(id)}
+            excludeIds={director1 ? [director1] : []}
+            placeholder="Buscar co-director por nombre o email…"
+          />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Co-director{" "}
-                <span className="text-gray-400 font-normal">(opcional)</span>
-              </label>
-              <select
-                value={director2}
-                onChange={(e) => setDirector2(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-usc-blue"
-              >
-                <option value="">— Sin co-director —</option>
-                {docentes
-                  .filter((d) => d.id !== director1)
-                  .map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.full_name}
-                    </option>
-                  ))}
-              </select>
-            </div>
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
 
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
-
-            <div className="flex justify-end gap-3 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60"
-              >
-                {loading ? "Aprobando..." : "Confirmar aprobación"}
-              </button>
-            </div>
-          </form>
-        )}
+          <div className="flex justify-end gap-3 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-60"
+            >
+              {loading ? "Aprobando..." : "Confirmar aprobación"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

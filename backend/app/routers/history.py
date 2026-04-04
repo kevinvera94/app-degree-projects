@@ -276,7 +276,7 @@ async def get_project_history(
                     u.full_name AS juror_name
                 FROM public.evaluations e
                 JOIN public.users u ON u.id = e.juror_id
-                WHERE e.project_id = :pid
+                WHERE e.project_id = :pid AND e.score IS NOT NULL
                 ORDER BY e.submitted_at ASC
                 """
             ),
@@ -293,7 +293,7 @@ async def get_project_history(
                     submitted_at,
                     is_extemporaneous
                 FROM public.evaluations
-                WHERE project_id = :pid
+                WHERE project_id = :pid AND score IS NOT NULL
                 ORDER BY submitted_at ASC
                 """
             ),

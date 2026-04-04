@@ -211,6 +211,20 @@ async def assign_juror(
             detail="El usuario no existe, no es docente o está inactivo",
         )
 
+    # No permitir asignar como jurado a un docente que ya es director activo del proyecto
+    director_check = await db.execute(
+        text(
+            "SELECT id FROM public.project_directors"
+            " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+        ),
+        {"pid": project_id, "uid": body.user_id},
+    )
+    if director_check.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Este docente ya es director activo de este proyecto y no puede ser jurado",
+        )
+
     # No permitir asignar el mismo docente como J1 y J2 (ambos activos)
     cross_check = await db.execute(
         text(

@@ -813,6 +813,20 @@ async def assign_director(
             detail="El docente ya está asignado como director de este proyecto",
         )
 
+    # No asignar como director a un docente que ya es jurado activo del mismo proyecto
+    juror_check = await db.execute(
+        text(
+            "SELECT id FROM public.project_jurors"
+            " WHERE project_id = :pid AND docente_id = :uid AND is_active = true"
+        ),
+        {"pid": project_id, "uid": body.user_id},
+    )
+    if juror_check.mappings().first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Este docente ya es jurado activo de este proyecto y no puede ser director",
+        )
+
     result = await db.execute(
         text(
             "INSERT INTO public.project_directors"

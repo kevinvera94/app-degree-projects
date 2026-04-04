@@ -502,7 +502,7 @@ export default function DocenteProyectoDetalle() {
       if (isDir && proj.submissions.length > 0) {
         const details = await Promise.all(
           proj.submissions
-            .filter((s) => s.status === "confirmada")
+            .filter((s) => s.status === "en_revision")
             .map((s) =>
               api
                 .get<SubmissionDetail>(`/projects/${proj.id}/submissions/${s.id}`)
@@ -782,34 +782,27 @@ export default function DocenteProyectoDetalle() {
             Documento a evaluar — {STAGE_LABELS[activeEvalStage] ?? activeEvalStage}
           </h2>
 
-          {/* Buscar submission confirmada para el stage activo */}
+          {/* Buscar submission en revisión para el stage activo */}
           {(() => {
             const relevantSub = project.submissions
               .filter(
-                (s) => s.stage === activeEvalStage && s.status === "confirmada",
+                (s) => s.stage === activeEvalStage && s.status === "en_revision",
               )
               .sort((a, b) => b.revision_number - a.revision_number)[0];
 
             if (!relevantSub) {
               return (
                 <p className="text-sm text-gray-400 italic">
-                  No hay documento confirmado para esta etapa.
+                  No hay documento en revisión para esta etapa.
                 </p>
               );
             }
 
             return (
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                <SubmissionDocumentLoader
-                  projectId={project.id}
-                  submissionId={relevantSub.id}
-                />
-              </div>
+              <SubmissionDocumentLoader
+                projectId={project.id}
+                submissionId={relevantSub.id}
+              />
             );
           })()}
         </div>
@@ -925,7 +918,7 @@ export default function DocenteProyectoDetalle() {
   );
 }
 
-// ── Subcomponente: carga de documento principal de una submission ──────────
+// ── Subcomponente: carga todos los adjuntos de una submission ─────────────
 
 function SubmissionDocumentLoader({
   projectId,
@@ -949,22 +942,33 @@ function SubmissionDocumentLoader({
       .catch(() => setLoaded(true));
   }, [projectId, submissionId]);
 
-  if (!loaded) return <span className="text-xs text-gray-400">Cargando…</span>;
+  if (!loaded) return <span className="text-xs text-gray-400">Cargando adjuntos…</span>;
 
-  const plantilla = attachments.find((a) => a.attachment_type === "plantilla");
-  if (!plantilla) {
+  if (attachments.length === 0) {
     return (
       <span className="text-sm text-gray-400 italic">
-        Documento principal no disponible.
+        No hay adjuntos disponibles.
       </span>
     );
   }
 
   return (
-    <AttachmentDownloadButton
-      projectId={projectId}
-      submissionId={submissionId}
-      attachment={plantilla}
-    />
+    <div className="space-y-2">
+      {attachments.map((att) => (
+        <div key={att.id} className="flex items-center gap-3">
+          <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          <AttachmentDownloadButton
+            projectId={projectId}
+            submissionId={submissionId}
+            attachment={att}
+          />
+          <span className="text-xs text-gray-300">{att.file_name}</span>
+        </div>
+      ))}
+    </div>
   );
 }

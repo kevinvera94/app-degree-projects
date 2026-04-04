@@ -175,7 +175,7 @@ async def evaluate_j3_producto_final_result(
     j3_result = await db.execute(
         text(
             "SELECT score FROM public.evaluations"
-            " WHERE project_id = :pid AND stage IN ('producto_final', 'correcciones_producto_final')"
+            " WHERE project_id = :pid AND stage = 'producto_final'"
             " AND juror_number = 3 AND revision_number = :rev AND score IS NOT NULL"
             " ORDER BY submitted_at DESC LIMIT 1"
         ),
@@ -224,8 +224,7 @@ async def evaluate_producto_final_result(
     evals_result = await db.execute(
         text(
             "SELECT juror_number, score FROM public.evaluations"
-            " WHERE project_id = :pid"
-            " AND stage IN ('producto_final', 'correcciones_producto_final')"
+            " WHERE project_id = :pid AND stage = 'producto_final'"
             " AND revision_number = :rev AND juror_number IN (1, 2) AND score IS NOT NULL"
         ),
         {"pid": project_id, "rev": revision_number},

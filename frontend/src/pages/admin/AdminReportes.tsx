@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import api from "../../services/api";
+import DocenteSearchInput from "../../components/DocenteSearchInput";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 
@@ -298,31 +299,22 @@ function TabVencimiento() {
 
 // ── Pestaña: Carga docente ─────────────────────────────────────────────────
 
+interface DocenteInfo {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
 function TabCargaDocente() {
-  const [docentes, setDocentes] = useState<DocenteOption[]>([]);
-  const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState("");
+  const [selectedDocente, setSelectedDocente] = useState<DocenteInfo | null>(null);
   const [workload, setWorkload] = useState<WorkloadResponse | null>(null);
-  const [loadingDocentes, setLoadingDocentes] = useState(true);
   const [loadingWorkload, setLoadingWorkload] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    api
-      .get<PaginatedUsers>("/users", { params: { role: "docente", size: 200 } })
-      .then((r) => setDocentes(r.data.items))
-      .catch(() => setError("No se pudo cargar la lista de docentes."))
-      .finally(() => setLoadingDocentes(false));
-  }, []);
-
-  const filtered = docentes.filter(
-    (d) =>
-      d.full_name.toLowerCase().includes(search.toLowerCase()) ||
-      d.email.toLowerCase().includes(search.toLowerCase())
-  );
-
-  function handleSelect(id: string) {
+  function handleDocenteChange(id: string, docente: DocenteInfo | null) {
     setSelectedId(id);
+    setSelectedDocente(docente);
     setWorkload(null);
     setError("");
     if (!id) return;
@@ -334,8 +326,6 @@ function TabCargaDocente() {
       .finally(() => setLoadingWorkload(false));
   }
 
-  const selectedDocente = docentes.find((d) => d.id === selectedId);
-
   function WorkloadTable({
     rows,
     label,
@@ -345,7 +335,7 @@ function TabCargaDocente() {
   }) {
     if (rows.length === 0)
       return (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 px-4 py-3">
           Sin proyectos activos como {label.toLowerCase()}.
         </p>
       );
@@ -382,40 +372,22 @@ function TabCargaDocente() {
   }
 
   return (
-    <div className="grid grid-cols-[260px_1fr] gap-6">
-      {/* Panel izquierdo: selector de docente */}
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-gray-700">Docente</p>
-        <input
-          type="text"
-          placeholder="Buscar por nombre o email"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
+    <div className="grid grid-cols-[300px_1fr] gap-6">
+      {/* Panel izquierdo: buscador de docente */}
+      <div>
+        <DocenteSearchInput
+          value={selectedId}
+          onChange={handleDocenteChange}
+          label="Docente"
+          placeholder="Buscar por nombre o email…"
         />
-        {loadingDocentes ? (
-          <p className="text-sm text-gray-400">Cargando docentes...</p>
-        ) : (
-          <select
-            size={12}
-            value={selectedId}
-            onChange={(e) => handleSelect(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-usc-blue"
-          >
-            {filtered.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.full_name}
-              </option>
-            ))}
-          </select>
-        )}
       </div>
 
       {/* Panel derecho: carga */}
       <div>
         {!selectedId && (
           <p className="text-sm text-gray-400 mt-8">
-            Selecciona un docente para ver su carga.
+            Busca y selecciona un docente para ver su carga.
           </p>
         )}
         {loadingWorkload && (

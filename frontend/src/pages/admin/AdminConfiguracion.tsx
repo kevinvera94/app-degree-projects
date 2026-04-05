@@ -366,7 +366,7 @@ function ModalityFormModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!isEdit && levels.length === 0) {
+    if (levels.length === 0) {
       setError("Selecciona al menos un nivel académico.");
       return;
     }
@@ -375,6 +375,7 @@ function ModalityFormModal({
       if (isEdit) {
         await api.patch(`/modalities/${modality.id}`, {
           name,
+          levels,
           max_members: maxMembers,
           is_active: isActive,
         });
@@ -412,26 +413,24 @@ function ModalityFormModal({
           />
         </div>
 
-        {!isEdit && (
-          <div>
-            <p className="block text-sm font-medium text-gray-700 mb-2">
-              Niveles académicos
-            </p>
-            <div className="grid grid-cols-2 gap-1">
-              {ALL_LEVELS.map((l) => (
-                <label key={l} className="flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={levels.includes(l)}
-                    onChange={() => toggleLevel(l)}
-                    className="rounded"
-                  />
-                  {LEVEL_LABELS[l]}
-                </label>
-              ))}
-            </div>
+        <div>
+          <p className="block text-sm font-medium text-gray-700 mb-2">
+            Niveles académicos
+          </p>
+          <div className="grid grid-cols-2 gap-1">
+            {ALL_LEVELS.map((l) => (
+              <label key={l} className="flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={levels.includes(l)}
+                  onChange={() => toggleLevel(l)}
+                  className="rounded"
+                />
+                {LEVEL_LABELS[l]}
+              </label>
+            ))}
           </div>
-        )}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">

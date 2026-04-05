@@ -21,6 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
 from app.core.dependencies import CurrentUser, get_current_user, require_docente
 from app.services.evaluation_service import evaluate_anteproyecto_result, evaluate_j3_result
+from app.services.notifications import send_system_message
 from app.services.producto_final_service import (
     evaluate_j3_producto_final_result,
     evaluate_producto_final_result,
@@ -242,6 +243,33 @@ async def submit_evaluation(
         },
     )
     updated_row = dict(updated.mappings().first())
+
+    # Notificar a directores y al administrador que el jurado registró su calificación
+    _stage_labels = {
+        "anteproyecto": "anteproyecto",
+        "producto_final": "producto final",
+    }
+    stage_label = _stage_labels.get(body.stage, body.stage)
+    # Obtener título del proyecto
+    proj_title_result = await db.execute(
+        text("SELECT title FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    proj_title = proj_title_result.scalar_one()
+    notif_msg = (
+        f"El Jurado {juror['juror_number']} registró su calificación de {stage_label}"
+        f" del trabajo '{proj_title}': {round(body.score, 1)}/5.0."
+    )
+    # Notificar a directores activos
+    dir_result = await db.execute(
+        text(
+            "SELECT docente_id FROM public.project_directors"
+            " WHERE project_id = :pid AND is_active = true"
+        ),
+        {"pid": project_id},
+    )
+    for d in dir_result.mappings():
+        await send_system_message(db, project_id, current_user.id, d["docente_id"], notif_msg)
 
     # Disparar lógica de resultado — dentro de la misma transacción
     if body.stage == "anteproyecto":

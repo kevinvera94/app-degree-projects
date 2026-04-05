@@ -499,6 +499,26 @@ async def submit_sustentation_evaluation(
     )
     eval_row = dict(eval_result.mappings().first())
 
+    # Notificar a directores que el jurado registró su calificación
+    proj_title_result = await db.execute(
+        text("SELECT title FROM public.thesis_projects WHERE id = :id"),
+        {"id": project_id},
+    )
+    proj_title = proj_title_result.scalar_one()
+    eval_notif_msg = (
+        f"El Jurado {juror['juror_number']} registró su calificación de sustentación"
+        f" del trabajo '{proj_title}': {round(body.score, 1)}/5.0."
+    )
+    dir_result = await db.execute(
+        text(
+            "SELECT docente_id FROM public.project_directors"
+            " WHERE project_id = :pid AND is_active = true"
+        ),
+        {"pid": project_id},
+    )
+    for d in dir_result.mappings():
+        await send_system_message(db, project_id, current_user.id, d["docente_id"], eval_notif_msg)
+
     # Verificar si ambos jurados ya han calificado → calcular resultado
     all_evals_result = await db.execute(
         text(

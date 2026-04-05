@@ -37,13 +37,25 @@ class ModalityCreate(BaseModel):
 class ModalityUpdate(BaseModel):
     model_config = ConfigDict(json_schema_extra={"example": {
         "name": "Investigación Aplicada",
+        "levels": ["profesional", "maestria_investigacion"],
         "max_members": 3,
         "is_active": True,
     }})
 
     name: Optional[str] = Field(None, max_length=100)
+    levels: Optional[list[str]] = None
     max_members: Optional[int] = Field(None, ge=1)
     is_active: Optional[bool] = None
+
+    @model_validator(mode="after")
+    def validate_levels(self) -> "ModalityUpdate":
+        if self.levels is not None:
+            if len(self.levels) == 0:
+                raise ValueError("Debe especificar al menos un nivel académico")
+            invalid = [lvl for lvl in self.levels if lvl not in VALID_LEVELS]
+            if invalid:
+                raise ValueError(f"Niveles inválidos: {', '.join(invalid)}")
+        return self
 
 
 class ModalityResponse(BaseModel):

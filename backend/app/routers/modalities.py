@@ -82,17 +82,74 @@ async def update_modality(
     _: CurrentUser = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ) -> ModalityResponse:
+    # Verificar que la modalidad existe y obtener niveles actuales
+    existing_result = await db.execute(
+        text(f"SELECT {_SELECT_MODALITY} FROM public.modalities WHERE id = :id"),
+        {"id": modality_id},
+    )
+    existing_row = existing_result.mappings().first()
+    if existing_row is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
+        )
+
+    # Validar niveles a remover: no puede haber proyectos activos con esa combinación
+    if body.levels is not None:
+        current_levels = set(existing_row["levels"] or [])
+        new_levels = set(body.levels)
+        removed_levels = current_levels - new_levels
+        if removed_levels:
+            conflicts_result = await db.execute(
+                text(
+                    "SELECT ap.level, COUNT(*) AS total"
+                    " FROM public.thesis_projects tp"
+                    " JOIN public.academic_programs ap ON ap.id = tp.academic_program_id"
+                    " WHERE tp.modality_id = :mid"
+                    " AND ap.level = ANY(:removed_levels)"
+                    " AND tp.status NOT IN ('idea_rechazada', 'cancelado',"
+                    "   'reprobado_en_sustentacion', 'acta_generada')"
+                    " GROUP BY ap.level"
+                ),
+                {"mid": modality_id, "removed_levels": list(removed_levels)},
+            )
+            conflicts = conflicts_result.mappings().all()
+            if conflicts:
+                detail_parts = [
+                    f"{row['level']} ({row['total']} proyecto{'s' if row['total'] > 1 else ''})"
+                    for row in conflicts
+                ]
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=(
+                        f"No se puede desasociar el nivel porque existen proyectos activos "
+                        f"con esta modalidad: {', '.join(detail_parts)}"
+                    ),
+                )
+
+    # Campos escalares editables
     allowed = {"name", "max_members", "is_active"}
     updates = {
         k: v for k, v in body.model_dump(exclude_none=True).items() if k in allowed
     }
+
+    # Incluir levels si se envió
+    if body.levels is not None:
+        updates["levels"] = body.levels
 
     if not updates:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Sin campos para actualizar"
         )
 
-    set_clause = ", ".join(f"{k} = :{k}" for k in updates)
+    # levels necesita cast explícito a text[] para asyncpg
+    set_parts = []
+    for k in updates:
+        if k == "levels":
+            set_parts.append("levels = :levels::text[]")
+        else:
+            set_parts.append(f"{k} = :{k}")
+    set_clause = ", ".join(set_parts)
+
     result = await db.execute(
         text(
             f"UPDATE public.modalities"
@@ -101,10 +158,6 @@ async def update_modality(
         {**updates, "id": modality_id},
     )
     row = result.mappings().first()
-    if row is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
-        )
     await db.commit()
     return _to_modality_response(row)
 

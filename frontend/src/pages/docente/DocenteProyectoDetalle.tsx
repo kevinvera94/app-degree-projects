@@ -782,18 +782,29 @@ export default function DocenteProyectoDetalle() {
             Documento a evaluar — {STAGE_LABELS[activeEvalStage] ?? activeEvalStage}
           </h2>
 
-          {/* Buscar submission en revisión para el stage activo */}
+          {/* Buscar submission para el stage activo.
+              - anteproyecto / producto_final: submission en_revision de esa etapa.
+              - sustentacion: no tiene submission propia; mostrar el producto_final aprobado. */}
           {(() => {
-            const relevantSub = project.submissions
-              .filter(
-                (s) => s.stage === activeEvalStage && s.status === "en_revision",
-              )
-              .sort((a, b) => b.revision_number - a.revision_number)[0];
+            let relevantSub: SubmissionBasic | undefined;
+
+            if (activeEvalStage === "sustentacion") {
+              // La sustentación evalúa el producto final entregado (aprobado)
+              relevantSub = project.submissions
+                .filter((s) => s.stage === "producto_final" && s.status === "aprobado")
+                .sort((a, b) => b.revision_number - a.revision_number)[0];
+            } else {
+              relevantSub = project.submissions
+                .filter(
+                  (s) => s.stage === activeEvalStage && s.status === "en_revision",
+                )
+                .sort((a, b) => b.revision_number - a.revision_number)[0];
+            }
 
             if (!relevantSub) {
               return (
                 <p className="text-sm text-gray-400 italic">
-                  No hay documento en revisión para esta etapa.
+                  No hay documento disponible para esta etapa.
                 </p>
               );
             }

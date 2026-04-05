@@ -96,21 +96,17 @@ async def _approved_transition(
 ) -> None:
     """
     Transición aprobado: aprobado_para_sustentacion o trabajo_aprobado (Diplomado).
+    Nota: no existe estado intermedio 'producto_final_aprobado' en el enum,
+    la transición es directa desde el estado actual al estado final.
     """
     diplomado = await _is_diplomado(project_id, db)
     final_status = "trabajo_aprobado" if diplomado else "aprobado_para_sustentacion"
-    intermediate = "producto_final_aprobado"
 
-    await _update_project_status(project_id, intermediate, db)
-    await _record_history(
-        project_id, prev_status, intermediate, triggered_by,
-        f"Producto final aprobado. {score_note}",
-        db,
-    )
     await _update_project_status(project_id, final_status, db)
     await _record_history(
-        project_id, intermediate, final_status, triggered_by,
-        "Transición automática." + (" Diplomado tecnológico: omite sustentación." if diplomado else ""),
+        project_id, prev_status, final_status, triggered_by,
+        f"Producto final aprobado. {score_note}."
+        + (" Diplomado tecnológico: omite sustentación." if diplomado else " Procede a sustentación."),
         db,
     )
     await _update_submission_status(project_id, stage, revision_number, "aprobado", db)

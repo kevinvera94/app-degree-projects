@@ -355,8 +355,15 @@ async def assign_juror(
         )
 
     # Mensaje automático al docente asignado
+    _stage_labels = {
+        "anteproyecto": "anteproyecto",
+        "producto_final": "producto final",
+        "sustentacion": "sustentación",
+    }
+    stage_label = _stage_labels.get(body.stage, body.stage)
     msg_content = (
-        f"Has sido asignado como Jurado {body.juror_number} del trabajo '{project['title']}'."
+        f"Has sido asignado como Jurado {body.juror_number} de {stage_label}"
+        f" del trabajo '{project['title']}'."
     )
     if body.stage != "sustentacion":
         msg_content += f" Plazo de evaluación: {due_date.strftime('%d/%m/%Y')}"

@@ -112,6 +112,7 @@ app-degree-projects/
 | `specs/arch/AUTH.md` | Estrategia de autenticación, flujo JWT, matriz de permisos por rol |
 | `specs/arch/INFRA.md` | Variables de entorno, despliegue, entornos dev/prod |
 | `specs/arch/ENUMS.md` | Referencia centralizada de todos los valores enum y constantes del sistema |
+| `specs/arch/RNF.md` | Requerimientos no funcionales: rendimiento, escalabilidad, seguridad, usabilidad y más |
 | `specs/DESIGN.md` | Paleta de colores, tokens visuales e identidad gráfica USC |
 
 ---

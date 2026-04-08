@@ -144,7 +144,7 @@ npm run test:e2e:ui
 4. Hacer deploy — verificar: `GET https://<servicio>.onrender.com/health` → `{"status": "ok"}`
 5. Actualizar `ALLOWED_ORIGINS` con el dominio de Vercel una vez desplegado el frontend
 
-Guía completa: [`specs/arch/INFRA.md`](specs/arch/INFRA.md)
+Guía completa: [`specs/ARCHITECTURE.md`](specs/ARCHITECTURE.md)
 
 ### Frontend — Vercel
 
@@ -169,12 +169,7 @@ Guía completa: [`specs/arch/INFRA.md`](specs/arch/INFRA.md)
 |---|---|
 | [`specs/BRIEF.md`](specs/BRIEF.md) | Fuente de verdad: descripción, roles, flujo completo y reglas de negocio |
 | [`specs/PRD.md`](specs/PRD.md) | Requerimientos funcionales por módulo (MOD-01 a MOD-17) |
-| [`specs/ARCHITECTURE.md`](specs/ARCHITECTURE.md) | Stack, principios técnicos y referencias a modelo de datos, API y auth |
-| [`specs/arch/API.md`](specs/arch/API.md) | Contrato REST completo por router |
-| [`specs/arch/DATA-MODEL.md`](specs/arch/DATA-MODEL.md) | Entidades, campos y relaciones de la base de datos |
-| [`specs/arch/AUTH.md`](specs/arch/AUTH.md) | Estrategia JWT, roles y matriz de permisos |
-| [`specs/arch/INFRA.md`](specs/arch/INFRA.md) | Variables de entorno, despliegue y estructura de carpetas |
-| [`specs/arch/RNF.md`](specs/arch/RNF.md) | Requerimientos no funcionales |
+| [`specs/ARCHITECTURE.md`](specs/ARCHITECTURE.md) | Stack, principios técnicos y enlaces a los documentos de arquitectura detallados |
 | [`specs/TASKS.md`](specs/TASKS.md) | Plan de tareas por fases — estado del proyecto |
 | [`specs/DESIGN.md`](specs/DESIGN.md) | Paleta de colores e identidad visual USC |
 

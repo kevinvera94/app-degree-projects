@@ -8,8 +8,8 @@
 ## Estado actual
 
 **Tarea activa:** —
-**Fase activa:** FASE-11
-**Próxima tarea:** `T-F11-09` — Documentación de operación y README final (ver FASE-11.md)
+**Fase activa:** FASE-11 ✅
+**Próxima tarea:** — (todas las fases completadas)
 
 ---
 
@@ -27,7 +27,7 @@
 | FASE-08 | [FASE-08.md](tasks/FASE-08.md) | Backend: Mensajería, historial y reportes | 11 | ✅ |
 | FASE-09 | [FASE-09.md](tasks/FASE-09.md) | Frontend: Base, autenticación y panel de administrador | 16 | ✅ |
 | FASE-10 | [FASE-10.md](tasks/FASE-10.md) | Frontend: Vistas de estudiante y docente | 13 | ✅ |
-| FASE-11 | [FASE-11.md](tasks/FASE-11.md) | Testing, integración y deploy | 9 | 🔄 |
+| FASE-11 | [FASE-11.md](tasks/FASE-11.md) | Testing, integración y deploy | 9 | ✅ |
 
 **Total tareas:** 116
 
@@ -150,6 +150,7 @@
 - `T-F11-06` — Deploy del backend en Render — 2026-04-02
 - `T-F11-07` — Deploy del frontend en Vercel — 2026-04-02
 - `T-F11-08` — Smoke test en producción — 2026-04-08
+- `T-F11-09` — Documentación de operación y README final — 2026-04-08
 
 ---
 

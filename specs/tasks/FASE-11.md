@@ -147,7 +147,7 @@
 - **Referencias:** `specs/BRIEF.md`, `specs/ARCHITECTURE.md`
 - **Descripción:** Actualizar el README del proyecto con instrucciones de setup, desarrollo y deploy para nuevos integrantes del equipo.
 - **Criterios de aceptación:**
-  - [ ] `README.md` en la raíz con secciones:
+  - [x] `README.md` en la raíz con secciones:
     - Descripción del proyecto (enlace a `specs/BRIEF.md`)
     - Stack tecnológico
     - Requisitos previos (Python, Node, cuenta Supabase)
@@ -156,7 +156,7 @@
     - Cómo correr los tests (`pytest`, `playwright test`)
     - Cómo hacer deploy (Render + Vercel)
     - Enlace a la documentación de specs (`specs/TASKS.md`, `specs/PRD.md`, `specs/ARCHITECTURE.md`)
-  - [ ] `README.md` en `backend/` con comandos de desarrollo
-  - [ ] `README.md` en `frontend/` con comandos de desarrollo
+  - [x] `README.md` en `backend/` con comandos de desarrollo
+  - [x] `README.md` en `frontend/` con comandos de desarrollo
 - **Dependencias:** T-F11-08
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada

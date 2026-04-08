@@ -44,7 +44,8 @@
 |---|---|---|---|
 | GET | `/academic-programs` | Listar programas | Todos |
 | POST | `/academic-programs` | Crear programa | Administrador |
-| PATCH | `/academic-programs/{id}` | Editar programa | Administrador |
+| PATCH | `/academic-programs/{id}` | Editar programa (incluye activar/desactivar con `is_active`) | Administrador |
+| DELETE | `/academic-programs/{id}` | Eliminar programa. Retorna `409` si hay referencias en `student_profiles` o `thesis_projects`. Si está en uso y no se desea seguir usando, desactivarlo con `PATCH` | Administrador |
 
 ---
 
@@ -54,7 +55,8 @@
 |---|---|---|---|
 | GET | `/modalities` | Listar modalidades con configuración | Todos |
 | POST | `/modalities` | Crear modalidad | Administrador |
-| PATCH | `/modalities/{id}` | Editar modalidad (ej. max_members por defecto) | Administrador |
+| PATCH | `/modalities/{id}` | Editar modalidad (incluye activar/desactivar con `is_active`) | Administrador |
+| DELETE | `/modalities/{id}` | Eliminar modalidad y sus límites asociados. Retorna `409` si hay referencias en `thesis_projects`. Si está en uso y no se desea seguir usando, desactivarla con `PATCH` | Administrador |
 | GET | `/modalities/{id}/limits` | Listar límites de integrantes por nivel para esta modalidad | Administrador |
 | PUT | `/modalities/{id}/limits/{level}` | Crear o actualizar límite específico para modalidad+nivel | Administrador |
 | DELETE | `/modalities/{id}/limits/{level}` | Eliminar límite específico (usa el max_members por defecto) | Administrador |
@@ -68,7 +70,7 @@
 | GET | `/date-windows` | Listar ventanas de fechas | Todos |
 | POST | `/date-windows` | Crear ventana de fechas | Administrador |
 | PATCH | `/date-windows/{id}` | Editar o activar/desactivar ventana | Administrador |
-| DELETE | `/date-windows/{id}` | Eliminar ventana (solo si no tiene radicaciones) | Administrador |
+| DELETE | `/date-windows/{id}` | Eliminar ventana. Retorna `409` si hay radicaciones asociadas. Si está en uso y no se desea seguir usando, desactivarla con `PATCH` | Administrador |
 
 ---
 

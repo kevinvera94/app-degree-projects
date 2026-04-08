@@ -75,6 +75,54 @@ async def create_modality(
     return _to_modality_response(row)
 
 
+@router.delete("/{modality_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_modality(
+    modality_id: UUID,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    # Verificar que la modalidad existe
+    exists = await db.execute(
+        text("SELECT id FROM public.modalities WHERE id = :id"),
+        {"id": modality_id},
+    )
+    if exists.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Modalidad no encontrada"
+        )
+
+    # Verificar referencias en thesis_projects
+    tp_ref = await db.execute(
+        text(
+            "SELECT COUNT(*) AS total FROM public.thesis_projects"
+            " WHERE modality_id = :id"
+        ),
+        {"id": modality_id},
+    )
+    tp_count = tp_ref.mappings().first()["total"]
+
+    if tp_count > 0:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"No se puede eliminar: la modalidad está referenciada en "
+                f"{tp_count} trabajo{'s' if tp_count > 1 else ''} de grado. "
+                f"Si deseas que no esté disponible para nuevas inscripciones, desactívala desde 'Editar'."
+            ),
+        )
+
+    # Eliminar límites específicos primero (la FK no tiene CASCADE definido explícitamente)
+    await db.execute(
+        text("DELETE FROM public.modality_level_limits WHERE modality_id = :id"),
+        {"id": modality_id},
+    )
+    await db.execute(
+        text("DELETE FROM public.modalities WHERE id = :id"),
+        {"id": modality_id},
+    )
+    await db.commit()
+
+
 @router.patch("/{modality_id}", response_model=ModalityResponse)
 async def update_modality(
     modality_id: UUID,

@@ -60,6 +60,69 @@ async def create_academic_program(
     return AcademicProgramResponse(**row)
 
 
+@router.delete("/{program_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_academic_program(
+    program_id: UUID,
+    _: CurrentUser = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+) -> None:
+    # Verificar que el programa existe
+    exists = await db.execute(
+        text("SELECT id FROM public.academic_programs WHERE id = :id"),
+        {"id": program_id},
+    )
+    if exists.mappings().first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Programa académico no encontrado",
+        )
+
+    # Verificar referencias en student_profiles
+    sp_ref = await db.execute(
+        text(
+            "SELECT COUNT(*) AS total FROM public.student_profiles"
+            " WHERE academic_program_id = :id"
+        ),
+        {"id": program_id},
+    )
+    sp_count = sp_ref.mappings().first()["total"]
+
+    # Verificar referencias en thesis_projects
+    tp_ref = await db.execute(
+        text(
+            "SELECT COUNT(*) AS total FROM public.thesis_projects"
+            " WHERE academic_program_id = :id"
+        ),
+        {"id": program_id},
+    )
+    tp_count = tp_ref.mappings().first()["total"]
+
+    if sp_count > 0 or tp_count > 0:
+        parts = []
+        if sp_count > 0:
+            parts.append(
+                f"{sp_count} perfil{'es' if sp_count > 1 else ''} de estudiante"
+            )
+        if tp_count > 0:
+            parts.append(
+                f"{tp_count} trabajo{'s' if tp_count > 1 else ''} de grado"
+            )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"No se puede eliminar: el programa está referenciado en "
+                f"{' y '.join(parts)}. "
+                f"Si deseas que no esté disponible para nuevas inscripciones, desactívalo desde 'Editar'."
+            ),
+        )
+
+    await db.execute(
+        text("DELETE FROM public.academic_programs WHERE id = :id"),
+        {"id": program_id},
+    )
+    await db.commit()
+
+
 @router.patch("/{program_id}", response_model=AcademicProgramResponse)
 async def update_academic_program(
     program_id: UUID,

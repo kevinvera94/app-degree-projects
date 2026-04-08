@@ -238,6 +238,8 @@ function ProgramasTab() {
   const [items, setItems] = useState<AcademicProgram[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [modalProg, setModalProg] = useState<AcademicProgram | "new" | null>(
     null
   );
@@ -262,6 +264,20 @@ function ProgramasTab() {
     return () => controller.abort();
   }, [fetch]);
 
+  async function handleDelete(prog: AcademicProgram) {
+    if (!window.confirm(`¿Eliminar el programa "${prog.name}"? Esta acción no se puede deshacer.`)) return;
+    setActionError(null);
+    setDeletingId(prog.id);
+    try {
+      await api.delete(`/academic-programs/${prog.id}`);
+      fetch();
+    } catch (err) {
+      setActionError(apiError(err));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-end mb-4">
@@ -275,6 +291,11 @@ function ProgramasTab() {
       {fetchError && (
         <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
           {fetchError}
+        </p>
+      )}
+      {actionError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {actionError}
         </p>
       )}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -303,12 +324,21 @@ function ProgramasTab() {
                     <ActiveBadge active={p.is_active} />
                   </td>
                   <td className="px-5 py-3">
-                    <button
-                      onClick={() => setModalProg(p)}
-                      className="text-usc-blue hover:underline text-xs font-medium"
-                    >
-                      Editar
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setModalProg(p)}
+                        className="text-usc-blue hover:underline text-xs font-medium"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p)}
+                        disabled={deletingId === p.id}
+                        className="text-red-500 hover:underline text-xs font-medium disabled:opacity-50"
+                      >
+                        {deletingId === p.id ? "Eliminando..." : "Eliminar"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -323,7 +353,7 @@ function ProgramasTab() {
           onClose={() => setModalProg(null)}
           onSaved={() => {
             setModalProg(null);
-            fetch(); // sin signal: el usuario sigue en el tab
+            fetch();
           }}
         />
       )}
@@ -675,6 +705,8 @@ function ModalidadesTab() {
   const [items, setItems] = useState<Modality[]>([]);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [modalMod, setModalMod] = useState<Modality | "new" | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -698,6 +730,21 @@ function ModalidadesTab() {
     return () => controller.abort();
   }, [fetch]);
 
+  async function handleDelete(mod: Modality) {
+    if (!window.confirm(`¿Eliminar la modalidad "${mod.name}"? Esta acción no se puede deshacer.`)) return;
+    setActionError(null);
+    setDeletingId(mod.id);
+    try {
+      await api.delete(`/modalities/${mod.id}`);
+      if (expandedId === mod.id) setExpandedId(null);
+      fetch();
+    } catch (err) {
+      setActionError(apiError(err));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-end mb-4">
@@ -711,6 +758,11 @@ function ModalidadesTab() {
       {fetchError && (
         <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
           {fetchError}
+        </p>
+      )}
+      {actionError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-4">
+          {actionError}
         </p>
       )}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -759,15 +811,27 @@ function ModalidadesTab() {
                       <ActiveBadge active={m.is_active} />
                     </td>
                     <td className="px-5 py-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setModalMod(m);
-                        }}
-                        className="text-usc-blue hover:underline text-xs font-medium"
-                      >
-                        Editar
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setModalMod(m);
+                          }}
+                          className="text-usc-blue hover:underline text-xs font-medium"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(m);
+                          }}
+                          disabled={deletingId === m.id}
+                          className="text-red-500 hover:underline text-xs font-medium disabled:opacity-50"
+                        >
+                          {deletingId === m.id ? "Eliminando..." : "Eliminar"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   {expandedId === m.id && <ModalityLimitsRow modality={m} />}
@@ -970,22 +1034,16 @@ function VentanasTab() {
     return () => controller.abort();
   }, [fetch]);
 
-  async function handleDelete(id: string) {
-    if (!confirm("¿Eliminar esta ventana de fechas?")) return;
+  async function handleDelete(ventana: DateWindow) {
+    const label = `${WINDOW_TYPE_LABELS[ventana.window_type] ?? ventana.window_type} (${ventana.period})`;
+    if (!window.confirm(`¿Eliminar la ventana "${label}"? Esta acción no se puede deshacer.`)) return;
     setDeleteError(null);
-    setDeleting(id);
+    setDeleting(ventana.id);
     try {
-      await api.delete(`/date-windows/${id}`);
+      await api.delete(`/date-windows/${ventana.id}`);
       fetch();
     } catch (err) {
-      const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === 409) {
-        setDeleteError(
-          "No se puede eliminar: esta ventana ya tiene radicaciones asociadas."
-        );
-      } else {
-        setDeleteError(apiError(err));
-      }
+      setDeleteError(apiError(err));
     } finally {
       setDeleting(null);
     }
@@ -1049,11 +1107,11 @@ function VentanasTab() {
                         Editar
                       </button>
                       <button
-                        onClick={() => handleDelete(v.id)}
+                        onClick={() => handleDelete(v)}
                         disabled={deleting === v.id}
-                        className="text-red-500 hover:underline text-xs disabled:opacity-50"
+                        className="text-red-500 hover:underline text-xs font-medium disabled:opacity-50"
                       >
-                        Eliminar
+                        {deleting === v.id ? "Eliminando..." : "Eliminar"}
                       </button>
                     </div>
                   </td>

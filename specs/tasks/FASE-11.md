@@ -129,16 +129,16 @@
 - **Referencias:** —
 - **Descripción:** Prueba manual del flujo completo en el entorno de producción para verificar que backend y frontend funcionan integrados.
 - **Criterios de aceptación:**
-  - [ ] Login como Admin en producción ✅
-  - [ ] Crear usuario Docente y Estudiante en producción ✅
-  - [ ] Crear ventana de fechas activa ✅
-  - [ ] Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto ✅
-  - [ ] Admin asigna jurados → Jurado registra calificación → Transición de estado correcta ✅
-  - [ ] Subida y descarga de archivos en Supabase Storage funciona en producción ✅
-  - [ ] Mensajería funciona entre roles ✅
-  - [ ] No hay errores CORS en producción ✅
+  - [x] Login como Admin en producción ✅
+  - [x] Crear usuario Docente y Estudiante en producción ✅
+  - [x] Crear ventana de fechas activa ✅
+  - [x] Estudiante inscribe idea → Admin aprueba → Estudiante radica anteproyecto ✅
+  - [x] Admin asigna jurados → Jurado registra calificación → Transición de estado correcta ✅
+  - [x] Subida y descarga de archivos en Supabase Storage funciona en producción ✅
+  - [x] Mensajería funciona entre roles ✅
+  - [x] No hay errores CORS en producción ✅
 - **Dependencias:** T-F11-07
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Completada
 
 ---
 

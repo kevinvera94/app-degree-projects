@@ -162,7 +162,10 @@ async def delete_date_window(
     if submissions.mappings().first() is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="No se puede eliminar: existen radicaciones asociadas a esta ventana",  # noqa: E501
+            detail=(
+                "No se puede eliminar: existen radicaciones asociadas a esta ventana. "
+                "Si deseas que no esté disponible, desactívala desde 'Editar'."
+            ),
         )
 
     await db.execute(

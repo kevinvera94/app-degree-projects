@@ -70,7 +70,7 @@
 | GET | `/date-windows` | Listar ventanas de fechas | Todos |
 | POST | `/date-windows` | Crear ventana de fechas | Administrador |
 | PATCH | `/date-windows/{id}` | Editar o activar/desactivar ventana | Administrador |
-| DELETE | `/date-windows/{id}` | Eliminar ventana (solo si no tiene radicaciones) | Administrador |
+| DELETE | `/date-windows/{id}` | Eliminar ventana. Retorna `409` si hay radicaciones asociadas. Si está en uso y no se desea seguir usando, desactivarla con `PATCH` | Administrador |
 
 ---
 

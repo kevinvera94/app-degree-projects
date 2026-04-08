@@ -14,3 +14,5 @@
 | RF-01-06 | El sistema permite al usuario recuperar su contraseña por email | Todos |
 | RF-01-07 | El sistema permite al Administrador configurar los parámetros globales: límite de integrantes por modalidad/nivel, modalidades disponibles por nivel académico, días hábiles de alerta para vencimiento de jurados | Administrador |
 | RF-01-08 | Un usuario sin sesión activa no puede acceder a ninguna pantalla funcional del sistema | Todos |
+| RF-01-09 | El Administrador puede eliminar un programa académico siempre que no esté referenciado en ningún perfil de estudiante ni trabajo de grado. Si está en uso, el sistema retorna un error descriptivo e indica la opción de desactivarlo | Administrador |
+| RF-01-10 | El Administrador puede eliminar una modalidad siempre que no esté referenciada en ningún trabajo de grado. La eliminación borra en cascada sus límites de integrantes asociados. Si está en uso, el sistema retorna un error descriptivo e indica la opción de desactivarla | Administrador |
